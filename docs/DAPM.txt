@@ -1,0 +1,39 @@
+***Chuỗi kết nối mongo
+mongodb+srv://2014483:2014483@team10-dapm.deh3da8.mongodb.net/?retryWrites=true&w=majority
+
+***Fix lỗi
+Điều chỉnh biến môi trường nếu lỗi golang
+
+***Công cụ sử dụng
+Docker(MySQL, localhost)
+TablePlus (GUI cho MySQL)
+Postman (test API)
+
+***Công nghệ sử dụng
+Golang
+GIN (API)
+GORM (làm việc với MySQL)
+
+***Thông tin
+- mysql name: root, pass: my-secret-pw
+
+***MySQL
+where ở cột nào thì đánh index ở cột đó
+
+***Postman
+- post: chuyển tab body, chọn kiểu json và nhập data
+
+***GORM API 
+- Gõ nhanh fu để tạo hàm
+
+***Go
+go mod init <name>
+shift alt F format code golang
++ Định nghĩa bảng
+- Khai báo viết hoa để export
+= tạo con trỏ *time.Time nếu như dưới db thuộc tính là null thì biến sẽ đc khởi tạo là null
+- Mục đích của con trỏ là đồng bộ giá trị khi thay đổi, vì con trỏ trỏ đến vùng nhớ chứ không phải giá trị của biến
+- i:= 42, p := &i lấy giá trị trong ô nhớ của i, *p = 21 thay đổi giá trị của i
+- * lấy giá trị, & để lấy địa chỉ ô nhớ
+- biến khai báo phải đc dùng nếu ko sẽ lỗi
+- interface rỗng = biến any (nhận bất kì giá trị nào)
