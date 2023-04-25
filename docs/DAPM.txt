@@ -25,6 +25,11 @@ where ở cột nào thì đánh index ở cột đó
 
 ***GORM API 
 - Gõ nhanh fu để tạo hàm
+- db.Where("Id = ?", id).Delete(nil) ----- truyền nil vì đã có where theo id
+- TenLoai string `json:"TenLoai" gorm:"column:TenLoai;" ` ----- Map theo tên key chuỗi json và map theo tên cột ở dưới db
+- Các create, update đều có tham số dât nhưng delete thì ko. Vì xóa không cần truyền tham số, chỉ cần điều kiện và xác định bảng
+- method TableName gorm sẽ tự gọi sau khi so sánh cấu trúc dữ liệu nên ko cần gọi thủ công
+- offset số phần tử của trang trước
 
 ***Go
 go mod init <name>
