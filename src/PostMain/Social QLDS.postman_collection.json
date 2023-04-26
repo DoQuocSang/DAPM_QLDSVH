@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "45a44bef-adc1-4b0c-9307-9525f2f85056",
+		"name": "Social QLDS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27095431",
+		"_collection_link": "https://red-satellite-849735.postman.co/workspace/Team-Workspace~e6255d96-2f95-43f4-82f3-dc1cf96c405c/collection/27095431-45a44bef-adc1-4b0c-9307-9525f2f85056?action=share&creator=27095431&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/ping",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get  by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/v1/baiviet/:id",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"v1",
+						"baiviet",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete  by id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/v1/nguoidung/:id",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"v1",
+						"nguoidung",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/v1/baiviet?page=2&limit=2",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"v1",
+						"baiviet"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a new",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Ten\":          \"hoaiTrang\",\r\n\t\"DiaChi\":       \"hhhh\",\r\n\t\"Email\":        \"2014496@dlu.edu.vn\",\r\n\t\"MatKhau\":      \"1234567\",\r\n    \"QuyenTruyCap\" : \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/v1/nguoidung",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"v1",
+						"nguoidung"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update by id",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Ten\":          \"ten update\",\r\n\t \"DIaChi\":          \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/v1/nguoidung/:id",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"v1",
+						"nguoidung",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
