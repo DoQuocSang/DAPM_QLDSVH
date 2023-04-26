@@ -10,9 +10,8 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
-            "env": {
-                "APP_NAME": "Ứng dụng web quản lý di sản văn hóa",
-                "DB_CONN_STR": "root:my-secret-pw@tcp(127.0.0.1:3306)/QLDSVH?charset=utf8mb4&parseTime=True&loc=Local"
+            "env":{
+                "DB_CONN_STR":"root:my-secret-pw@tcp(127.0.0.1:3307)/QLDSVH?charset=utf8mb4&parseTime=True&loc=Local"
             }
         }
     ]

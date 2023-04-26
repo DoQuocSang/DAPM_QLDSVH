@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,126 +12,66 @@ import (
 	"gorm.io/gorm"
 )
 
-//======================== LoaiDiSan
-// `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-// `TenLoai` varchar(255) DEFAULT NULL,
-// `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-// `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
-
-type LoaiDiSan struct {
-	Id        int        `json:"Id"`
-	TenLoai   string     `json:"TenLoai"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdateAt  *time.Time `json:"update_at"`
+type TodoItem struct {
+	Id           int        `json:"id"`
+	Ten          string     `json:"ten"`
+	DiaChi       string     `json:"diachi"`
+	Email        string     `json:"email"`
+	MatKhau      string     `json:"matkhau"`
+	QuyenTruyCap bool       `json:"quyentruycap"`
+	CreateAt     *time.Time `json:"create_at"`
+	UpdateAt     *time.Time `json:"update_at,omitempty"`
 }
 
-type LoaiDiSan_Creation struct {
-	Id      int    `json:"-" gorm:"column:Id;`
-	TenLoai string `json:"TenLoai" gorm:"column:TenLoai;"`
-}
-
-func (LoaiDiSan_Creation) TableName() string {
-	return "LoaiDiSan"
-}
-
-//======================== DiSanVanHoa
-// `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-// `TenDiSan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-// `IdDiSan` int DEFAULT NULL,
-// `MoTa` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-// `HinhAnh` json DEFAULT NULL,
-// `ThoiGian` datetime DEFAULT NULL,
-// `DiaDiem` varchar(255) DEFAULT NULL,
-// `TinhTrang` enum('DangSuaChua','CanSuaChua','BinhThuong') DEFAULT 'BinhThuong',
-// `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-// `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-type DiSanVanHoa struct {
-	Id        int        `json:"Id"`
-	TenDiSan  string     `json:"TenDiSan"`
-	IdDiSan   int        `json:"IdDiSan"`
-	MoTa      string     `json:"MoTa"`
-	DiaDiem   string     `json:"DiaDiem"`
-	ThoiGian  time.Time  `json:"ThoiGian"`
-	TinhTrang string     `json:"TinhTrang"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdateAt  *time.Time `json:"update_at"`
-}
-
-type DiSanVanHoa_Creation struct {
-	TenDiSan  string    `json:"TenDiSan"`
-	IdDiSan   int       `json:"IdDiSan"`
-	MoTa      string    `json:"MoTa"`
-	DiaDiem   string    `json:"DiaDiem"`
-	ThoiGian  time.Time `json:"ThoiGian"`
-	TinhTrang string    `json:"TinhTrang"`
+type TodoItemCreation struct {
+	Ten          string     `json:"ten"`
+	Email        string     `json:"email"`
+	MatKhau      string     `json:"matkhau"`
+	QuyenTruyCap bool       `json:"quyentruycap"`
 }
 
 func main() {
-	//=================================================== Kết nối db
-	// dsn := os.Getenv("DB_CONN_STR")
-	DB_CONN_STR := "root:my-secret-pw@tcp(127.0.0.1:3306)/QLDSVH?charset=utf8mb4&parseTime=True&loc=Local"
-	dsn := DB_CONN_STR
+	dsn := os.Getenv("DB_CONN_STR")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		//Log lỗi và thoát chương trình
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
 	fmt.Println(db)
 
-	//=================================================== Khởi tạo
 	now := time.Now().UTC()
 
-	item := LoaiDiSan{
-		Id:        1,
-		TenLoai:   "Di sản văn hóa phi vật thể",
-		CreatedAt: &now,
-		UpdateAt:  &now,
+	item := TodoItem{
+		Id:           1,
+		Ten:          "hoaiTrang",
+		DiaChi:       "hhhh",
+		Email:        "2014496@dlu.edu.vn",
+		MatKhau:      "1234567",
+		QuyenTruyCap: true,
+		CreateAt:     &now,
+		UpdateAt:     &now,
 	}
 
-	// //=================================================== Chuyển struct thành json
-	// jsonData, err := json.Marshal(item)
-
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	// fmt.Println(string(jsonData))
-
-	// //=================================================== Chuyển từ json về struct
-	// jsonStr := `{"Id":1,"TenLoai":"Di sản văn hóa phi vật thể","created_at":"2023-04-24T21:00:42.3242677Z","update_at":null}`
-
-	// var item2 LoaiDiSan
-
-	// if err := json.Unmarshal([]byte(jsonStr), &item2); err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	// fmt.Println(item2)
-
-	//=================================================== Http server
 	r := gin.Default()
 
-	//CRUD: create, read, update, delete
-	// POST/v1/loaidisan -> tạo item
-	// GET/v1/loaidisan/?page=1 -> lấy danh sách
-	// GET/v1/loaidisan/:id -> Lấy chi tiết item
-	// PUT/v1/loaidisan/:id -> Update item
-	// DELETE/v1/loaidisan/:id -> Xóa item
+	//CRUD: Create,Read,update,Delete
+	//POST /v1/items(create a new item)
+	//GET /v1/items(list items) /v1/items?page=1
+	//GET /v1/items/:id(get item detail by id)
+	//(PUT||PATCH) /v1/items/:id(update item by id)
+	//DELETE /v1/items/:id(delete item by id)
 
-	v1 := r.Group("/v1")
+	v1:=r.Group(relativePath"/v1")
 	{
-		LoaiDiSan := v1.Group("/loai-di-san")
+		items:=v1.Group(relativePath:"/items")
 		{
-			LoaiDiSan.POST("", Create_LoaiDiSan(db))
-			LoaiDiSan.GET("")
-			LoaiDiSan.GET("/:id")
-			LoaiDiSan.PATCH("/:id")
-			LoaiDiSan.DELETE("/:id")
+			items.POST(relativePath:"", CreateItem())
+			items.GET(relativePath:"")
+			items.GET(relativePath:"/:id")
+			items.PATCH(relativePath:"/:id")
+			items.DELETE(relativePath:"/:id")
+
 		}
 	}
 
@@ -140,31 +81,11 @@ func main() {
 		})
 	})
 
-	r.Run(":3000") // 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run(":3000")
 }
 
-func Create_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
+func CreateItem() func(*gin.Context){
 	return func(c *gin.Context) {
-		var data LoaiDiSan_Creation
 
-		if err := c.ShouldBind(&data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-
-			return
-		}
-
-		if err := db.Create(&data).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
-
-			return
-		}
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"data": data.Id,
-		})
 	}
 }
