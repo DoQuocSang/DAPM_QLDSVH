@@ -30,6 +30,9 @@ where ở cột nào thì đánh index ở cột đó
 - Các create, update đều có tham số dât nhưng delete thì ko. Vì xóa không cần truyền tham số, chỉ cần điều kiện và xác định bảng
 - method TableName gorm sẽ tự gọi sau khi so sánh cấu trúc dữ liệu nên ko cần gọi thủ công
 - offset số phần tử của trang trước
+- *Time.time nếu như dưới db là null thì biến sẽ có giá trị là nil
+- Time.time mặc định luôn có giá trị nên nếu dưới db là null thì luôn trả về format thời gian chứ ko phải nil
+- Thêm * vô kiểu dữ liệu trong struct để có thể cập nhật giá trị nil
 
 ***Go
 go mod init <name>

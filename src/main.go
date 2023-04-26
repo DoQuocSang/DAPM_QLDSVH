@@ -12,6 +12,23 @@ import (
 	"gorm.io/gorm"
 )
 
+// ======================== PhanTrang
+type Paging struct {
+	Page  int   `json:"Page" form:"page"`
+	Limit int   `json:"Limit" form:"limit"`
+	Total int64 `json:"Total" form:"-"`
+}
+
+func (p *Paging) Process() {
+	if p.Page <= 0 {
+		p.Page = 1
+	}
+
+	if p.Limit <= 0 || p.Limit >= 100 {
+		p.Limit = 10
+	}
+}
+
 //======================== LoaiDiSan
 // `id` bigint unsigned NOT NULL AUTO_INCREMENT,
 // `TenLoai` varchar(255) DEFAULT NULL,
@@ -46,23 +63,6 @@ func (LoaiDiSan_Update) TableName() string {
 	return LoaiDiSan{}.TableName()
 }
 
-// ======================== PhanTrang
-type Paging struct {
-	Page  int   `json:"Page" form:"page"`
-	Limit int   `json:"Limit" form:"limit"`
-	Total int64 `json:"Total" form:"-"`
-}
-
-func (p *Paging) Process() {
-	if p.Page <= 0 {
-		p.Page = 1
-	}
-
-	if p.Limit <= 0 || p.Limit >= 100 {
-		p.Limit = 10
-	}
-}
-
 //======================== DiSanVanHoa
 // `id` bigint unsigned NOT NULL AUTO_INCREMENT,
 // `TenDiSan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -76,24 +76,46 @@ func (p *Paging) Process() {
 // `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 type DiSanVanHoa struct {
-	Id        int        `json:"id"`
-	TenDiSan  string     `json:"TenDiSan"`
-	IdDiSan   int        `json:"IdDiSan"`
-	MoTa      string     `json:"MoTa"`
-	DiaDiem   string     `json:"DiaDiem"`
-	ThoiGian  time.Time  `json:"ThoiGian"`
-	TinhTrang string     `json:"TinhTrang"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdateAt  *time.Time `json:"updated_at"`
+	Id        int        `json:"id" gorm:"column:id;"`
+	TenDiSan  string     `json:"TenDiSan" gorm:"column:TenDiSan;"`
+	IdDiSan   int        `json:"IdDiSan" gorm:"column:IdDiSan;"`
+	MoTa      string     `json:"MoTa" gorm:"column:MoTa;"`
+	DiaDiem   string     `json:"DiaDiem" gorm:"column:DiaDiem;"`
+	ThoiGian  *time.Time `json:"ThoiGian" gorm:"column:ThoiGian;"`
+	TinhTrang string     `json:"TinhTrang" gorm:"column:TinhTrang;"`
+	CreatedAt *time.Time `json:"created_at" gorm:"column:created_at;"`
+	UpdateAt  *time.Time `json:"updated_at" gorm:"column:updated_at;"`
+}
+
+func (DiSanVanHoa) TableName() string {
+	return "DiSanVanHoa"
 }
 
 type DiSanVanHoa_Creation struct {
-	TenDiSan  string    `json:"TenDiSan"`
-	IdDiSan   int       `json:"IdDiSan"`
-	MoTa      string    `json:"MoTa"`
-	DiaDiem   string    `json:"DiaDiem"`
-	ThoiGian  time.Time `json:"ThoiGian"`
-	TinhTrang string    `json:"TinhTrang"`
+	Id        int        `json:"-" gorm:"column:id;"`
+	TenDiSan  string     `json:"TenDiSan" gorm:"column:TenDiSan;"`
+	IdDiSan   int        `json:"IdDiSan" gorm:"column:IdDiSan;"`
+	MoTa      string     `json:"MoTa" gorm:"column:MoTa;"`
+	DiaDiem   string     `json:"DiaDiem" gorm:"column:DiaDiem;"`
+	ThoiGian  *time.Time `json:"ThoiGian" gorm:"column:ThoiGian;"`
+	TinhTrang string     `json:"TinhTrang" gorm:"column:TinhTrang;"`
+}
+
+func (DiSanVanHoa_Creation) TableName() string {
+	return DiSanVanHoa{}.TableName()
+}
+
+type DiSanVanHoa_Update struct {
+	TenDiSan  string     `json:"TenDiSan" gorm:"column:TenDiSan;"`
+	IdDiSan   int        `json:"IdDiSan" gorm:"column:IdDiSan;"`
+	MoTa      string     `json:"MoTa" gorm:"column:MoTa;"`
+	DiaDiem   string     `json:"DiaDiem" gorm:"column:DiaDiem;"`
+	ThoiGian  *time.Time `json:"ThoiGian" gorm:"column:ThoiGian;"`
+	TinhTrang string     `json:"TinhTrang" gorm:"column:TinhTrang;"`
+}
+
+func (DiSanVanHoa_Update) TableName() string {
+	return DiSanVanHoa{}.TableName()
 }
 
 func main() {
@@ -111,14 +133,14 @@ func main() {
 	fmt.Println(db)
 
 	//=================================================== Khởi tạo
-	now := time.Now().UTC()
+	//now := time.Now().UTC()
 
-	item := LoaiDiSan{
-		Id:        1,
-		TenLoai:   "Di sản văn hóa phi vật thể",
-		CreatedAt: &now,
-		UpdateAt:  &now,
-	}
+	// item := LoaiDiSan{
+	// 	Id:        1,
+	// 	TenLoai:   "Di sản văn hóa phi vật thể",
+	// 	CreatedAt: &now,
+	// 	UpdateAt:  &now,
+	// }
 
 	// //=================================================== Chuyển struct thành json
 	// jsonData, err := json.Marshal(item)
@@ -162,17 +184,28 @@ func main() {
 			LoaiDiSan.PATCH("/:id", Update_LoaiDiSan(db))
 			LoaiDiSan.DELETE("/:id", Delete_LoaiDiSan(db))
 		}
+
+		DiSanVanHoa := v1.Group("/di-san-van-hoa")
+		{
+			DiSanVanHoa.POST("", Create_DiSanVanHoa(db))
+			DiSanVanHoa.GET("", List_DiSanVanHoa(db))
+			DiSanVanHoa.GET("/:id", Get_DiSanVanHoa(db))
+			DiSanVanHoa.PATCH("/:id", Update_DiSanVanHoa(db))
+			DiSanVanHoa.DELETE("/:id", Delete_DiSanVanHoa(db))
+		}
 	}
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message": item,
+			"message": "Server đang chạy ở port 3000",
+			//"message": item,
 		})
 	})
 
 	r.Run(":3000") // 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
+// ======================== Loại di sản
 func Create_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
 		var data LoaiDiSan_Creation
@@ -323,6 +356,184 @@ func List_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
 		var result []LoaiDiSan
 
 		if err := db.Table(LoaiDiSan{}.TableName()).Count(&paging.Total).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		// db = db.Where("status <> ?", "value")
+
+		if err := db.Order("id desc").
+			Offset((paging.Page - 1) * paging.Limit).
+			Limit(paging.Limit).
+			Find(&result).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data":   result,
+			"paging": paging,
+		})
+	}
+}
+
+// ======================== Di sản văn hóa
+func Create_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+	return func(c *gin.Context) {
+		var data DiSanVanHoa_Creation
+
+		if err := c.ShouldBind(&data); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		if err := db.Create(&data).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data id": data.Id,
+		})
+	}
+}
+
+func Get_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+	return func(c *gin.Context) {
+		var data DiSanVanHoa
+
+		//ascii to int
+		id, err := strconv.Atoi(c.Param("id"))
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		//data.Id = id
+
+		if err := db.Where("Id = ?", id).First(&data).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data": data,
+		})
+	}
+}
+
+func Update_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+	return func(c *gin.Context) {
+		var data DiSanVanHoa_Update
+
+		//ascii to int
+		id, err := strconv.Atoi(c.Param("id"))
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		if err := c.ShouldBind(&data); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		if err := db.Where("Id = ?", id).Updates(&data).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data": true,
+		})
+	}
+}
+
+func Delete_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+	return func(c *gin.Context) {
+		//ascii to int
+		id, err := strconv.Atoi(c.Param("id"))
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		// // Xóa nhưng ko xóa hẳn dưới db
+		// if err := db.Table(LoaiDiSan{}.TableName()).Where("Id = ?", id).Updates(map[string]interface{}{
+		// 	"status": "deleted",
+		// }).Error; err != nil {
+		// 	c.JSON(http.StatusBadRequest, gin.H{
+		// 		"error": err.Error(),
+		// 	})
+
+		// 	return
+		// }
+
+		// Xóa hẳn dưới db
+		if err := db.Table(DiSanVanHoa{}.TableName()).Where("Id = ?", id).Delete(nil).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data": true,
+		})
+	}
+}
+
+func List_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+	return func(c *gin.Context) {
+		var paging Paging
+
+		if err := c.ShouldBind(&paging); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		paging.Process()
+
+		var result []DiSanVanHoa
+
+		if err := db.Table(DiSanVanHoa{}.TableName()).Count(&paging.Total).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
