@@ -1,5 +1,6 @@
-import React, {useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useHistory, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faTags } from "@fortawesome/free-solid-svg-icons";
 import { faUserPen } from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +11,18 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 export default () => {
    const [activeBtn, setActiveBtn] = useState(1);
+
+   const location = useLocation().pathname; // React Hook
+   //console.log();
+
+   useEffect(() => {
+      if (location.includes('heritage')) {
+         setActiveBtn(2)
+      }
+      if (location.includes('heritage-type')) {
+         setActiveBtn(3)
+      }
+   }, [])
 
    return (
       <>
@@ -32,7 +45,7 @@ export default () => {
                            </form>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard" onClick={()=>setActiveBtn(1)}>
+                           <Link to="/admin/dashboard" onClick={() => setActiveBtn(1)}>
                               <p className={activeBtn === 1 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
                                  <svg className={activeBtn === 1 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
@@ -45,7 +58,7 @@ export default () => {
                            </Link>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard/all-heritage" onClick={()=>setActiveBtn(2)}>
+                           <Link to="/admin/dashboard/all-heritage" onClick={() => setActiveBtn(2)}>
                               <p target="_blank" className={activeBtn === 2 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
                                  <svg className={activeBtn === 2 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faBook} />
@@ -58,7 +71,7 @@ export default () => {
                            </Link>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard/all-heritage-type" onClick={()=>setActiveBtn(3)}>
+                           <Link to="/admin/dashboard/all-heritage-type" onClick={() => setActiveBtn(3)}>
                               <p className={activeBtn === 3 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
                                  <svg className={activeBtn === 3 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faBookmark} />
@@ -68,7 +81,7 @@ export default () => {
                            </Link>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard/all-author" onClick={()=>setActiveBtn(4)}>
+                           <Link to="/admin/dashboard/all-author" onClick={() => setActiveBtn(4)}>
                               <p className={activeBtn === 4 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
                                  <svg className={activeBtn === 4 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faUserPen} />
@@ -78,7 +91,7 @@ export default () => {
                            </Link>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard/all-blog" onClick={()=>setActiveBtn(5)}>
+                           <Link to="/admin/dashboard/all-blog" onClick={() => setActiveBtn(5)}>
                               <p href="#" className={activeBtn === 5 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
                                  <svg className={activeBtn === 5 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faFileLines} />
@@ -88,7 +101,7 @@ export default () => {
                            </Link>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard/all-tag" onClick={()=>setActiveBtn(6)}>
+                           <Link to="/admin/dashboard/all-tag" onClick={() => setActiveBtn(6)}>
                               <p href="#" className={activeBtn === 6 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
                                  <svg className={activeBtn === 6 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faTags} />
@@ -98,7 +111,7 @@ export default () => {
                            </Link>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard/all-user" onClick={()=>setActiveBtn(7)}>
+                           <Link to="/admin/dashboard/all-user" onClick={() => setActiveBtn(7)}>
                               <p href="#" className={activeBtn === 7 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
                                  <svg className={activeBtn === 7 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faUser} />

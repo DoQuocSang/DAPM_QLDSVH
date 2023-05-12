@@ -8,25 +8,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { getBooks } from "../../../services/BookRepository";
 import { toVND } from "../../../components/utils/Utils";
 import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 import DefaultImage from "images/post-default.png"
 import Error404 from "../../../components/admin/other/Error404";
+import { getHeritages } from "services/HeritageRepository";
 
 export default () => {
-    const [booksList, setBooksList] = useState([]);
-    const [metadata, setMetadata] = useState([]);
+    const [heritageList, setHeritageList] = useState([]);
 
     useEffect(() => {
-        getBooks("Id", "DESC").then(data => {
+        getHeritages().then(data => {
             if (data) {
-                setBooksList(data.items);
-                setMetadata(data.metadata);
+                setHeritageList(data);
             }
             else
-                setBooksList([]);
-            //console.log(data.items)
+                setHeritageList([]);
+            console.log(data)
         })
     }, []);
 
@@ -61,10 +59,10 @@ export default () => {
                                                             STT
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Tên sách
+                                                            Tên di sản
                                                         </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Loại sách
+                                                        <th scope="col" width="10%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                            Id loại di sản
                                                         </th>
                                                         <th scope="col" width="20%" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Ảnh
@@ -73,7 +71,7 @@ export default () => {
                                                             Mô tả ngắn
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Giá
+                                                            Trạng thái
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Sửa
@@ -85,33 +83,33 @@ export default () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="bg-white">
-                                                    {booksList.map((book, index) => (
+                                                    {heritageList.map((item, index) => (
                                                         <tr>
                                                             <td className="p-4 text-center text-sm font-bold text-gray-500">
                                                                 {index + 1}
                                                             </td>
                                                             <td className="p-4 text-sm font-semibold text-gray-500">
-                                                                {book.title}
+                                                                {item.Name}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500">
-                                                                {book.category.name}
+                                                                {item.IdHeritageType}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500">
-                                                                {isEmptyOrSpaces(book.imageUrl) ? (
+                                                                {isEmptyOrSpaces(item.ImageUrl) ? (
                                                                     <img className="h-40 w-auto rounded-lg mx-auto" src={DefaultImage} alt="Neil image" />
                                                                 ) : (
-                                                                    <img className="h-40 w-auto rounded-lg mx-auto" src={book.imageUrl} alt="Neil image" />
+                                                                    <img className="h-40 w-auto rounded-lg mx-auto" src={item.ImageUrl} alt="Neil image" />
                                                                 )}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500 align-middle">
-                                                                {book.shortDescription}
+                                                                {item.ShortDescription}
                                                             </td>
                                                             <td className="p-4 text-sm font-semibold text-gray-500">
-                                                                {toVND(book.price)}
+                                                                {item.Status}
                                                             </td>
 
                                                             <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider">
-                                                                <Link to={`/admin/dashboard/update-heritage/${book.id}`}>
+                                                                <Link to={`/admin/dashboard/update-heritage/${item.id}`}>
                                                                     <FontAwesomeIcon icon={faPenToSquare} />
                                                                 </Link>
                                                             </th>
@@ -122,7 +120,7 @@ export default () => {
                                                     ))}
                                                 </tbody>
                                             </table>
-                                            {booksList.length === 0 ? <Error404 /> : ""}
+                                            {heritageList.length === 0 ? <Error404 /> : ""}
                                         </div>
                                     </div>
                                 </div>

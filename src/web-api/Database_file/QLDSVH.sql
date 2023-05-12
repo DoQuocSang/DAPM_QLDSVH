@@ -23,17 +23,18 @@ CREATE TABLE `Heritage` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `HeritageType`;
 CREATE TABLE `HeritageType` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `UrlSlug` text,
+  `Description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `UrlSlug` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `Heritage` (`id`, `Name`, `IdHeritageType`, `Description`, `Image`, `Time`, `Location`, `Status`, `UrlSlug`, `ShortDescription`, `ImageUrl`, `created_at`, `updated_at`) VALUES
 (1, 'Quần thể di tích Cố đô Huế', 1, 'Nằm dọc hai bên bờ sông Hương và một vài vùng phụ cận thuộc tỉnh Thừa Thiên Huế, Quần thể di tích Cố đô Huế từng là kinh đô của Việt Nam từ năm 1802 – 1945. Ngày 11/12/1993, Quần thể di tích Cố đô Huế được UNESCO ghi danh vào Danh sách Di sản Văn hóa Thế giới với giá trị nổi bật toàn cầu biểu trưng cho sự nổi bật về uy quyền của một đế chế phong kiến đã mất của Việt Nam vào thời kỳ hưng thịnh nhất của nó đầu thế kỷ XIX – một điển hình nổi bật của Kinh đô phong kiến phương Đông.', NULL, '1993-12-11 00:00:00', 'Thừa Thiên Huế', 'BinhThuong', 'quan-the-di-tich-co-do-hue', 'Nằm dọc hai bên bờ sông Hương và một vài vùng phụ cận thuộc tỉnh Thừa Thiên Huế, Quần thể di tích Cố đô Huế từng là kinh đô của Việt Nam từ năm 1802 – 1945. Ngày 11/12/1993, Quần thể di tích Cố đô Huế được UNESCO ghi danh vào Danh sách Di sản Văn hóa Thế giới với giá trị nổi bật toàn cầu biểu trưng cho sự nổi bật về uy quyền của một đế chế phong kiến đã mất của Việt Nam vào thời kỳ hưng thịnh nhất của nó đầu thế kỷ XIX – một điển hình nổi bật của Kinh đô phong kiến phương Đông.', NULL, '2023-04-24 09:35:44', '2023-04-24 09:47:49');
@@ -44,16 +45,14 @@ INSERT INTO `Heritage` (`id`, `Name`, `IdHeritageType`, `Description`, `Image`, 
 INSERT INTO `Heritage` (`id`, `Name`, `IdHeritageType`, `Description`, `Image`, `Time`, `Location`, `Status`, `UrlSlug`, `ShortDescription`, `ImageUrl`, `created_at`, `updated_at`) VALUES
 (4, 'Vườn Quốc gia Phong Nha – Kẻ Bàng', 1, 'Với diện tích 123.326ha nằm trong vùng sinh thái bắc Trường Sơn, vườn Quốc gia Phong Nha – Kẻ Bàng là một trong những mẫu hình riêng biệt và đẹp nhất về kiến tạo carxtơ phức tạp ở Đông Nam Á, là nơi hội tụ những giá trị về địa chất, địa mạo, khí hậu, sinh học, cảnh quan và văn hóa cũng như lịch sử độc đáo. Phong Nha – Kẻ Bàng hai lần được UNESCO công nhận là di sản thiên nhiên thế giới, giá trị toàn cầu về địa chất, địa mạo (năm 2003), giá trị về hệ sinh thái và đa dạng sinh học (năm 2015).', NULL, '2015-07-03 00:00:00', 'Quảng Bình', 'BinhThuong', 'vuon-quoc-gia-phong-nha-ke-bang', 'Với diện tích 123.326ha nằm trong vùng sinh thái bắc Trường Sơn, vườn Quốc gia Phong Nha – Kẻ Bàng là một trong những mẫu hình riêng biệt và đẹp nhất về kiến tạo carxtơ phức tạp ở Đông Nam Á, là nơi hội tụ những giá trị về địa chất, địa mạo, khí hậu, sinh học, cảnh quan và văn hóa cũng như lịch sử độc đáo. Phong Nha – Kẻ Bàng hai lần được UNESCO công nhận là di sản thiên nhiên thế giới, giá trị toàn cầu về địa chất, địa mạo (năm 2003), giá trị về hệ sinh thái và đa dạng sinh học (năm 2015).', NULL, '2023-04-24 09:35:44', '2023-04-24 09:47:49'),
 (5, 'Hoàng Thành Thăng Long', 1, 'Hoàng Thành Thăng Long là quần thể di tích gắn với lịch sử kinh thành Thăng Long Hà Nội. Công trình kiến trức đồ sộ này được các triều vua (Lý – Trần – Lê) xây dựng trong nhiều giai đoạn lịch sử và trở thành di tích quan trọng bậc nhất trong hệ thống các di tích Việt Nam. Ngày 1/8/2010, Hoàng Thành Thăng Long đã được UNESCO công nhận là di sản văn hóa thế giới. Những giá trị nổi bật toàn cầu của khu di sản này được ghi nhận bởi 3 đặc điểm nổi bật: chiều dài lịch sử văn hóa suốt 13 thế kỷ, tính liên tục của di sản với tư cách là một trung tâm quyền lực, và các tầng di tích di vật đa dạng, phong phú, sinh động.', NULL, '2010-08-01 00:00:00', 'Hà Nội', 'BinhThuong', 'hoang-thanh-thang-long', 'Hoàng Thành Thăng Long là quần thể di tích gắn với lịch sử kinh thành Thăng Long Hà Nội. Công trình kiến trức đồ sộ này được các triều vua (Lý – Trần – Lê) xây dựng trong nhiều giai đoạn lịch sử và trở thành di tích quan trọng bậc nhất trong hệ thống các di tích Việt Nam. Ngày 1/8/2010, Hoàng Thành Thăng Long đã được UNESCO công nhận là di sản văn hóa thế giới. Những giá trị nổi bật toàn cầu của khu di sản này được ghi nhận bởi 3 đặc điểm nổi bật: chiều dài lịch sử văn hóa suốt 13 thế kỷ, tính liên tục của di sản với tư cách là một trung tâm quyền lực, và các tầng di tích di vật đa dạng, phong phú, sinh động.', NULL, '2023-04-24 09:35:44', '2023-04-24 09:47:49'),
-(6, 'Demo', 1, 'Demo', NULL, '2050-04-26 07:00:00', 'Demo', 'DangSuaChua', 'demo', NULL, NULL, '2023-04-24 09:35:44', '2023-04-24 09:47:49');
+(6, 'Đã cập nhật', 2, 'Đã cập nhật', NULL, '2050-04-26 07:00:00', 'Đã cập nhật', 'BinhThuong', 'da-cap-nhat', 'Đã cập nhật', NULL, '2023-04-24 09:35:44', '2023-04-24 09:47:49');
 
-INSERT INTO `HeritageType` (`id`, `Name`, `UrlSlug`, `created_at`, `updated_at`) VALUES
-(1, 'Di sản văn hóa vật thể', 'di-san-van-hoa-vat-the', '2023-04-24 09:59:24', '2023-04-24 09:59:24');
-INSERT INTO `HeritageType` (`id`, `Name`, `UrlSlug`, `created_at`, `updated_at`) VALUES
-(2, 'Di sản văn hóa phi vật thể', 'di-san-van-hoa-phi-vat-the', '2023-04-24 09:59:24', '2023-04-24 09:59:24');
-INSERT INTO `HeritageType` (`id`, `Name`, `UrlSlug`, `created_at`, `updated_at`) VALUES
-(3, 'Chưa xác định', 'chua-xac-dinh', '2023-04-24 09:59:24', '2023-04-24 09:59:24');
-INSERT INTO `HeritageType` (`id`, `Name`, `UrlSlug`, `created_at`, `updated_at`) VALUES
-(4, 'Cần xem xét', 'can-xem-xet', '2023-04-24 09:59:24', '2023-04-24 09:59:24');
+INSERT INTO `HeritageType` (`id`, `Name`, `Description`, `UrlSlug`, `created_at`, `updated_at`) VALUES
+(1, 'Di sản văn hóa vật thể', 'Là sản phẩm vật chất có giá trị lịch sử, văn hoá, bao gồm các di tích lịch sử văn hoá, danh lam thắng cảnh, các di vật cổ vật, bảo vật quốc gia', 'di-san-van-hoa-vat-the', '2023-04-24 09:59:24', '2023-04-24 09:59:24');
+INSERT INTO `HeritageType` (`id`, `Name`, `Description`, `UrlSlug`, `created_at`, `updated_at`) VALUES
+(2, 'Di sản văn hóa phi vật thể', 'Là những sản phẩm tinh thần có giá trị về lịch sử, văn hoá, khoa học được lưu giữ bằng trí nhớ, chữ viết, truyền miệng, truyền nghề, trình diễn và các hình thức lưu giữ, lưu truyền khác', 'di-san-van-hoa-phi-vat-the', '2023-04-24 09:59:24', '2023-04-24 09:59:24');
+INSERT INTO `HeritageType` (`id`, `Name`, `Description`, `UrlSlug`, `created_at`, `updated_at`) VALUES
+(3, 'Chưa xác định', 'Là nhưng di sản chưa xác định được loại', 'chua-xac-dinh', '2023-04-24 09:59:24', '2023-04-24 09:59:24');
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

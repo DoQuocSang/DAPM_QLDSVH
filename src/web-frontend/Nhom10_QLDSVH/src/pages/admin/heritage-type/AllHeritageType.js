@@ -8,23 +8,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { getCategories } from "../../../services/CategoryRepository";
 import Error404 from "../../../components/admin/other/Error404";
+import { getHeritageTypes } from "services/HeritageTypeRepository";
 
 export default () => {
 
-    const [categoriesList, setCategoriesList] = useState([]);
-    const [metadata, setMetadata] = useState([]);
+    const [heritageTypeList, setHeritageTypeList] = useState([]);
 
     useEffect(() => {
-        getCategories().then(data => {
+        getHeritageTypes().then(data => {
             if (data) {
-              setCategoriesList(data.items);
-              setMetadata(data.metadata);
+              setHeritageTypeList(data);
             }
             else
-              setCategoriesList([]);
-            //console.log(data.items)
+              setHeritageTypeList([]);
+            console.log(data)
           })
     }, []);
 
@@ -36,8 +34,8 @@ export default () => {
                         <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
                             <div className="mb-4 flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2">Quản lý loại sách</h3>
-                                    <span className="text-base font-normal text-gray-500">Các loại sách hiện có trong database</span>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2">Quản lý loại di sản</h3>
+                                    <span className="text-base font-normal text-gray-500">Các loại di sảnhiện có trong database</span>
                                 </div>
                                 <div className="flex-shrink-0">
                                     <Link to="/admin/dashboard/add-heritage-type">
@@ -59,7 +57,7 @@ export default () => {
                                                             Id
                                                         </th>
                                                         <th scope="col" width="25%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Tên loại sách
+                                                            Tên loại
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Mô tả
@@ -73,7 +71,7 @@ export default () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="bg-white">
-                                                    {categoriesList.map((category, index) => (
+                                                    {heritageTypeList.map((item, index) => (
                                                     <tr>
                                                         {/* <td className="p-4  text-sm font-normal text-gray-900">
                                                             Payment from <span className="font-semibold">Bonnie Green</span>
@@ -82,13 +80,13 @@ export default () => {
                                                             {index + 1}
                                                         </td>
                                                         <td className="p-4  text-sm font-semibold text-gray-500">
-                                                            {category.name}
+                                                            {item.Name}
                                                         </td>
                                                         <td className="p-4  text-sm font-normal text-gray-500">
-                                                            {category.description}
+                                                            {item.Description}
                                                         </td>
                                                         <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider">
-                                                        <Link to={`/admin/dashboard/update-heritage-type/${category.id}`}>
+                                                        <Link to={`/admin/dashboard/update-heritage-type/${item.id}`}>
                                                             <FontAwesomeIcon icon={faPenToSquare} />
                                                             </Link>
                                                         </th>
@@ -99,7 +97,7 @@ export default () => {
                                                 ))}
                                                 </tbody>
                                             </table>
-                                            {categoriesList.length === 0 ? <Error404 /> : ""}
+                                            {heritageTypeList.length === 0 ? <Error404 /> : ""}
                                         </div>
                                     </div>
                                 </div>

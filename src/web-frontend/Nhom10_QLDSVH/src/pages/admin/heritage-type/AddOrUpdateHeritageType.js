@@ -10,48 +10,37 @@ import { Link } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
 import { AddOrUpdateText } from "../../../components/utils/Utils";
-import { getCategoryById } from "../../../services/CategoryRepository";
-import { addOrUpdateCategory } from "../../../services/CategoryRepository";
+import { getHeritageTypeById } from "../../../services/HeritageTypeRepository";
 
 export default  ({ type = "" }) => {
 
-    let mainText = AddOrUpdateText(type, "loại sách");
+    let mainText = AddOrUpdateText(type, "loại di sản");
     const initialState = {
         id: 0,
-        name: '',
-        description: '',
-        urlSlug: '',
+        Name: '',
+        Description: '',
+        UrlSlug: '',
     },
-    [category, setCategory] = useState(initialState);
+    [heritageType, setHeritageType] = useState(initialState);
 
     let { id } = useParams();
     id = id ?? 0;
     //console.log(id);
     useEffect(() => {
-        document.title = "Thêm/ cập nhật loại sách";
+        document.title = "Thêm/ cập nhật loại di sản";
 
-        getCategoryById(id).then(data => {
+        getHeritageTypeById(id).then(data => {
             if (data)
-                setCategory({
+                setHeritageType({
                     ...data,
                 });
             else
-                setCategory(initialState);
-            //console.log(data);
+                setHeritageType(initialState);
+            console.log(data);
         })
     }, [])
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        let form = new FormData(e.target);
-            addOrUpdateCategory(form).then(data => {
-            if (data)
-                alert("Lưu thành công");
-            else
-                alert("Lỗi");
-            console.log(data);
-        });
-    }
+
 
 
     return (
@@ -70,35 +59,35 @@ export default  ({ type = "" }) => {
                             name="name"
                             required
                             type="text"
-                            value={category.name || ''}
-                            onChange={e => setCategory({
-                                ...category,
-                                name: e.target.value
+                            value={heritageType.Name || ''}
+                            onChange={e => setHeritageType({
+                                ...heritageType,
+                                Name: e.target.value,
                             })}
-                            placeholder="Nhập tên sách"
+                            placeholder="Nhập tên di sản"
                             className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                         <input
-                            name="urlSlug"
+                        <input
+                            name="slug"
                             required
                             type="text"
-                            value={category.urlSlug || ''}
-                            onChange={e => setCategory({
-                                ...category,
-                                urlSlug: e.target.value
+                            value={heritageType.UrlSlug || ''}
+                            onChange={e => setHeritageType({
+                                ...heritageType,
+                                UrlSlug: e.target.value
                             })}
                             placeholder="Nhập định danh slug"
                             className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
                         <textarea
-                            name="description"
+                            name="Description"
                             required
                             type="text"
-                            value={category.description || ''}
-                            onChange={e => setCategory({
-                                ...category,
-                                description: e.target.value
+                            value={heritageType.Description || ''}
+                            onChange={e => setHeritageType({
+                                ...heritageType,
+                                Description: e.target.value
                             })}
                             placeholder="Nhập mô tả chi tiết"
-                            className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false"></textarea>
+                            className="description mb-4 sec h-20 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false"></textarea>
                         <div className="buttons flex">
                             <hr className="mt-4" />
                             <Link to="/admin/dashboard/all-heritage-type" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">

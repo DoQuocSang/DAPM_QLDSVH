@@ -33,15 +33,17 @@ func (p *Paging) Process() {
 // `id` bigint unsigned NOT NULL AUTO_INCREMENT,
 // `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
 // `UrlSlug` text,
+// `Description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
 // `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
 // `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
 
 type HeritageType struct {
-	Id        int        `json:"id" gorm:"column:id"`
-	Name      string     `json:"Name" gorm:"column:Name"`
-	UrlSlug   string     `json:"UrlSlug" gorm:"column:UrlSlug"`
-	CreatedAt *time.Time `json:"created_at" gorm:"column:created_at"`
-	UpdateAt  *time.Time `json:"updated_at" gorm:"column:updated_at"`
+	Id          int        `json:"id" gorm:"column:id"`
+	Name        string     `json:"Name" gorm:"column:Name"`
+	Description string     `json:"Description" gorm:"column:Description;"`
+	UrlSlug     string     `json:"UrlSlug" gorm:"column:UrlSlug"`
+	CreatedAt   *time.Time `json:"created_at" gorm:"column:created_at"`
+	UpdateAt    *time.Time `json:"updated_at" gorm:"column:updated_at"`
 }
 
 func (HeritageType) TableName() string {
@@ -49,9 +51,10 @@ func (HeritageType) TableName() string {
 }
 
 type HeritageType_Creation struct {
-	Id      int    `json:"-" gorm:"column:id;"`
-	Name    string `json:"Name" gorm:"column:Name"`
-	UrlSlug string `json:"UrlSlug" gorm:"column:UrlSlug"`
+	Id          int    `json:"-" gorm:"column:id;"`
+	Name        string `json:"Name" gorm:"column:Name"`
+	Description string `json:"Description" gorm:"column:Description;"`
+	UrlSlug     string `json:"UrlSlug" gorm:"column:UrlSlug"`
 }
 
 func (HeritageType_Creation) TableName() string {
@@ -59,8 +62,9 @@ func (HeritageType_Creation) TableName() string {
 }
 
 type HeritageType_Update struct {
-	Name    string `json:"Name" gorm:"column:Name"`
-	UrlSlug string `json:"UrlSlug" gorm:"column:UrlSlug"`
+	Name        string `json:"Name" gorm:"column:Name"`
+	Description string `json:"Description" gorm:"column:Description;"`
+	UrlSlug     string `json:"UrlSlug" gorm:"column:UrlSlug"`
 }
 
 func (HeritageType_Update) TableName() string {

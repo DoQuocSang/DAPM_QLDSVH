@@ -9,7 +9,7 @@ import { AddOrUpdateText } from "../../../components/utils/Utils";
 import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 
 import { getHeritageById } from "services/HeritageRepository";
-
+import { getHeritageTypes } from "services/HeritageTypeRepository";
 
 
 export default ({ type = "" }) => {
@@ -17,15 +17,18 @@ export default ({ type = "" }) => {
     let mainText = AddOrUpdateText(type, "di sản");
     const initialState = {
         id: 0,
-        TenDiSan: '',
-        Mota: '',
-        ThoiGian: '',
-        TinhTrang: '',
-        idLoaiDiSan: 0
+        IdHeritageType: 0,
+        Name: '',
+        ImageUrl: '',
+        Location: '',
+        ShortDescription: '',
+        Status: '',
+        UrlSlug: '',
+        Time: '',
+        Description: ''
     },[heritage, setHeritage] = useState(initialState);
 
-    const [categoriesList, setCategoriesList] = useState([]);
-    const [authorsList, setAuthorsList] = useState([]);
+    const [heritageTypeList, setHeritageTypeList] = useState([]);
 
     let { id } = useParams();
     id = id ?? 0;
@@ -42,11 +45,21 @@ export default ({ type = "" }) => {
                 setHeritage(initialState);
             console.log(data);
         })
+
+        getHeritageTypes().then(data => {
+            if (data) {
+              setHeritageTypeList(data);
+            }
+            else
+              setHeritageTypeList([]);
+            console.log(data)
+          })
     }, [])
+    console.log(heritage);
 
     return (
         <div id="main-content" className="h-full w-full bg-gray-50 relative overflow-y-auto lg:ml-64">
-            <main>
+            <main> 
                 <div className="mt-12 px-4">
                     <div className="editor mx-auto flex w-10/12 max-w-2xl flex-col p-6 text-gray-800 shadow-lg mb-12 rounded-lg border-t-4 border-purple-400">
                         <div className="flex mb-4 items-center space-x-5">
@@ -57,68 +70,52 @@ export default ({ type = "" }) => {
                             </div>
                         </div>
                         <input
-                            name="title"
+                            name="name"
                             required
                             type="text"
-                            value={heritage.TenDiSan || ''}
+                            value={heritage.Name || ''}
                             onChange={e => setHeritage({
                                 ...heritage,
-                                title: e.target.value,
-                                meta: e.target.value
+                                Name: e.target.value,
                             })}
-                            placeholder="Nhập tên sách"
+                            placeholder="Nhập tên di sản"
                             className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
                         <input
                             name="slug"
                             required
                             type="text"
-                            value={heritage.urlSlug || ''}
+                            value={heritage.UrlSlug || ''}
                             onChange={e => setHeritage({
                                 ...heritage,
-                                urlSlug: e.target.value
+                                UrlSlug: e.target.value
                             })}
                             placeholder="Nhập định danh slug"
                             className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+                        
                         <select
-                            name='authorId'
-                            value={heritage.authorId}
+                            name='idHeritageType'
+                            value={heritage.IdHeritageType}
                             required
                             onChange={e => {
                                 setHeritage({
                                     ...heritage,
-                                    authorId: e.target.value
+                                    IdHeritageType: e.target.value
                                 })
                             }}
                             className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
-                            <option value=''>--- Chọn tác giả ---</option>
-                            {authorsList.map((item, index) => (
-                                <option key={index} value={item.id}>{item.fullName}</option>
-                            ))}
-                        </select>
-                        <select
-                            name='categoryId'
-                            value={heritage.categoryId}
-                            required
-                            onChange={e => {
-                                setHeritage({
-                                    ...heritage,
-                                    categoryId: e.target.value
-                                }); console.log(heritage.categoryId)
-                            }}
-                            className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
-                            <option value=''>--- Chọn chủ đề ---</option>
-                            {categoriesList.map((item, index) => (
-                                <option key={index} value={item.id}>{item.name}</option>
+                            <option value=''>--- Chọn loại di sản ---</option>
+                            {heritageTypeList.map((item, index) => (
+                                <option key={index} value={item.id}>{item.Name}</option>
                             ))}
                         </select>
                         <textarea
                             name="shortDescription"
                             required
                             type="text"
-                            value={heritage.shortDescription || ''}
+                            value={heritage.ShortDescription || ''}
                             onChange={e => setHeritage({
                                 ...heritage,
-                                shortDescription: e.target.value
+                                ShortDescription: e.target.value
                             })}
                             placeholder="Nhập mô tả ngắn"
                             className="description mb-4 sec h-20 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false"></textarea>
@@ -126,74 +123,56 @@ export default ({ type = "" }) => {
                             name="description"
                             required
                             type="text"
-                            value={heritage.description || ''}
+                            value={heritage.Description || ''}
                             onChange={e => setHeritage({
                                 ...heritage,
-                                description: e.target.value
+                                Description: e.target.value
                             })}
                             placeholder="Nhập mô tả chi tiết"
                             className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false" ></textarea>
 
                         <input
-                            name="price"
+                            name="location"
                             required
                             type="text"
-                            value={heritage.price || ''}
+                            value={heritage.Location || ''}
                             onChange={e => setHeritage({
                                 ...heritage,
-                                price: e.target.value
+                                Location: e.target.value
                             })}
-                            placeholder="Nhập giá sách"
+                            placeholder="Nhập địa điểm"
                             className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                        <input
-                            name="coverForm"
+                        <select
+                            name='status'
+                            value={heritage.Status}
                             required
-                            type="text"
-                            value={heritage.coverForm || ''}
-                            onChange={e => setHeritage({
-                                ...heritage,
-                                coverForm: e.target.value
-                            })}
-                            placeholder="Nhập hình thức bìa"
-                            className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                        <input
-                            name="supplier"
-                            required
-                            type="text"
-                            value={heritage.supplier || ''}
-                            onChange={e => setHeritage({
-                                ...heritage,
-                                supplier: e.target.value
-                            })}
-                            placeholder="Nhập nhà cung cấp"
-                            className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                        <input
-                            name="publishCompany"
-                            required
-                            type="text"
-                            value={heritage.publishCompany || ''}
-                            onChange={e => setHeritage({
-                                ...heritage,
-                                publishCompany: e.target.value
-                            })}
-                            placeholder="Nhập nhà xuất bản"
-                            className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-
+                            onChange={e => {
+                                setHeritage({
+                                    ...heritage,
+                                    Status: e.target.value
+                                })
+                            }}
+                            className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
+                            <option value=''>--- Chọn trạng thái ---</option>
+                            <option value={0}>Đang sửa chữa</option>
+                            <option value={1}>Cần sửa chữa</option>
+                            <option value={2}>Bình thường</option>
+                        </select>
                         <input
                             name="imageUrl"
                             required
                             type="text"
-                            value={heritage.imageUrl || ''}
+                            value={heritage.ImageUrl || ''}
                             onChange={e => setHeritage({
                                 ...heritage,
-                                imageUrl: e.target.value,
+                                ImageUrl: e.target.value,
                             })}
                             placeholder="Nhập link ảnh"
                             className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
 
-                        {!isEmptyOrSpaces(heritage.imageUrl) && <>
+                        {!isEmptyOrSpaces(heritage.ImageUrl) && <>
                             <p className="text-gray-600 mb-4 text-center">Ảnh hiện tại</p>
-                            <img src={heritage.imageUrl} className="w-full h-auto mb-4 rounded-lg" />
+                            <img src={heritage.ImageUrl} className="w-full h-auto mb-4 rounded-lg" />
                         </>}
 
                         <div className="buttons flex">
