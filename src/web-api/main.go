@@ -29,93 +29,108 @@ func (p *Paging) Process() {
 	}
 }
 
-//======================== LoaiDiSan
+//======================== HeritageType
 // `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-// `TenLoai` varchar(255) DEFAULT NULL,
+// `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+// `UrlSlug` text,
 // `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
 // `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
 
-type LoaiDiSan struct {
+type HeritageType struct {
 	Id        int        `json:"id" gorm:"column:id"`
-	TenLoai   string     `json:"TenLoai" gorm:"column:TenLoai"`
+	Name      string     `json:"Name" gorm:"column:Name"`
+	UrlSlug   string     `json:"UrlSlug" gorm:"column:UrlSlug"`
 	CreatedAt *time.Time `json:"created_at" gorm:"column:created_at"`
 	UpdateAt  *time.Time `json:"updated_at" gorm:"column:updated_at"`
 }
 
-func (LoaiDiSan) TableName() string {
-	return "LoaiDiSan"
+func (HeritageType) TableName() string {
+	return "HeritageType"
 }
 
-type LoaiDiSan_Creation struct {
+type HeritageType_Creation struct {
 	Id      int    `json:"-" gorm:"column:id;"`
-	TenLoai string `json:"TenLoai" gorm:"column:TenLoai;"`
+	Name    string `json:"Name" gorm:"column:Name"`
+	UrlSlug string `json:"UrlSlug" gorm:"column:UrlSlug"`
 }
 
-func (LoaiDiSan_Creation) TableName() string {
-	return LoaiDiSan{}.TableName()
+func (HeritageType_Creation) TableName() string {
+	return HeritageType{}.TableName()
 }
 
-type LoaiDiSan_Update struct {
-	TenLoai string `json:"TenLoai" gorm:"column:TenLoai;"`
+type HeritageType_Update struct {
+	Name    string `json:"Name" gorm:"column:Name"`
+	UrlSlug string `json:"UrlSlug" gorm:"column:UrlSlug"`
 }
 
-func (LoaiDiSan_Update) TableName() string {
-	return LoaiDiSan{}.TableName()
+func (HeritageType_Update) TableName() string {
+	return HeritageType{}.TableName()
 }
 
-//======================== DiSanVanHoa
+//======================== Heritage
 // `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-// `TenDiSan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-// `IdDiSan` int DEFAULT NULL,
-// `MoTa` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-// `HinhAnh` json DEFAULT NULL,
-// `ThoiGian` datetime DEFAULT NULL,
-// `DiaDiem` varchar(255) DEFAULT NULL,
-// `TinhTrang` enum('DangSuaChua','CanSuaChua','BinhThuong') DEFAULT 'BinhThuong',
+// `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+// `IdHeritageType` int DEFAULT NULL,
+// `Description` text,
+// `Image` json DEFAULT NULL,
+// `Time` datetime DEFAULT NULL,
+// `Location` varchar(255) DEFAULT NULL,
+// `Status` enum('DangSuaChua','CanSuaChua','BinhThuong') DEFAULT 'BinhThuong',
+// `UrlSlug` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+// `ShortDescription` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+// `ImageUrl` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
 // `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-// `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+// `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
 
-type DiSanVanHoa struct {
-	Id        int        `json:"id" gorm:"column:id;"`
-	TenDiSan  string     `json:"TenDiSan" gorm:"column:TenDiSan;"`
-	IdDiSan   int        `json:"IdDiSan" gorm:"column:IdDiSan;"`
-	MoTa      string     `json:"MoTa" gorm:"column:MoTa;"`
-	DiaDiem   string     `json:"DiaDiem" gorm:"column:DiaDiem;"`
-	ThoiGian  *time.Time `json:"ThoiGian" gorm:"column:ThoiGian;"`
-	TinhTrang string     `json:"TinhTrang" gorm:"column:TinhTrang;"`
-	CreatedAt *time.Time `json:"created_at" gorm:"column:created_at;"`
-	UpdateAt  *time.Time `json:"updated_at" gorm:"column:updated_at;"`
+type Heritage struct {
+	Id               int        `json:"id" gorm:"column:id;"`
+	Name             string     `json:"Name" gorm:"column:Name;"`
+	IdHeritageType   int        `json:"IdHeritageType" gorm:"column:IdHeritageType;"`
+	Description      string     `json:"Description" gorm:"column:Description;"`
+	ShortDescription string     `json:"ShortDescription" gorm:"column:ShortDescription;"`
+	Location         string     `json:"Location" gorm:"column:Location;"`
+	ImageUrl         string     `json:"ImageUrl" gorm:"column:ImageUrl;"`
+	UrlSlug          string     `json:"UrlSlug" gorm:"column:UrlSlug;"`
+	Time             *time.Time `json:"Time" gorm:"column:Time;"`
+	Status           string     `json:"Status" gorm:"column:Status;"`
+	CreatedAt        *time.Time `json:"created_at" gorm:"column:created_at;"`
+	UpdateAt         *time.Time `json:"updated_at" gorm:"column:updated_at;"`
 }
 
-func (DiSanVanHoa) TableName() string {
-	return "DiSanVanHoa"
+func (Heritage) TableName() string {
+	return "Heritage"
 }
 
-type DiSanVanHoa_Creation struct {
-	Id        int        `json:"-" gorm:"column:id;"`
-	TenDiSan  string     `json:"TenDiSan" gorm:"column:TenDiSan;"`
-	IdDiSan   int        `json:"IdDiSan" gorm:"column:IdDiSan;"`
-	MoTa      string     `json:"MoTa" gorm:"column:MoTa;"`
-	DiaDiem   string     `json:"DiaDiem" gorm:"column:DiaDiem;"`
-	ThoiGian  *time.Time `json:"ThoiGian" gorm:"column:ThoiGian;"`
-	TinhTrang string     `json:"TinhTrang" gorm:"column:TinhTrang;"`
+type Heritage_Creation struct {
+	Id               int        `json:"id" gorm:"column:id;"`
+	Name             string     `json:"Name" gorm:"column:Name;"`
+	IdHeritageType   int        `json:"IdHeritageType" gorm:"column:IdHeritageType;"`
+	Description      string     `json:"Description" gorm:"column:Description;"`
+	ShortDescription string     `json:"ShortDescription" gorm:"column:ShortDescription;"`
+	Location         string     `json:"Location" gorm:"column:Location;"`
+	ImageUrl         string     `json:"ImageUrl" gorm:"column:ImageUrl;"`
+	UrlSlug          string     `json:"UrlSlug" gorm:"column:UrlSlug;"`
+	Time             *time.Time `json:"Time" gorm:"column:Time;"`
 }
 
-func (DiSanVanHoa_Creation) TableName() string {
-	return DiSanVanHoa{}.TableName()
+func (Heritage_Creation) TableName() string {
+	return Heritage{}.TableName()
 }
 
-type DiSanVanHoa_Update struct {
-	TenDiSan  string     `json:"TenDiSan" gorm:"column:TenDiSan;"`
-	IdDiSan   int        `json:"IdDiSan" gorm:"column:IdDiSan;"`
-	MoTa      string     `json:"MoTa" gorm:"column:MoTa;"`
-	DiaDiem   string     `json:"DiaDiem" gorm:"column:DiaDiem;"`
-	ThoiGian  *time.Time `json:"ThoiGian" gorm:"column:ThoiGian;"`
-	TinhTrang string     `json:"TinhTrang" gorm:"column:TinhTrang;"`
+type Heritage_Update struct {
+	Name             string     `json:"Name" gorm:"column:Name;"`
+	IdHeritageType   int        `json:"IdHeritageType" gorm:"column:IdHeritageType;"`
+	Description      string     `json:"Description" gorm:"column:Description;"`
+	ShortDescription string     `json:"ShortDescription" gorm:"column:ShortDescription;"`
+	Location         string     `json:"Location" gorm:"column:Location;"`
+	ImageUrl         string     `json:"ImageUrl" gorm:"column:ImageUrl;"`
+	UrlSlug          string     `json:"UrlSlug" gorm:"column:UrlSlug;"`
+	Time             *time.Time `json:"Time" gorm:"column:Time;"`
+	Status           string     `json:"Status" gorm:"column:Status;"`
 }
 
-func (DiSanVanHoa_Update) TableName() string {
-	return DiSanVanHoa{}.TableName()
+func (Heritage_Update) TableName() string {
+	return Heritage{}.TableName()
 }
 
 func main() {
@@ -166,6 +181,7 @@ func main() {
 
 	//=================================================== Http server
 	r := gin.Default()
+	r.Use(addCorsHeaders())
 
 	//CRUD: create, read, update, delete
 	// POST/v1/loaidisan -> tạo item
@@ -176,22 +192,22 @@ func main() {
 
 	v1 := r.Group("/v1")
 	{
-		LoaiDiSan := v1.Group("/loai-di-san")
+		HeritageType := v1.Group("/heritage-type")
 		{
-			LoaiDiSan.POST("", Create_LoaiDiSan(db))
-			LoaiDiSan.GET("", List_LoaiDiSan(db))
-			LoaiDiSan.GET("/:id", Get_LoaiDiSan(db))
-			LoaiDiSan.PATCH("/:id", Update_LoaiDiSan(db))
-			LoaiDiSan.DELETE("/:id", Delete_LoaiDiSan(db))
+			HeritageType.POST("", Create_HeritageType(db))
+			HeritageType.GET("", List_HeritageType(db))
+			HeritageType.GET("/:id", Get_HeritageType(db))
+			HeritageType.PATCH("/:id", Update_HeritageType(db))
+			HeritageType.DELETE("/:id", Delete_HeritageType(db))
 		}
 
-		DiSanVanHoa := v1.Group("/di-san-van-hoa")
+		Heritage := v1.Group("/heritage")
 		{
-			DiSanVanHoa.POST("", Create_DiSanVanHoa(db))
-			DiSanVanHoa.GET("", List_DiSanVanHoa(db))
-			DiSanVanHoa.GET("/:id", Get_DiSanVanHoa(db))
-			DiSanVanHoa.PATCH("/:id", Update_DiSanVanHoa(db))
-			DiSanVanHoa.DELETE("/:id", Delete_DiSanVanHoa(db))
+			Heritage.POST("", Create_Heritage(db))
+			Heritage.GET("", List_Heritage(db))
+			Heritage.GET("/:id", Get_Heritage(db))
+			Heritage.PATCH("/:id", Update_Heritage(db))
+			Heritage.DELETE("/:id", Delete_Heritage(db))
 		}
 	}
 
@@ -205,10 +221,10 @@ func main() {
 	r.Run(":3000") // 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
-// ======================== Loại di sản
-func Create_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
+// ======================== HeritageType
+func Create_HeritageType(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		var data LoaiDiSan_Creation
+		var data HeritageType_Creation
 
 		if err := c.ShouldBind(&data); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -232,9 +248,9 @@ func Create_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-func Get_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
+func Get_HeritageType(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		var data LoaiDiSan
+		var data HeritageType
 
 		//ascii to int
 		id, err := strconv.Atoi(c.Param("id"))
@@ -263,9 +279,9 @@ func Get_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-func Update_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
+func Update_HeritageType(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		var data LoaiDiSan_Update
+		var data HeritageType_Update
 
 		//ascii to int
 		id, err := strconv.Atoi(c.Param("id"))
@@ -300,7 +316,7 @@ func Update_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-func Delete_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
+func Delete_HeritageType(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
 		//ascii to int
 		id, err := strconv.Atoi(c.Param("id"))
@@ -325,7 +341,7 @@ func Delete_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
 		// }
 
 		// Xóa hẳn dưới db
-		if err := db.Table(LoaiDiSan{}.TableName()).Where("Id = ?", id).Delete(nil).Error; err != nil {
+		if err := db.Table(HeritageType{}.TableName()).Where("Id = ?", id).Delete(nil).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
@@ -339,7 +355,7 @@ func Delete_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-func List_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
+func List_HeritageType(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
 		var paging Paging
 
@@ -353,9 +369,9 @@ func List_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
 
 		paging.Process()
 
-		var result []LoaiDiSan
+		var result []HeritageType
 
-		if err := db.Table(LoaiDiSan{}.TableName()).Count(&paging.Total).Error; err != nil {
+		if err := db.Table(HeritageType{}.TableName()).Count(&paging.Total).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
@@ -384,9 +400,9 @@ func List_LoaiDiSan(db *gorm.DB) func(*gin.Context) {
 }
 
 // ======================== Di sản văn hóa
-func Create_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+func Create_Heritage(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		var data DiSanVanHoa_Creation
+		var data Heritage_Creation
 
 		if err := c.ShouldBind(&data); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -410,9 +426,9 @@ func Create_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-func Get_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+func Get_Heritage(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		var data DiSanVanHoa
+		var data Heritage
 
 		//ascii to int
 		id, err := strconv.Atoi(c.Param("id"))
@@ -441,9 +457,9 @@ func Get_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-func Update_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+func Update_Heritage(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		var data DiSanVanHoa_Update
+		var data Heritage_Update
 
 		//ascii to int
 		id, err := strconv.Atoi(c.Param("id"))
@@ -478,7 +494,7 @@ func Update_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-func Delete_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+func Delete_Heritage(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
 		//ascii to int
 		id, err := strconv.Atoi(c.Param("id"))
@@ -503,7 +519,7 @@ func Delete_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
 		// }
 
 		// Xóa hẳn dưới db
-		if err := db.Table(DiSanVanHoa{}.TableName()).Where("Id = ?", id).Delete(nil).Error; err != nil {
+		if err := db.Table(Heritage{}.TableName()).Where("Id = ?", id).Delete(nil).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
@@ -517,7 +533,7 @@ func Delete_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-func List_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
+func List_Heritage(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
 		var paging Paging
 
@@ -531,9 +547,9 @@ func List_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
 
 		paging.Process()
 
-		var result []DiSanVanHoa
+		var result []Heritage
 
-		if err := db.Table(DiSanVanHoa{}.TableName()).Count(&paging.Total).Error; err != nil {
+		if err := db.Table(Heritage{}.TableName()).Count(&paging.Total).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
@@ -558,5 +574,22 @@ func List_DiSanVanHoa(db *gorm.DB) func(*gin.Context) {
 			"data":   result,
 			"paging": paging,
 		})
+	}
+}
+
+func addCorsHeaders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
 	}
 }
