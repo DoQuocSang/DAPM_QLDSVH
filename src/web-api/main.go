@@ -212,6 +212,7 @@ func main() {
 			Heritage.GET("/:id", Get_Heritage(db))
 			Heritage.PATCH("/:id", Update_Heritage(db))
 			Heritage.DELETE("/:id", Delete_Heritage(db))
+			Heritage.GET("/:id/herritage-type", Get_Type_Heritage(db))
 		}
 	}
 
@@ -448,6 +449,37 @@ func Get_Heritage(db *gorm.DB) func(*gin.Context) {
 		//data.Id = id
 
 		if err := db.Where("Id = ?", id).First(&data).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data": data,
+		})
+	}
+}
+
+func Get_Type_Heritage(db *gorm.DB) func(*gin.Context) {
+	return func(c *gin.Context) {
+		var data Heritage
+
+		//ascii to int
+		id, err := strconv.Atoi(c.Param("id"))
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		//data.Id = id
+
+		if err := db.Where("Id = ?", id).Select("Name").First(&data).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})

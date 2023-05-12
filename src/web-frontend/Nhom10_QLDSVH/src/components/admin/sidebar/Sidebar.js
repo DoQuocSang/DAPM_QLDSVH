@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useHistory, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faTags } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faCalendar, faChartColumn, faComment, faMountainSun, faTags, faTicket } from "@fortawesome/free-solid-svg-icons";
 import { faUserPen } from "@fortawesome/free-solid-svg-icons";
 import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 import { faFileLines } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import DesignIllustration from "images/stats-illustration.svg";
 
 
 export default () => {
@@ -27,9 +28,9 @@ export default () => {
    return (
       <>
          <aside id="sidebar" className="fixed hidden z-20 h-full top-0 left-0 pt-16 flex lg:flex flex-shrink-0 flex-col w-64 transition-width duration-75" aria-label="Sidebar">
-            <div className="relative flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white pt-0">
-               <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-                  <div className="flex-1 px-3 bg-white divide-y space-y-1">
+            <div className="relative flex-1 flex flex-col min-h-0 bg-white pt-0 border border-l border-gray-200">
+               <div className="flex-1 flex flex-col pt-0 pb-0 px-0 overflow-y-auto">
+                  <div className="flex-1 px-3 py-6 bg-white divide-y space-y-1 rounded-lg">
                      <ul className="space-y-2 pb-3 px-3">
                         <li>
                            <form action="#" method="GET" className="lg:hidden">
@@ -47,7 +48,7 @@ export default () => {
                         <li>
                            <Link to="/admin/dashboard" onClick={() => setActiveBtn(1)}>
                               <p className={activeBtn === 1 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 1 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                 <svg className={activeBtn === 1 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-red-500 flex-shrink-0 group-hover:text-red-600 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
                                     <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
                                  </svg>
@@ -60,8 +61,8 @@ export default () => {
                         <li>
                            <Link to="/admin/dashboard/all-heritage" onClick={() => setActiveBtn(2)}>
                               <p target="_blank" className={activeBtn === 2 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 2 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <FontAwesomeIcon icon={faBook} />
+                                 <svg className={activeBtn === 2 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-amber-500 flex-shrink-0 group-hover:text-amber-600 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <FontAwesomeIcon icon={faMountainSun} />
                                  </svg>
                                  <span className="ml-3 flex-1 whitespace-nowrap">
                                     Di sản
@@ -73,7 +74,7 @@ export default () => {
                         <li>
                            <Link to="/admin/dashboard/all-heritage-type" onClick={() => setActiveBtn(3)}>
                               <p className={activeBtn === 3 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 3 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                 <svg className={activeBtn === 3 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-emerald-400 flex-shrink-0 group-hover:text-emerald-500 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faBookmark} />
                                  </svg>
                                  <span className="ml-3 flex-1 whitespace-nowrap">Loại di sản</span>
@@ -83,17 +84,17 @@ export default () => {
                         <li>
                            <Link to="/admin/dashboard/all-author" onClick={() => setActiveBtn(4)}>
                               <p className={activeBtn === 4 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 4 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <FontAwesomeIcon icon={faUserPen} />
+                                 <svg className={activeBtn === 4 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-cyan-400 flex-shrink-0 group-hover:text-cyan-500 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <FontAwesomeIcon icon={faCalendar} />
                                  </svg>
-                                 <span className="ml-3 flex-1 whitespace-nowrap">Tác giả</span>
+                                 <span className="ml-3 flex-1 whitespace-nowrap">Sự kiện</span>
                               </p>
                            </Link>
                         </li>
                         <li>
                            <Link to="/admin/dashboard/all-blog" onClick={() => setActiveBtn(5)}>
                               <p href="#" className={activeBtn === 5 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 5 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                 <svg className={activeBtn === 5 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-blue-500 flex-shrink-0 group-hover:text-blue-600 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faFileLines} />
                                  </svg>
                                  <span className="ml-3 flex-1 whitespace-nowrap">Bài viết</span>
@@ -103,20 +104,30 @@ export default () => {
                         <li>
                            <Link to="/admin/dashboard/all-tag" onClick={() => setActiveBtn(6)}>
                               <p href="#" className={activeBtn === 6 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 6 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <FontAwesomeIcon icon={faTags} />
+                                 <svg className={activeBtn === 6 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-purple-500 flex-shrink-0 group-hover:text-purple-600 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <FontAwesomeIcon icon={faTicket} />
                                  </svg>
-                                 <span className="ml-3 flex-1 whitespace-nowrap">Thẻ</span>
+                                 <span className="ml-3 flex-1 whitespace-nowrap">Vé</span>
                               </p>
                            </Link>
                         </li>
                         <li>
                            <Link to="/admin/dashboard/all-user" onClick={() => setActiveBtn(7)}>
                               <p href="#" className={activeBtn === 7 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 7 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                 <svg className={activeBtn === 7 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-pink-400 flex-shrink-0 group-hover:text-pink-500 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faUser} />
                                  </svg>
                                  <span className="ml-3 flex-1 whitespace-nowrap">Tài khoản</span>
+                              </p>
+                           </Link>
+                        </li>
+                        <li>
+                           <Link to="#" onClick={() => setActiveBtn(8)}>
+                              <p href="#" className={activeBtn === 8 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
+                                 <svg className={activeBtn === 8 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-rose-400 flex-shrink-0 group-hover:text-rose-500 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <FontAwesomeIcon icon={faComment} />
+                                 </svg>
+                                 <span className="ml-3 flex-1 whitespace-nowrap">Góp ý</span>
                               </p>
                            </Link>
                         </li>
@@ -129,6 +140,7 @@ export default () => {
                            <span className="ml-4">Đăng xuất</span>
                         </p>
                      </div> */}
+
                   </div>
                </div>
             </div>

@@ -27,7 +27,7 @@ export default () => {
     }, []);
 
     return (
-        <div id="main-content" className="h-full w-full bg-gray-50 relative overflow-y-auto lg:ml-64">
+        <div id="main-content" className="h-full w-full bg-gray-100 relative overflow-y-auto lg:ml-64">
             <main>
                 <div className="pt-6 px-4">
                     <div className="w-full mb-8">
@@ -50,8 +50,8 @@ export default () => {
                                 <div className="overflow-x-auto rounded-lg">
                                     <div className="align-middle inline-block min-w-full">
                                         <div className="shadow overflow-hidden sm:rounded-lg">
-                                            <table className="min-w-full divide-y divide-gray-200">
-                                                <thead className="bg-gray-50">
+                                            <table className="min-w-full divide-y divide-gray-200 border border-gray-200">
+                                                <thead className="bg-gray-200">
                                                     <tr>
                                                         <th scope="col" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Id
@@ -72,7 +72,7 @@ export default () => {
                                                 </thead>
                                                 <tbody className="bg-white">
                                                     {heritageTypeList.map((item, index) => (
-                                                    <tr>
+                                                    <tr className={index%2 !== 0 && "bg-gray-100"}>
                                                         {/* <td className="p-4  text-sm font-normal text-gray-900">
                                                             Payment from <span className="font-semibold">Bonnie Green</span>
                                                         </td> */}

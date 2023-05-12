@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Logo from "images/logo.png"
+import Logo from "images/logo1.png"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import DefaultUserImage from "images/post-default.png"
 
 
@@ -23,8 +23,8 @@ export default () => {
                   </button>
                   <Link to="/">
                      <a className="text-xl font-bold flex items-center lg:ml-2.5 hover:text-amber-500 transition duration-300">
-                        <img src={Logo} className="h-10 mr-2" alt="Windster Logo" />
-                        <span className="self-center whitespace-nowrap text-2xl font-extrabold">10Team</span>
+                        <img src={Logo} className="h-12 mr-2" alt="Windster Logo" />
+                        {/* <span className="self-center whitespace-nowrap text-2xl font-extrabold">10Team</span> */}
                      </a>
                   </Link>
 
@@ -56,9 +56,18 @@ export default () => {
                         <a className="github-button" href="#" data-color-scheme="no-preference: dark; light: light; dark: light;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star themesberg/windster-tailwind-css-dashboard on GitHub">Star</a>
                      </div> */}
                   </div>
-                  <a href="/" className="hidden transition duration-300 sm:inline-flex ml-5 text-white  bg-red-400 hover:bg-amber-400 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center items-center mr-3">
+                  {/* <a href="/" className="hidden transition duration-300 sm:inline-flex ml-5 text-white  bg-red-400 hover:bg-amber-400 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center items-center mr-3">
                      <FontAwesomeIcon icon={faRightFromBracket} className="text-base mr-3" />
                      Đăng xuất
+                  </a> */}
+                  <a href="#" className="text-base font-bold text-gray-500 mr-4 hover:text-red-500 transition duration-150 ease-in-out">
+                     <FontAwesomeIcon icon={faGear} className="text-lg" />
+                  </a>
+                  <a href="#" className="text-base font-bold text-gray-500 mr-4 hover:text-red-500 transition duration-150 ease-in-out">
+                     <FontAwesomeIcon icon={faBell} className="text-lg" />
+                  </a>
+                  <a href="/" className="text-base font-bold text-gray-500 mr-4 hover:text-red-500 transition duration-150 ease-in-out">
+                     <FontAwesomeIcon icon={faRightFromBracket} className="text-lg" />
                   </a>
                </div>
             </div>
