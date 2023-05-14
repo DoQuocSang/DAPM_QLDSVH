@@ -5,11 +5,10 @@ export default () => {
       <>
          <footer className="bg-white md:flex md:items-center md:justify-between shadow rounded-lg p-4 md:p-6 xl:p-8 my-6 mx-4">
             <ul className="flex items-center flex-wrap mb-6 md:mb-0">
-               <li><a href="#" className="text-sm font-normal text-gray-500 hover:underline mr-4 md:mr-6">Terms and conditions</a></li>
-               <li><a href="#" className="text-sm font-normal text-gray-500 hover:underline mr-4 md:mr-6">Privacy Policy</a></li>
-               <li><a href="#" className="text-sm font-normal text-gray-500 hover:underline mr-4 md:mr-6">Licensing</a></li>
-               <li><a href="#" className="text-sm font-normal text-gray-500 hover:underline mr-4 md:mr-6">Cookie Policy</a></li>
-               <li><a href="#" className="text-sm font-normal text-gray-500 hover:underline">Contact</a></li>
+               <li><a href="#" className="text-sm font-normal text-gray-500 hover:underline mr-4 md:mr-6">Hướng dẫn</a></li>
+               <li><a href="#" className="text-sm font-normal text-gray-500 hover:underline mr-4 md:mr-6">Chính sách</a></li>
+               <li><a href="#" className="text-sm font-normal text-gray-500 hover:underline mr-4 md:mr-6">Giấy phép</a></li>
+               <li><a href="#" className="text-sm font-normal text-gray-500 hover:underline mr-4 md:mr-6">Liên hệ</a></li>
             </ul>
             <div className="flex sm:justify-center space-x-6">
                <a href="#" className="text-gray-500 hover:text-gray-900">
@@ -40,7 +39,7 @@ export default () => {
             </div>
          </footer>
          <p className="text-center text-sm text-gray-500 my-10">
-            &copy; 2019-2021 <a href="#" className="hover:underline" target="_blank">Themesberg</a>. All rights reserved.
+            &copy; 2023 <a href="#" className="hover:underline" target="_blank">Vnesco.DSVHVN</a> All rights reserved.
          </p>
       </>
    )

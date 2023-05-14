@@ -5,7 +5,6 @@ export default () => {
         const button = document.getElementById('logout_buttonmodal')
         const closebutton = document.getElementById('logout_closebutton')
         const modal = document.getElementById('logout_modal')
-
         button.addEventListener('click', () => modal.classList.add('scale-100'))
         closebutton.addEventListener('click', () => modal.classList.remove('scale-100'))
     }, []);

@@ -18,61 +18,60 @@ export default () => {
     useEffect(() => {
         getHeritageTypes().then(data => {
             if (data) {
-              setHeritageTypeList(data);
+                setHeritageTypeList(data);
             }
             else
-              setHeritageTypeList([]);
+                setHeritageTypeList([]);
             console.log(data)
-          })
+        })
     }, []);
 
     return (
-        <div id="main-content" className="h-full w-full bg-gray-100 relative overflow-y-auto lg:ml-64">
-            <main>
-                <div className="pt-6 px-4">
-                    <div className="w-full mb-8">
-                        <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
-                            <div className="mb-4 flex items-center justify-between">
-                                <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2">Quản lý loại di sản</h3>
-                                    <span className="text-base font-normal text-gray-500">Các loại di sảnhiện có trong database</span>
-                                </div>
-                                <div className="flex-shrink-0">
-                                    <Link to="/admin/dashboard/add-heritage-type">
-                                        <a className="hidden transition duration-300 sm:inline-flex ml-5 text-white bg-teal-400 hover:bg-teal-600 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center items-center mr-3">
-                                            <FontAwesomeIcon icon={faPlus} className="text-base mr-3" />
-                                            Thêm
-                                        </a>
-                                    </Link>
-                                </div>
+        <main>
+            <div className="pt-6 px-4">
+                <div className="w-full mb-8">
+                    <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
+                        <div className="mb-4 flex items-center justify-between">
+                            <div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">Quản lý loại di sản</h3>
+                                <span className="text-base font-normal text-gray-500">Các loại di sảnhiện có trong database</span>
                             </div>
-                            <div className="flex flex-col mt-8">
-                                <div className="overflow-x-auto rounded-lg">
-                                    <div className="align-middle inline-block min-w-full">
-                                        <div className="shadow overflow-hidden sm:rounded-lg">
-                                            <table className="min-w-full divide-y divide-gray-200 border border-gray-200">
-                                                <thead className="bg-gray-200">
-                                                    <tr>
-                                                        <th scope="col" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Id
-                                                        </th>
-                                                        <th scope="col" width="25%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Tên loại
-                                                        </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Mô tả
-                                                        </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Sửa
-                                                        </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Xóa
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="bg-white">
-                                                    {heritageTypeList.map((item, index) => (
-                                                    <tr className={index%2 !== 0 && "bg-gray-100"}>
+                            <div className="flex-shrink-0">
+                                <Link to="/admin/dashboard/add-heritage-type">
+                                    <a className="hidden transition duration-300 sm:inline-flex ml-5 text-white bg-teal-400 hover:bg-teal-600 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center items-center mr-3">
+                                        <FontAwesomeIcon icon={faPlus} className="text-base mr-3" />
+                                        Thêm
+                                    </a>
+                                </Link>
+                            </div>
+                        </div>
+                        <div className="flex flex-col mt-8">
+                            <div className="overflow-x-auto rounded-lg">
+                                <div className="align-middle inline-block min-w-full">
+                                    <div className="shadow overflow-hidden sm:rounded-lg">
+                                        <table className="min-w-full divide-y divide-gray-200 border border-gray-200">
+                                            <thead className="bg-gray-200">
+                                                <tr>
+                                                    <th scope="col" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        Id
+                                                    </th>
+                                                    <th scope="col" width="25%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        Tên loại
+                                                    </th>
+                                                    <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        Mô tả
+                                                    </th>
+                                                    <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        Sửa
+                                                    </th>
+                                                    <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        Xóa
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white">
+                                                {heritageTypeList.map((item, index) => (
+                                                    <tr className={index % 2 !== 0 && "bg-gray-100"}>
                                                         {/* <td className="p-4  text-sm font-normal text-gray-900">
                                                             Payment from <span className="font-semibold">Bonnie Green</span>
                                                         </td> */}
@@ -86,8 +85,8 @@ export default () => {
                                                             {item.Description}
                                                         </td>
                                                         <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider">
-                                                        <Link to={`/admin/dashboard/update-heritage-type/${item.id}`}>
-                                                            <FontAwesomeIcon icon={faPenToSquare} />
+                                                            <Link to={`/admin/dashboard/update-heritage-type/${item.id}`}>
+                                                                <FontAwesomeIcon icon={faPenToSquare} />
                                                             </Link>
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-xl font-semibold text-red-400 uppercase tracking-wider">
@@ -95,17 +94,17 @@ export default () => {
                                                         </th>
                                                     </tr>
                                                 ))}
-                                                </tbody>
-                                            </table>
-                                            {heritageTypeList.length === 0 ? <Error404 /> : ""}
-                                        </div>
+                                            </tbody>
+                                        </table>
+                                        {heritageTypeList.length === 0 ? <Error404 /> : ""}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* <div className=" my-4">
+                {/* <div className=" my-4">
                         <div className="bg-white shadow rounded-lg mb-4 p-4 sm:p-6 h-full">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-xl font-bold leading-none text-gray-900">Latest Customers</h3>
@@ -209,9 +208,7 @@ export default () => {
                             </div>
                         </div>
                     </div> */}
-                </div>
-            </main>
-
-        </div>
+            </div>
+        </main>
     );
 }

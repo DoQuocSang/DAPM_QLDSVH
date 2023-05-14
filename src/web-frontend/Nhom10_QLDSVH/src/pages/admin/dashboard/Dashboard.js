@@ -11,11 +11,15 @@ import DesignIllustration from "images/stats-illustration.svg";
 export default () => {
 
     return (
-        <div className="h-full w-full  lg:ml-64">
-           <div className="h-full flex flex-col justify-center items-center content-center justify-items-center my-10">
-                <img className="h-80 w-auto mb-20 mt-20" src={DesignIllustration} alt="Neil image" />
-                <span className="self-center whitespace-nowrap text-4xl font-extrabold">Chào mừng bạn đến với Admin</span>
-           </div>
-        </div>
+        <main>
+            <div className="pt-6 px-4">
+                <div className="w-full mb-8">
+                    <div className="h-full flex flex-col justify-center items-center content-center justify-items-center my-20">
+                        <img className="h-80 w-auto mb-20" src={DesignIllustration} alt="Neil image" />
+                        <span className="self-center whitespace-nowrap text-4xl font-extrabold">Chào mừng bạn đến với Admin</span>
+                    </div>
+                </div>
+            </div>
+        </main>
     );
 }

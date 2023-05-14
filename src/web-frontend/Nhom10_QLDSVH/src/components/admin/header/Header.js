@@ -71,6 +71,7 @@ export default () => {
                   <a id="logout_buttonmodal" className="cursor-pointer text-base font-bold text-gray-500 mr-4 hover:text-red-500 transition duration-150 ease-in-out">
                      <FontAwesomeIcon icon={faRightFromBracket} className="text-lg" />
                   </a>
+                  
                </div>
             </div>
          </div>

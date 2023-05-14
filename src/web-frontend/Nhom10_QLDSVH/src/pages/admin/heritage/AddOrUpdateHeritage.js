@@ -58,7 +58,6 @@ export default ({ type = "" }) => {
     console.log(heritage);
 
     return (
-        <div id="main-content" className="h-full w-full bg-gray-50 relative overflow-y-auto lg:ml-64">
             <main> 
                 <div className="mt-12 px-4">
                     <div className="editor mx-auto flex w-10/12 max-w-2xl flex-col p-6 text-gray-800 shadow-lg mb-12 rounded-lg border-t-4 border-purple-400">
@@ -189,6 +188,5 @@ export default ({ type = "" }) => {
 
                 </div>
             </main>
-        </div>
     );
 }
