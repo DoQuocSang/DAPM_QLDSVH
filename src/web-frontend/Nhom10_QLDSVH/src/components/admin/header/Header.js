@@ -4,11 +4,13 @@ import Logo from "images/logo1.png"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import DefaultUserImage from "images/post-default.png"
+import LogoutModal from "../../../components/admin/modal/LogoutModal";
 
 
 export default () => {
 
    return (
+     <>
       <nav className="bg-white border-b border-gray-200 fixed z-30 w-full">
          <div className="px-3 py-3 lg:px-5 lg:pl-3 shadow-md">
             <div className="flex items-center justify-between">
@@ -66,13 +68,15 @@ export default () => {
                   <a href="#" className="text-base font-bold text-gray-500 mr-4 hover:text-red-500 transition duration-150 ease-in-out">
                      <FontAwesomeIcon icon={faBell} className="text-lg" />
                   </a>
-                  <a href="/" className="text-base font-bold text-gray-500 mr-4 hover:text-red-500 transition duration-150 ease-in-out">
+                  <a id="logout_buttonmodal" className="cursor-pointer text-base font-bold text-gray-500 mr-4 hover:text-red-500 transition duration-150 ease-in-out">
                      <FontAwesomeIcon icon={faRightFromBracket} className="text-lg" />
                   </a>
                </div>
             </div>
          </div>
       </nav>
+      <LogoutModal/>
+     </>
    );
 }
 
