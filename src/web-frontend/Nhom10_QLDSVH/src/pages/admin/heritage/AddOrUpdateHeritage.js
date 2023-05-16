@@ -10,6 +10,8 @@ import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 
 import { getHeritageById } from "services/HeritageRepository";
 import { getHeritageTypes } from "services/HeritageTypeRepository";
+import { addHeritage } from "../../../services/HeritageRepository";
+import NotificationModal from "../../../components/admin/modal/NotificationModal";
 
 import DefaultImage from "images/post-default-full.png"
 
@@ -17,7 +19,6 @@ export default ({ type = "" }) => {
 
     let mainText = AddOrUpdateText(type, "di sản");
     const initialState = {
-        id: 0,
         IdHeritageType: 0,
         Name: '',
         ImageUrl: '',
@@ -25,11 +26,11 @@ export default ({ type = "" }) => {
         ShortDescription: '',
         Status: '',
         UrlSlug: '',
-        Time: '',
         Description: ''
     },[heritage, setHeritage] = useState(initialState);
 
     const [heritageTypeList, setHeritageTypeList] = useState([]);
+    const [successFlag, SetSuccessFlag] = useState(false);
 
     let { id } = useParams();
     id = id ?? 0;
@@ -37,16 +38,18 @@ export default ({ type = "" }) => {
     useEffect(() => {
         document.title = "Thêm/ cập nhật di sản";
 
-        getHeritageById(id).then(data => {
-            if (data)
-                setHeritage({
-                    ...data
-                });
-            else
-                setHeritage(initialState);
-            //console.log(data);
-        })
-
+        if(id !== 0){
+            getHeritageById(id).then(data => {
+                if (data)
+                    setHeritage({
+                        ...data
+                    });
+                else
+                    setHeritage(initialState);
+                //console.log(data);
+            })
+        }
+      
         getHeritageTypes().then(data => {
             if (data) {
               setHeritageTypeList(data);
@@ -57,6 +60,26 @@ export default ({ type = "" }) => {
           })
     }, [])
     //console.log(heritage);
+
+    const handleSubmit = () => {
+        console.log(heritage)
+        addHeritage(heritage).then(data => {
+            if (data){
+                SetSuccessFlag(true);
+            }
+            else{
+                SetSuccessFlag(false);
+            }
+            console.log(data);
+        });
+    }
+
+     //Xử lý khi bấm xóa bên component con NotificationModal
+     const childToParent = (isContinue) => {
+        if(isContinue === true){
+            setHeritage(initialState);
+        }
+    }
 
     return (
             <main> 
@@ -107,7 +130,7 @@ export default ({ type = "" }) => {
                             onChange={e => {
                                 setHeritage({
                                     ...heritage,
-                                    IdHeritageType: e.target.value
+                                    IdHeritageType: parseInt(e.target.value, 10)
                                 })
                             }}
                             className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
@@ -173,9 +196,9 @@ export default ({ type = "" }) => {
                             }}
                             className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
                             <option value=''>--- Chọn trạng thái ---</option>
-                            <option value={0}>Đang sửa chữa</option>
-                            <option value={1}>Cần sửa chữa</option>
-                            <option value={2}>Bình thường</option>
+                            <option value={"Đang bảo tồn"}>Đang bảo tồn</option>
+                            <option value={"Bị đe dọa"}>Bị đe dọa</option>
+                            <option value={"Nguy cơ biến mất"}>Nguy cơ biến mất</option>
                         </select>
                         <h2 className="font-semibold text-sm text-teal-500">
                             Hình ảnh
@@ -202,11 +225,12 @@ export default ({ type = "" }) => {
                             <Link to="/admin/dashboard/all-heritage" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
                                 Hủy
                             </Link>
-                            <button onClick={()=>{console.log(heritage)}} type="submit" className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer !hover:bg-indigo-700 !bg-indigo-500 p-2 px-5 font-semibold text-white">
+                            <button id="notification_buttonmodal" onClick={()=>{handleSubmit()}} type="submit" className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer !hover:bg-indigo-700 !bg-indigo-500 p-2 px-5 font-semibold text-white">
                                 {mainText.buttonText}
                             </button>
                         </div>
 
+                        <NotificationModal isSuccess={successFlag} isContinue={childToParent}/>
                     </div>
 
                 </div>

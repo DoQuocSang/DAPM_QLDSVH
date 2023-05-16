@@ -35,7 +35,7 @@ export default () => {
             }
             else
                 setHeritageList([]);
-            //console.log(data)
+            console.log(data)
         })
     }, []);
 
