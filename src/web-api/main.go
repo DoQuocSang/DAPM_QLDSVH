@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"qldsvh/common"
 	"strconv"
 	"time"
 
@@ -11,23 +12,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
-
-// ======================== PhanTrang
-type Paging struct {
-	Page  int   `json:"Page" form:"page"`
-	Limit int   `json:"Limit" form:"limit"`
-	Total int64 `json:"Total" form:"-"`
-}
-
-func (p *Paging) Process() {
-	if p.Page <= 0 {
-		p.Page = 1
-	}
-
-	if p.Limit <= 0 || p.Limit >= 100 {
-		p.Limit = 10
-	}
-}
 
 //======================== HeritageType
 // `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -38,12 +22,10 @@ func (p *Paging) Process() {
 // `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
 
 type HeritageType struct {
-	Id          int        `json:"id" gorm:"column:id"`
-	Name        string     `json:"Name" gorm:"column:Name"`
-	Description string     `json:"Description" gorm:"column:Description;"`
-	UrlSlug     string     `json:"UrlSlug" gorm:"column:UrlSlug"`
-	CreatedAt   *time.Time `json:"created_at" gorm:"column:created_at"`
-	UpdateAt    *time.Time `json:"updated_at" gorm:"column:updated_at"`
+	common.SQLModel
+	Name        string `json:"Name" gorm:"column:Name;"`
+	Description string `json:"Description" gorm:"column:Description;"`
+	UrlSlug     string `json:"UrlSlug" gorm:"column:UrlSlug;"`
 }
 
 func (HeritageType) TableName() string {
@@ -52,9 +34,9 @@ func (HeritageType) TableName() string {
 
 type HeritageType_Creation struct {
 	Id          int    `json:"-" gorm:"column:id;"`
-	Name        string `json:"Name" gorm:"column:Name"`
+	Name        string `json:"Name" gorm:"column:Name;"`
 	Description string `json:"Description" gorm:"column:Description;"`
-	UrlSlug     string `json:"UrlSlug" gorm:"column:UrlSlug"`
+	UrlSlug     string `json:"UrlSlug" gorm:"column:UrlSlug;"`
 }
 
 func (HeritageType_Creation) TableName() string {
@@ -62,9 +44,9 @@ func (HeritageType_Creation) TableName() string {
 }
 
 type HeritageType_Update struct {
-	Name        string `json:"Name" gorm:"column:Name"`
+	Name        string `json:"Name" gorm:"column:Name;"`
 	Description string `json:"Description" gorm:"column:Description;"`
-	UrlSlug     string `json:"UrlSlug" gorm:"column:UrlSlug"`
+	UrlSlug     string `json:"UrlSlug" gorm:"column:UrlSlug;"`
 }
 
 func (HeritageType_Update) TableName() string {
@@ -86,8 +68,83 @@ func (HeritageType_Update) TableName() string {
 // `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
 // `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
 
+// HeritageStatus
+// type HeritageStatus int
+
+// const (
+// 	//in to ascii: giá trị số tự tăng
+// 	HeritageConserve  HeritageStatus = iota //0
+// 	HeritageThreaten                        //1
+// 	HeritageDisappear                       //2
+// )
+
+// var allHeritageStatuses = [3]string{"Đang bảo tồn", "Bị đe dọa", "Nguy cơ biến mất"}
+
+// func (item *HeritageStatus) String() string {
+// 	//Giá trị của item là int
+// 	return allHeritageStatuses[*item]
+// }
+
+// func parseStrToHeritageStatus(s string) (HeritageStatus, error) {
+// 	for i := range allHeritageStatuses {
+// 		if allHeritageStatuses[i] == s {
+// 			return HeritageStatus(i), nil
+// 		}
+// 	}
+
+// 	return HeritageStatus(0), errors.New("invalid status string")
+// }
+
+// func (item *HeritageStatus) Scan(value interface{}) error {
+// 	bytes, ok := value.([]byte)
+
+// 	if !ok {
+// 		return errors.New(fmt.Sprintf("Fail to scan data from sql: %s", value))
+// 	}
+
+// 	v, err := parseStrToHeritageStatus(string(bytes))
+
+// 	if err != nil {
+// 		return errors.New(fmt.Sprintf("Fail to scan data from sql: %s", value))
+// 	}
+
+// 	*item = v
+
+// 	return nil
+// }
+
+// func (item *HeritageStatus) Value() (driver.Value, error) {
+// 	if item == nil {
+// 		return nil, nil
+// 	}
+
+// 	return item.String(), nil
+// }
+
+// func (item *HeritageStatus) MarshalJSON() ([]byte, error) {
+// 	if item == nil {
+// 		return nil, nil
+// 	}
+
+// 	return []byte(fmt.Sprintf("\"%s\"", item.String())), nil
+// }
+
+// func (item *HeritageStatus) UnmarshalJSON(data []byte) error {
+// 	str := strings.ReplaceAll(string(data), "\"", "")
+
+// 	v, err := parseStrToHeritageStatus(str)
+
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	*item = v
+
+// 	return nil
+// }
+
 type Heritage struct {
-	Id               int        `json:"id" gorm:"column:id;"`
+	common.SQLModel
 	Name             string     `json:"Name" gorm:"column:Name;"`
 	IdHeritageType   int        `json:"IdHeritageType" gorm:"column:IdHeritageType;"`
 	Description      string     `json:"Description" gorm:"column:Description;"`
@@ -97,8 +154,6 @@ type Heritage struct {
 	UrlSlug          string     `json:"UrlSlug" gorm:"column:UrlSlug;"`
 	Time             *time.Time `json:"Time" gorm:"column:Time;"`
 	Status           string     `json:"Status" gorm:"column:Status;"`
-	CreatedAt        *time.Time `json:"created_at" gorm:"column:created_at;"`
-	UpdateAt         *time.Time `json:"updated_at" gorm:"column:updated_at;"`
 }
 
 func (Heritage) TableName() string {
@@ -247,9 +302,7 @@ func Create_HeritageType(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data id": data.Id,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.Id))
 	}
 }
 
@@ -278,9 +331,7 @@ func Get_HeritageType(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": data,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }
 
@@ -315,9 +366,7 @@ func Update_HeritageType(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": true,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }
 
@@ -354,15 +403,13 @@ func Delete_HeritageType(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": true,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }
 
 func List_HeritageType(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		var paging Paging
+		var paging common.Paging
 
 		if err := c.ShouldBind(&paging); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -397,10 +444,7 @@ func List_HeritageType(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data":   result,
-			"paging": paging,
-		})
+		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))
 	}
 }
 
@@ -425,9 +469,7 @@ func Create_Heritage(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data id": data.Id,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.Id))
 	}
 }
 
@@ -456,9 +498,7 @@ func Get_Heritage(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": data,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }
 
@@ -487,9 +527,7 @@ func Get_Type_Heritage(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": data,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }
 
@@ -524,9 +562,7 @@ func Update_Heritage(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": true,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }
 
@@ -563,15 +599,13 @@ func Delete_Heritage(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": true,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }
 
 func List_Heritage(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		var paging Paging
+		var paging common.Paging
 
 		if err := c.ShouldBind(&paging); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -606,10 +640,7 @@ func List_Heritage(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data":   result,
-			"paging": paging,
-		})
+		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))
 	}
 }
 

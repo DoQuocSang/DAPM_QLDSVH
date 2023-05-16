@@ -11,6 +11,7 @@ import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 import { getHeritageById } from "services/HeritageRepository";
 import { getHeritageTypes } from "services/HeritageTypeRepository";
 
+import DefaultImage from "images/post-default-full.png"
 
 export default ({ type = "" }) => {
 
@@ -43,7 +44,7 @@ export default ({ type = "" }) => {
                 });
             else
                 setHeritage(initialState);
-            console.log(data);
+            //console.log(data);
         })
 
         getHeritageTypes().then(data => {
@@ -52,10 +53,10 @@ export default ({ type = "" }) => {
             }
             else
               setHeritageTypeList([]);
-            console.log(data)
+            //console.log(data)
           })
     }, [])
-    console.log(heritage);
+    //console.log(heritage);
 
     return (
             <main> 
@@ -201,7 +202,7 @@ export default ({ type = "" }) => {
                             <Link to="/admin/dashboard/all-heritage" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
                                 Hủy
                             </Link>
-                            <button type="submit" className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer !hover:bg-indigo-700 !bg-indigo-500 p-2 px-5 font-semibold text-white">
+                            <button onClick={()=>{console.log(heritage)}} type="submit" className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer !hover:bg-indigo-700 !bg-indigo-500 p-2 px-5 font-semibold text-white">
                                 {mainText.buttonText}
                             </button>
                         </div>
