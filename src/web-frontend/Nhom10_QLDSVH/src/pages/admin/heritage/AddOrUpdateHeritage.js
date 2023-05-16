@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faCircleNotch, faPenToSquare, faPencil } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -60,7 +60,7 @@ export default ({ type = "" }) => {
     return (
             <main> 
                 <div className="mt-12 px-4">
-                    <div className="editor mx-auto flex w-10/12 max-w-2xl flex-col p-6 text-gray-800 shadow-lg mb-12 rounded-lg border-t-4 border-purple-400">
+                    <div className="bg-white editor mx-auto flex w-10/12 max-w-2xl flex-col p-6 text-gray-800 shadow-lg mb-12 rounded-lg border-t-4 border-purple-400">
                         <div className="flex mb-4 items-center space-x-5">
                             <div className="h-14 w-14 bg-yellow-200 rounded-full flex flex-shrink-0 justify-center items-center text-yellow-500 text-2xl font-mono">i</div>
                             <div className="block pl-2 font-semibold text-xl self-start text-gray-700">
@@ -68,6 +68,9 @@ export default ({ type = "" }) => {
                                 <p className="text-sm text-gray-500 font-normal leading-relaxed">Vui lòng điền vào các ô bên dưới</p>
                             </div>
                         </div>
+                        <h2 className="font-semibold text-sm text-teal-500">
+                            Tên di sản
+                        </h2>
                         <input
                             name="name"
                             required
@@ -79,6 +82,9 @@ export default ({ type = "" }) => {
                             })}
                             placeholder="Nhập tên di sản"
                             className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+                        <h2 className="font-semibold text-sm text-teal-500">
+                            UrlSlug
+                        </h2>
                         <input
                             name="slug"
                             required
@@ -90,7 +96,9 @@ export default ({ type = "" }) => {
                             })}
                             placeholder="Nhập định danh slug"
                             className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                        
+                        <h2 className="font-semibold text-sm text-teal-500">
+                            Loại di sản
+                        </h2>
                         <select
                             name='idHeritageType'
                             value={heritage.IdHeritageType}
@@ -107,6 +115,9 @@ export default ({ type = "" }) => {
                                 <option key={index} value={item.id}>{item.Name}</option>
                             ))}
                         </select>
+                        <h2 className="font-semibold text-sm text-teal-500">
+                            Mô tả ngắn
+                        </h2>
                         <textarea
                             name="shortDescription"
                             required
@@ -118,6 +129,9 @@ export default ({ type = "" }) => {
                             })}
                             placeholder="Nhập mô tả ngắn"
                             className="description mb-4 sec h-20 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false"></textarea>
+                       <h2 className="font-semibold text-sm text-teal-500">
+                            Mô tả chi tiết
+                        </h2>
                         <textarea
                             name="description"
                             required
@@ -129,7 +143,9 @@ export default ({ type = "" }) => {
                             })}
                             placeholder="Nhập mô tả chi tiết"
                             className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false" ></textarea>
-
+                        <h2 className="font-semibold text-sm text-teal-500">
+                            Địa điểm
+                        </h2>
                         <input
                             name="location"
                             required
@@ -141,6 +157,9 @@ export default ({ type = "" }) => {
                             })}
                             placeholder="Nhập địa điểm"
                             className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+                        <h2 className="font-semibold text-sm text-teal-500">
+                            Trạng thái
+                        </h2>
                         <select
                             name='status'
                             value={heritage.Status}
@@ -157,6 +176,9 @@ export default ({ type = "" }) => {
                             <option value={1}>Cần sửa chữa</option>
                             <option value={2}>Bình thường</option>
                         </select>
+                        <h2 className="font-semibold text-sm text-teal-500">
+                            Hình ảnh
+                        </h2>
                         <input
                             name="imageUrl"
                             required

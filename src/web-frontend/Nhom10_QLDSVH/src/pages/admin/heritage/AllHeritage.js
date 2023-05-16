@@ -14,10 +14,19 @@ import DefaultImage from "images/post-default.png"
 import Error404 from "../../../components/admin/other/Error404";
 import { getHeritages } from "services/HeritageRepository";
 import DeleteModal from "../../../components/admin/modal/DeleteModal";
+import { getHeritageById } from "../../../services/HeritageRepository";
 
 export default () => {
     const [heritageList, setHeritageList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
+
+    //Xử lý khi bấm xóa bên component con DeleteModal
+    const childToParent = (isDelete) => {
+        if(isDelete === true && deleteId !== 0){
+            setHeritageList(heritageList.filter(item => item.id !== deleteId));
+        }
+        console.log(heritageList.length)
+    }
 
     useEffect(() => {
         getHeritages().then(data => {
@@ -26,7 +35,7 @@ export default () => {
             }
             else
                 setHeritageList([]);
-            console.log(data)
+            //console.log(data)
         })
     }, []);
 
@@ -114,7 +123,7 @@ export default () => {
                                                                 {item.Status}
                                                             </td>
 
-                                                            <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider">
+                                                            <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider hover:text-emerald-600 transition duration-75">
                                                                 <Link to={`/admin/dashboard/update-heritage/${item.id}`}>
                                                                     <FontAwesomeIcon icon={faPenToSquare} />
                                                                 </Link>
@@ -129,7 +138,7 @@ export default () => {
                                             {heritageList.length === 0 ?
                                                 <Error404 />
                                                 :
-                                                <DeleteModal deleteId={deleteId} />}
+                                                <DeleteModal deleteId={deleteId} isDelete={childToParent}/>}
                                         </div>
                                     </div>
                                 </div>
