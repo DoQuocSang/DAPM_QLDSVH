@@ -14,7 +14,8 @@ export function getHeritages(
     page = 1,
     limit = 30
     ) {    
-    return get_api(`http://localhost:3000/v1/heritage?page=${page}&limit=${limit}`)
+    return get_api(`http://localhost:3000/v1/heritage/full-info?page=${page}&limit=${limit}`)
+    // return get_api(`http://localhost:3000/v1/heritage?page=${page}&limit=${limit}`)
     // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
 }
 

@@ -77,7 +77,7 @@ export default () => {
                                                             Tên di sản
                                                         </th>
                                                         <th scope="col" width="10%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Id loại di sản
+                                                            Loại di sản
                                                         </th>
                                                         <th scope="col" width="20%" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Ảnh
@@ -107,7 +107,7 @@ export default () => {
                                                                 {item.Name}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500">
-                                                                {item.IdHeritageType}
+                                                                {item.HeritageTypeName}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500">
                                                                 {isEmptyOrSpaces(item.ImageUrl) ? (

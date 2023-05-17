@@ -193,6 +193,20 @@ func (Heritage_Update) TableName() string {
 	return Heritage{}.TableName()
 }
 
+type Heritage_FullInfo struct {
+	common.SQLModel
+	Name             string     `json:"Name" gorm:"column:Name;"`
+	IdHeritageType   int        `json:"IdHeritageType" gorm:"column:IdHeritageType;"`
+	HeritageTypeName string     `json:"HeritageTypeName" gorm:"column:HeritageTypeName;"`
+	Description      string     `json:"Description" gorm:"column:Description;"`
+	ShortDescription string     `json:"ShortDescription" gorm:"column:ShortDescription;"`
+	Location         string     `json:"Location" gorm:"column:Location;"`
+	ImageUrl         string     `json:"ImageUrl" gorm:"column:ImageUrl;"`
+	UrlSlug          string     `json:"UrlSlug" gorm:"column:UrlSlug;"`
+	Time             *time.Time `json:"Time" gorm:"column:Time;"`
+	Status           string     `json:"Status" gorm:"column:Status;"`
+}
+
 func main() {
 	//=================================================== Kết nối db
 	// dsn := os.Getenv("DB_CONN_STR")
@@ -265,10 +279,11 @@ func main() {
 		{
 			Heritage.POST("", Create_Heritage(db))
 			Heritage.GET("", List_Heritage(db))
+			Heritage.GET("/full-info", List_Heritage_FullInfo(db))
 			Heritage.GET("/:id", Get_Heritage(db))
 			Heritage.PATCH("/:id", Update_Heritage(db))
 			Heritage.DELETE("/:id", Delete_Heritage(db))
-			Heritage.GET("/:id/herritage-type", Get_Type_Heritage(db))
+			//Heritage.GET("/:id/heritage-type", Get_HeritageTypeById(db))
 		}
 	}
 
@@ -503,34 +518,40 @@ func Get_Heritage(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-func Get_Type_Heritage(db *gorm.DB) func(*gin.Context) {
-	return func(c *gin.Context) {
-		var data Heritage
+// func Get_HeritageTypeById(db *gorm.DB) func(*gin.Context) {
+// 	return func(c *gin.Context) {
+// 		//ascii to int
+// 		id, err := strconv.Atoi(c.Param("id"))
 
-		//ascii to int
-		id, err := strconv.Atoi(c.Param("id"))
+// 		if err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"error": err.Error(),
+// 			})
 
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+// 			return
+// 		}
 
-			return
-		}
+// 		var result struct {
+// 			Id               int
+// 			Name             string
+// 			HeritageTypeName string
+// 		}
 
-		//data.Id = id
+// 		if err := db.Table("Heritage").
+// 			Select("Heritage.id AS Id, Heritage.Name AS Name, HeritageType.Name AS HeritageTypeName").
+// 			Joins("JOIN HeritageType ON Heritage.IdHeritageType = HeritageType.id").
+// 			Where("Heritage.id = ?", id).
+// 			First(&result).Error; err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"error": err.Error(),
+// 			})
 
-		if err := db.Where("Id = ?", id).Select("Name").First(&data).Error; err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+// 			return
+// 		}
 
-			return
-		}
-
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
-	}
-}
+// 		c.JSON(http.StatusOK, common.SimpleSuccessResponse(result))
+// 	}
+// }
 
 func Update_Heritage(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
@@ -645,6 +666,51 @@ func List_Heritage(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
+func List_Heritage_FullInfo(db *gorm.DB) func(*gin.Context) {
+	return func(c *gin.Context) {
+		var paging common.Paging
+
+		if err := c.ShouldBind(&paging); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		paging.Process()
+
+		var result []Heritage_FullInfo
+
+		if err := db.Table(Heritage{}.TableName()).Count(&paging.Total).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		// db = db.Where("status <> ?", "value")
+
+		if err := db.Table("Heritage").
+			Select("Heritage.*, HeritageType.Name AS HeritageTypeName").
+			Joins("JOIN HeritageType ON Heritage.IdHeritageType = HeritageType.id").
+			Order("id desc").
+			Offset((paging.Page - 1) * paging.Limit).
+			Limit(paging.Limit).
+			Find(&result).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))
+	}
+}
+
+// ======================== Config Server
 func addCorsHeaders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
