@@ -29,6 +29,8 @@ export default () => {
     }
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+        
         getHeritages().then(data => {
             if (data) {
                 setHeritageList(data);

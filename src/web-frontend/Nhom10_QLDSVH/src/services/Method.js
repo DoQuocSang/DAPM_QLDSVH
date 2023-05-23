@@ -45,6 +45,23 @@ export async function post_api(your_api, formData) {
     }
 }
 
+export async function patch_api(your_api, formData) {
+  try {
+      const response = await axios.patch(your_api, formData); 
+      //console.log(response);
+      if(response.status === 200){
+        return response.data.data
+      }
+      else{
+        return null
+      }
+      
+    } catch (error) {
+      console.log('Error', error.message);
+    }
+}
+
+//==========================================================
 export async function specical_case_get_api(your_api) {
     try {
         const response = await axios.get(your_api); 

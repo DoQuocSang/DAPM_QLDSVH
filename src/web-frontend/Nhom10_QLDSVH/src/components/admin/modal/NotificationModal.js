@@ -2,8 +2,9 @@ import { faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { upperCaseFirstCharacter } from "../../utils/Utils";
 
-export default ({ mainText = 'item', isSuccess, isContinue }) => {
+export default ({mainAction='text', mainText = 'item', isSuccess, isContinue }) => {
     useEffect(() => {
         const button = document.getElementById('notification_buttonmodal')
         const closebuttons = document.getElementsByClassName('notification_closebutton')
@@ -12,7 +13,7 @@ export default ({ mainText = 'item', isSuccess, isContinue }) => {
         Array.from(closebuttons).forEach((button) => {
             button.addEventListener('click', () => modal.classList.remove('scale-100'))
         })
-        console.log(closebuttons)
+        //console.log(closebuttons)
     }, []);
 
     const handleContinue = () => {
@@ -30,8 +31,8 @@ export default ({ mainText = 'item', isSuccess, isContinue }) => {
                                 <div className="text-center p-5 flex-auto justify-center">
                                     <FontAwesomeIcon icon={faCircleCheck} className="w-10 h-auto flex items-center text-teal-500 mx-auto" />
                                     <h2 className="text-xl font-bold py-4 ">Thông báo</h2>
-                                    <p className="text-sm text-gray-500 px-8">Đã thêm {mainText} thành công!</p>
-                                    <p className="text-sm text-gray-500 px-8">Bạn có muốn tiếp tục thêm {mainText} không?</p>
+                                    <p className="text-sm text-gray-500 px-8">Đã {mainAction} {mainText} thành công!</p>
+                                    <p className="text-sm text-gray-500 px-8">Bạn có muốn tiếp tục {mainAction} {mainText} không?</p>
                                 </div>
                             </>
                         ) : (
@@ -39,7 +40,7 @@ export default ({ mainText = 'item', isSuccess, isContinue }) => {
                                 <div className="text-center p-5 flex-auto justify-center">
                                     <FontAwesomeIcon icon={faCircleXmark} className="w-10 h-auto flex items-center text-red-500 mx-auto" />
                                     <h2 className="text-xl font-bold py-4 ">Thông báo</h2>
-                                    <p className="text-sm text-gray-500 px-8">Thêm {mainText} không thành công!</p>
+                                    <p className="text-sm text-gray-500 px-8">{upperCaseFirstCharacter(mainAction)} {mainText} không thành công!</p>
                                 </div>
                             </>
                         )}
@@ -49,7 +50,7 @@ export default ({ mainText = 'item', isSuccess, isContinue }) => {
                                     Xem danh sách
                                 </Link>
                                 <button onClick={() => handleContinue()} className="notification_closebutton mb-2 md:mb-0 bg-teal-500 border border-teal-500 px-10 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-teal-600">
-                                    Tiếp tục thêm
+                                    Tiếp tục {mainAction}
                                 </button>
                             </div>
                             <div className={isSuccess === false ? "" : "hidden"}>

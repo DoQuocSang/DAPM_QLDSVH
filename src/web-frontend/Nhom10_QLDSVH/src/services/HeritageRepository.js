@@ -2,6 +2,7 @@ import axios from 'axios';
 import { get_api } from './Method';
 import { delete_api } from './Method';
 import { post_api } from './Method';
+import { patch_api } from './Method';
 
 export function getHeritageById(
     id = 0,
@@ -29,6 +30,13 @@ export function addHeritage(
     formData
     ) {
     return post_api(`http://localhost:3000/v1/heritage`, formData);
+}
+
+export function patchHeritage(
+    id = 0,
+    formData
+    ) {
+    return patch_api(`http://localhost:3000/v1/heritage/${id}`, formData);
 }
 
 

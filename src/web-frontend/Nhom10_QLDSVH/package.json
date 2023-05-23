@@ -20,6 +20,7 @@
     "axios": "^1.4.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "diacriticless": "^1.0.1",
     "feather-icons": "^4.29.0",
     "framer-motion": "^10.12.2",
     "moment": "^2.29.4",
