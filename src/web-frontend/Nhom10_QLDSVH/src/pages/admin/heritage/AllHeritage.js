@@ -5,7 +5,7 @@ import Book1 from "images/book1.png"
 import Book2 from "images/book2.jpg"
 import Book3 from "images/book3.jpg"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faChartPie, faDizzy, faLaughBeam, faPenToSquare, faShield, faTired } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { toVND } from "../../../components/utils/Utils";
@@ -22,7 +22,7 @@ export default () => {
 
     //Xử lý khi bấm xóa bên component con DeleteModal
     const childToParent = (isDelete) => {
-        if(isDelete === true && deleteId !== 0){
+        if (isDelete === true && deleteId !== 0) {
             setHeritageList(heritageList.filter(item => item.id !== deleteId));
         }
         console.log(heritageList.length)
@@ -30,7 +30,7 @@ export default () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        
+
         getHeritages().then(data => {
             if (data) {
                 setHeritageList(data);
@@ -49,11 +49,67 @@ export default () => {
         <>
             <main>
                 <div className="pt-6 px-4">
+                    <div className="mb-4 w-full grid grid-cols-4 gap-4">
+                        <div className="relative max-w-md mx-auto md:max-w-2xl min-w-0 break-words bg-white w-full shadow-sm rounded-xl">
+                            <div className="px-6">
+                                <div className="text-center py-6">
+                                    <FontAwesomeIcon className="text-3xl" icon={faChartPie} />
+                                    <h3 className="text-2xl text-slate-600 font-bold leading-normal my-1">12</h3>
+                                    <div className="text-xs mt-0 mb-2 text-slate-400 font-bold uppercase">
+                                        <i className="fas fa-map-marker-alt mr-2 text-slate-400 opacity-75"></i>
+                                        Tổng số di sản
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="relative max-w-md mx-auto md:max-w-2xl min-w-0 break-words bg-white w-full shadow-sm rounded-xl">
+                            <div className="px-6">
+                                <div className="text-center py-6">
+                                    <FontAwesomeIcon className="text-emerald-500 text-3xl" icon={faLaughBeam} />
+                                    <h3 className="text-2xl text-slate-600 font-bold leading-normal my-1">03</h3>
+                                    <div className="text-xs mt-0 mb-2 text-slate-400 font-bold uppercase">
+                                        <i className="fas fa-map-marker-alt mr-2 text-slate-400 opacity-75"></i>
+                                        Di sản đang bảo tồn
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="relative max-w-md mx-auto md:max-w-2xl min-w-0 break-words bg-white w-full shadow-sm rounded-xl">
+                            <div className="px-6">
+                                <div className="text-center py-6">
+                                    <FontAwesomeIcon className="text-amber-500 text-3xl" icon={faTired} />
+                                    <h3 className="text-2xl text-slate-600 font-bold leading-normal my-1">02</h3>
+                                    <div className="text-xs mt-0 mb-2 text-slate-400 font-bold uppercase">
+                                        <i className="fas fa-map-marker-alt mr-2 text-slate-400 opacity-75"></i>
+                                        Di sản bị đe dọa
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="relative max-w-md mx-auto md:max-w-2xl min-w-0 break-words bg-white w-full shadow-sm rounded-xl">
+                            <div className="px-6">
+                                <div className="text-center py-6">
+                                    <FontAwesomeIcon className="text-red-500 text-3xl" icon={faDizzy} />
+                                    <h3 className="text-2xl text-slate-600 font-bold leading-normal my-1">04</h3>
+                                    <div className="text-xs mt-0 mb-2 text-slate-400 font-bold uppercase">
+                                        <i className="fas fa-map-marker-alt mr-2 text-slate-400 opacity-75"></i>
+                                        Di sản có nguy cơ biến mất
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                     <div className="w-full mb-8">
                         <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
                             <div className="mb-4 flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2">Quản lý di sản</h3>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                        Quản lý di sản
+                                    </h3>
                                     <span className="text-base font-normal text-gray-500">Các di sản hiện có trong database</span>
                                 </div>
                                 <div className="flex-shrink-0">
@@ -65,6 +121,7 @@ export default () => {
                                     </Link>
                                 </div>
                             </div>
+
                             <div className="flex flex-col mt-8">
                                 <div className="overflow-x-auto rounded-lg">
                                     <div className="align-middle inline-block min-w-full">
@@ -140,7 +197,7 @@ export default () => {
                                             {heritageList.length === 0 ?
                                                 <Error404 />
                                                 :
-                                                <DeleteModal deleteId={deleteId} isDelete={childToParent}/>}
+                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} />}
                                         </div>
                                     </div>
                                 </div>

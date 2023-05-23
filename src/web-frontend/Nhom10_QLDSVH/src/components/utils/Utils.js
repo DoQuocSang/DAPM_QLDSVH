@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Moment from 'moment';
 import tw from "twin.macro";
-import { remove } from 'diacriticless';
+import { remove } from 'diacritics';
 
 
 
