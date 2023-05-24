@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { upperCaseFirstCharacter } from "../../utils/Utils";
 
-export default ({mainAction='text', mainText = 'item', isSuccess, isContinue }) => {
+export default ({mainAction='text', mainText = 'item', type = '', isSuccess, isContinue }) => {
     useEffect(() => {
         const button = document.getElementById('notification_buttonmodal')
         const closebuttons = document.getElementsByClassName('notification_closebutton')
@@ -15,6 +15,14 @@ export default ({mainAction='text', mainText = 'item', isSuccess, isContinue }) 
         })
         //console.log(closebuttons)
     }, []);
+
+    let page = '';
+    if(type === 'heritage'){
+        page = 'all-heritage';
+    }
+    if(type === 'heritage-type'){
+        page = 'all-heritage-type';
+    }
 
     const handleContinue = () => {
         isContinue(true);
@@ -46,7 +54,7 @@ export default ({mainAction='text', mainText = 'item', isSuccess, isContinue }) 
                         )}
                         <div className="p-3 mt-2 text-center md:block">
                             <div className={isSuccess === true ? "space-x-4" : "hidden"}>
-                                <Link to="/admin/dashboard/all-heritage" className="notification_closebutton mb-2 md:mb-0 bg-white px-10 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">
+                                <Link to={`/admin/dashboard/${page}`} className="notification_closebutton mb-2 md:mb-0 bg-white px-10 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">
                                     Xem danh sách
                                 </Link>
                                 <button onClick={() => handleContinue()} className="notification_closebutton mb-2 md:mb-0 bg-teal-500 border border-teal-500 px-10 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-teal-600">

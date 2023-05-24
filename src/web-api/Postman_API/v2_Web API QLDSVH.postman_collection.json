@@ -315,7 +315,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "62"
+									"value": "24"
 								}
 							]
 						}
@@ -358,46 +358,6 @@
 				},
 				{
 					"name": "Lấy danh sách di sản văn hóa",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{qldsvh}}/v1/heritage?page=2&limit=5",
-							"host": [
-								"{{qldsvh}}"
-							],
-							"path": [
-								"v1",
-								"heritage"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "2"
-								},
-								{
-									"key": "limit",
-									"value": "5"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Tìm kiếm theo từ khóa di sản văn hóa",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},

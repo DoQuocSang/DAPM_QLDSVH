@@ -39,6 +39,15 @@ export function patchHeritage(
     return patch_api(`http://localhost:3000/v1/heritage/${id}`, formData);
 }
 
+export function getHeritagesByQuerySearch(
+    key = "",
+    column = "name",
+    page = 1,
+    limit = 30
+    ) {    
+    return get_api(`http://localhost:3000/v1/heritage/search?page=${page}&limit=${limit}&key=${key}&column=${column}`)
+}
+
 
 
 

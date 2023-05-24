@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { deleteHeritageById } from "../../../services/HeritageRepository";
+import { deleteHeritageTypeById } from "../../../services/HeritageTypeRepository";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
-export default ({ mainText = 'item', deleteId = 0, isDelete }) => {
+export default ({ mainText = 'item', deleteId = 0, type='', isDelete }) => {
     const [changeContent, setChangeContent] = useState(false);
 
     useEffect(() => {
@@ -17,14 +18,29 @@ export default ({ mainText = 'item', deleteId = 0, isDelete }) => {
     }, []);
 
     const handleDelete = () => {
-        deleteHeritageById(deleteId).then(data => {
-            //Ở đây Data có kiểu trả về là boolean
-            //Gọi hàm isDelete để thực thi bên component cha AllHeritage  
-            isDelete(data);
-
-            //Thay đổi nội dung thông báo nếu xóa thành công
-            setChangeContent(true);
-        })
+        if(type === 'heritage'){
+            deleteHeritageById(deleteId).then(data => {
+                //Ở đây Data có kiểu trả về là boolean
+                //Gọi hàm isDelete để thực thi bên component cha AllHeritage  
+                isDelete(data);
+    
+                //Thay đổi nội dung thông báo nếu xóa thành công
+                setChangeContent(true);
+                
+                //console.log('di san van hoa')
+            })
+        }
+        if(type === 'heritage-type'){
+            deleteHeritageTypeById(deleteId).then(data => {
+                //Ở đây Data có kiểu trả về là boolean
+                //Gọi hàm isDelete để thực thi bên component cha AllHeritage  
+                isDelete(data);
+    
+                //Thay đổi nội dung thông báo nếu xóa thành công
+                setChangeContent(true);
+            })
+            //console.log('loai di san')
+        }
     }
 
     return (

@@ -28,6 +28,14 @@ export default () => {
         console.log(heritageList.length)
     }
 
+    //Xử lý khi tìm kiếm bên component header
+    const datafromHeader = (data) => {
+        if (data.length > 0) {
+            setHeritageList(data);
+        }
+        //console.log(heritageList.length)
+    }
+
     useEffect(() => {
         window.scrollTo(0, 0);
 
@@ -49,7 +57,7 @@ export default () => {
         <>
             <main>
                 <div className="pt-6 px-4">
-                    <div className="mb-4 w-full grid grid-cols-4 gap-4">
+                    {/* <div className="mb-4 w-full grid grid-cols-4 gap-4">
                         <div className="relative max-w-md mx-auto md:max-w-2xl min-w-0 break-words bg-white w-full shadow-sm rounded-xl">
                             <div className="px-6">
                                 <div className="text-center py-6">
@@ -102,7 +110,7 @@ export default () => {
                             </div>
                         </div>
 
-                    </div>
+                    </div> */}
                     <div className="w-full mb-8">
                         <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
                             <div className="mb-4 flex items-center justify-between">
@@ -197,7 +205,7 @@ export default () => {
                                             {heritageList.length === 0 ?
                                                 <Error404 />
                                                 :
-                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} />}
+                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} type="heritage" />}
                                         </div>
                                     </div>
                                 </div>

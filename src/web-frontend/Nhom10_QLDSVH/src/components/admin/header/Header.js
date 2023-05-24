@@ -1,16 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "images/logo1.png"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import DefaultUserImage from "images/post-default.png"
 import LogoutModal from "../../../components/admin/modal/LogoutModal";
+import { getHeritagesByQuerySearch } from "../../../services/HeritageRepository";
+import { isEmptyOrSpaces } from "../../utils/Utils";
 
 
 export default () => {
+   const [heritageList, setHeritageList] = useState([]);
+
+   const handleSearch = (key) => {
+      if(!isEmptyOrSpaces(key)){
+         getHeritagesByQuerySearch(key).then(data => {
+            if (data) {
+               setHeritageList(data);
+            }
+            else {
+               setHeritageList([]);
+            }
+            console.log(heritageList);
+        });
+      }else{
+         setHeritageList([]);
+      }
+   }
 
    return (
      <>
+      {/* {heritageList.length}
+       {heritageList.map((item, index) => (
+          <p key={index}>{item.Name}</p>
+       ))} */}
       <nav className="bg-white border-b border-gray-200 fixed z-30 w-full">
          <div className="px-3 py-3 lg:px-5 lg:pl-3 shadow-md">
             <div className="flex items-center justify-between">
@@ -38,9 +61,15 @@ export default () => {
                               <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                            </svg>
                         </div>
-                        <input type="text" name="email" id="topbar-search" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-full focus:ring-cyan-600 focus:border-cyan-600 block w-full pl-10 p-2.5" placeholder="Tìm kiếm" />
+                        <input 
+                           type="text" 
+                           name="key" 
+                           id="topbar-search" 
+                           onChange={e => handleSearch(e.target.value)}
+                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-full focus:ring-cyan-600 focus:border-cyan-600 block w-full pl-10 p-2.5 transition duration-500 ease-in-out border-transparent focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-1 ring-purple-400" placeholder="Tìm kiếm" />
                      </div>
                   </form>
+
                </div>
                <div className="flex items-center">
                   <button id="toggleSidebarMobileSearch" type="button" className="lg:hidden text-gray-500 hover:text-gray-900 hover:bg-gray-100 p-2 rounded-lg">

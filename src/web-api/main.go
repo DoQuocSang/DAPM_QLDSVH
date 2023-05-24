@@ -284,6 +284,8 @@ func main() {
 			Heritage.PATCH("/:id", Update_Heritage(db))
 			Heritage.DELETE("/:id", Delete_Heritage(db))
 			//Heritage.GET("/:id/heritage-type", Get_HeritageTypeById(db))
+
+			Heritage.GET("/search", Search_Heritage(db))
 		}
 	}
 
@@ -297,7 +299,7 @@ func main() {
 	r.Run(":3000") // 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
-// ======================== HeritageType
+// ======================== HeritageType ================================================================================================
 func Create_HeritageType(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
 		var data HeritageType_Creation
@@ -464,7 +466,7 @@ func List_HeritageType(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-// ======================== Di sản văn hóa
+// ======================== Di sản văn hóa ================================================================================================
 func Create_Heritage(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
 		var data Heritage_Creation
@@ -710,7 +712,51 @@ func List_Heritage_FullInfo(db *gorm.DB) func(*gin.Context) {
 	}
 }
 
-// ======================== Config Server
+func Search_Heritage(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var paging common.Paging
+
+		if err := c.ShouldBind(&paging); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+		paging.Process()
+
+		searchTerm := c.Query("key")
+		columnName := c.Query("column")
+
+		var result []Heritage_FullInfo
+
+		if err := db.Table(Heritage{}.TableName()).Where(columnName+" LIKE ?", "%"+searchTerm+"%").Count(&paging.Total).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		if err := db.Table(Heritage{}.TableName()).
+			Order("id desc").
+			Offset((paging.Page-1)*paging.Limit).
+			Limit(paging.Limit).
+			Where(columnName+" LIKE ?", "%"+searchTerm+"%").
+			Find(&result).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		// Return the matching records
+		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))
+	}
+}
+
+// ======================== Config Server ================================================================================================
 func addCorsHeaders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
