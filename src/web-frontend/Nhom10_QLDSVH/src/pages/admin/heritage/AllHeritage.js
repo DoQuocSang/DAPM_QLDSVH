@@ -41,11 +41,10 @@ export default () => {
 
         getHeritages().then(data => {
             if (data) {
-                setHeritageList(data);
+                setHeritageList(data.data);
             }
             else
                 setHeritageList([]);
-            console.log(data)
         })
     }, []);
 
@@ -147,13 +146,13 @@ export default () => {
                                                             Loại di sản
                                                         </th>
                                                         <th scope="col" width="20%" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Ảnh
+                                                           Hình ảnh
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Mô tả ngắn
+                                                            Địa điểm
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Trạng thái
+                                                            Đơn vị quản lý
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Sửa
@@ -171,23 +170,23 @@ export default () => {
                                                                 {index + 1}
                                                             </td>
                                                             <td className="p-4 text-sm font-semibold text-gray-500">
-                                                                {item.Name}
+                                                                {item.name}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500">
-                                                                {item.HeritageTypeName}
+                                                                {item.heritage_type.name}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500">
-                                                                {isEmptyOrSpaces(item.ImageUrl) ? (
+                                                                {isEmptyOrSpaces(item.image_url) ? (
                                                                     <img className="h-40 w-auto rounded-lg mx-auto" src={DefaultImage} alt="Neil image" />
                                                                 ) : (
                                                                     <img className="h-40 w-auto rounded-lg mx-auto" src={item.ImageUrl} alt="Neil image" />
                                                                 )}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500 align-middle">
-                                                                {item.ShortDescription}
+                                                                {item.location.name}
                                                             </td>
                                                             <td className="p-4 text-sm font-semibold text-gray-500">
-                                                                {item.Status}
+                                                                {item.management_unit.name}
                                                             </td>
 
                                                             <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider hover:text-emerald-600 transition duration-75">

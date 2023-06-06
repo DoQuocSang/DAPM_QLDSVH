@@ -21,14 +21,14 @@ export default ({ type = "" }) => {
 
     let mainText = AddOrUpdateText(type, "di sản");
     const initialState = {
-        IdHeritageType: 0,
-        Name: '',
-        ImageUrl: '',
-        Location: '',
-        ShortDescription: '',
-        Status: '',
-        UrlSlug: '',
-        Description: ''
+        heritage_type_id: 0,
+        name: '',
+        image_url: '',
+        location_id: 0,
+        management_unit_id: 0,
+        time: '',
+        urlslug: '',
+        description: ''
     }, [heritage, setHeritage] = useState(initialState);
 
     const [heritageTypeList, setHeritageTypeList] = useState([]);
@@ -52,12 +52,10 @@ export default ({ type = "" }) => {
 
         if (id !== 0) {
             getHeritageById(id).then(data => {
+                //console.log(data)
                 if (data) {
                     const {
                         id: ignoredId,
-                        Time: ignoredTime,
-                        created_at: ignoredCreatedAt,
-                        updated_at: ignoredUpdatedAt,
                         ...heritageData } = data;
                     setHeritage({
                         ...heritageData
@@ -71,51 +69,49 @@ export default ({ type = "" }) => {
 
         getHeritageTypes().then(data => {
             if (data) {
-                setHeritageTypeList(data);
+                setHeritageTypeList(data.data);
             }
             else
                 setHeritageTypeList([]);
             //console.log(data)
         })
     }, [])
-    //console.log(heritage);
-
-  
+    console.log(heritage)
 
     //validate lỗi bổ trống
     const validateAllInput = () => {
         const validationErrors = {};
 
-        if (heritage.IdHeritageType === 0) {
-            validationErrors.IdHeritageType = 'Vui lòng chọn loại di sản';
+        if (heritage.heritage_type_id === 0) {
+            validationErrors.heritage_type_id = 'Vui lòng chọn loại di sản';
         }
 
-        if (heritage.Name.trim() === '') {
-            validationErrors.Name = 'Vui lòng nhập tên di sản';
+        if (heritage.name.trim() === '') {
+            validationErrors.name = 'Vui lòng nhập tên di sản';
         }
 
-        if (heritage.ImageUrl.trim() === '') {
-            validationErrors.ImageUrl = 'Vui lòng nhập địa chỉ url của ảnh';
+        if (heritage.image_url.trim() === '') {
+            validationErrors.image_url = 'Vui lòng chọn địa chỉ url của ảnh';
         }
 
-        if (heritage.Location.trim() === '') {
-            validationErrors.Location = 'Vui lòng nhập vị trí';
+        if (heritage.location_id === 0) {
+            validationErrors.location_id = 'Vui lòng chọn địa điểm';
         }
 
-        if (heritage.ShortDescription.trim() === '') {
-            validationErrors.ShortDescription = 'Vui lòng nhập mô tả ngắn';
+        if (heritage.management_unit_id === 0) {
+            validationErrors.management_unit_id = 'Vui lòng chọn đơn vị quản lý';
         }
 
-        if (heritage.Status.trim() === '') {
-            validationErrors.Status = 'Vui lòng chọn trạng thái';
+        if (heritage.time.trim() === '') {
+            validationErrors.time = 'Vui lòng nhập thời gian';
         }
 
-        if (heritage.UrlSlug.trim() === '') {
-            validationErrors.UrlSlug = 'Slug chưa được tạo';
+        if (heritage.urlslug.trim() === '') {
+            validationErrors.urlslug = 'Slug chưa được tạo';
         }
 
-        if (heritage.Description.trim() === '') {
-            validationErrors.Description = 'Vui lòng nhập mô tả chi tiết';
+        if (heritage.description.trim() === '') {
+            validationErrors.description = 'Vui lòng nhập mô tả chi tiết';
         }
 
         setErrors(validationErrors);
@@ -183,18 +179,18 @@ export default ({ type = "" }) => {
                         name="name"
                         required
                         type="text"
-                        value={heritage.Name || ''}
+                        value={heritage.name || ''}
                         onChange={e => setHeritage({
                             ...heritage,
-                            Name: e.target.value,
-                            UrlSlug: generateSlug(e.target.value),
+                            name: e.target.value,
+                            urlslug: generateSlug(e.target.value),
                         })}
                         placeholder="Nhập tên di sản"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.Name &&
+                    {errors.name &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.Name}
+                            {errors.name}
                         </p>
                     }
 
@@ -202,70 +198,122 @@ export default ({ type = "" }) => {
                         UrlSlug
                     </h2>
                     <input
-                        name="slug"
+                        name="urlslug"
                         required
                         type="text"
-                        value={heritage.UrlSlug || ''}
+                        value={heritage.urlslug || ''}
                         // onChange={e => setHeritage({
                         //     ...heritage,
                         //     UrlSlug: e.target.value
                         // })}
                         placeholder="Nhập định danh slug"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.UrlSlug &&
+                    {errors.urlslug &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.UrlSlug}
+                            {errors.urlslug}
                         </p>
                     }
-                    
+
                     <h2 className="font-semibold text-sm text-teal-500">
                         Loại di sản
                     </h2>
                     <select
-                        name='idHeritageType'
-                        value={heritage.IdHeritageType}
+                        name='heritage_type_id'
+                        value={heritage.heritage_type_id}
                         required
                         onChange={e => {
                             setHeritage({
                                 ...heritage,
-                                IdHeritageType: parseInt(e.target.value, 10)
+                                heritage_type_id: parseInt(e.target.value, 10)
                             })
                         }}
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
                         <option value=''>--- Chọn loại di sản ---</option>
                         {heritageTypeList.map((item, index) => (
-                            <option key={index} value={item.id}>{item.Name}</option>
+                            <option key={index} value={item.id}>{item.name}</option>
                         ))}
                     </select>
-                    {errors.IdHeritageType &&
+                    {errors.heritage_type_id &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.IdHeritageType}
+                            {errors.heritage_type_id}
                         </p>
                     }
-                    
+
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Mô tả ngắn
+                        Địa điểm
                     </h2>
-                    <textarea
-                        name="shortDescription"
+                    <select
+                        name='location_id'
+                        value={heritage.location_id}
+                        required
+                        onChange={e => {
+                            setHeritage({
+                                ...heritage,
+                                location_id: parseInt(e.target.value, 10)
+                            })
+                        }}
+                        className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
+                        <option value=''>--- Chọn địa điểm ---</option>
+                        {heritageTypeList.map((item, index) => (
+                            <option key={index} value={item.id}>{item.name}</option>
+                        ))}
+                    </select>
+                    {errors.location_id &&
+                        <p className="text-red-500 mb-6 text-sm font-semibold">
+                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
+                            {errors.location_id}
+                        </p>
+                    }
+
+                    <h2 className="font-semibold text-sm text-teal-500">
+                        Đơn vị quản lý
+                    </h2>
+                    <select
+                        name='management_unit_id'
+                        value={heritage.management_unit_id}
+                        required
+                        onChange={e => {
+                            setHeritage({
+                                ...heritage,
+                                management_unit_id: parseInt(e.target.value, 10)
+                            })
+                        }}
+                        className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
+                        <option value=''>--- Chọn đơn vị quản lý ---</option>
+                        {heritageTypeList.map((item, index) => (
+                            <option key={index} value={item.id}>{item.name}</option>
+                        ))}
+                    </select>
+                    {errors.management_unit_id &&
+                        <p className="text-red-500 mb-6 text-sm font-semibold">
+                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
+                            {errors.management_unit_id}
+                        </p>
+                    }
+
+                    <h2 className="font-semibold text-sm text-teal-500">
+                        Thời gian
+                    </h2>
+                    <input
+                        name="time"
                         required
                         type="text"
-                        value={heritage.ShortDescription || ''}
+                        value={heritage.time || ''}
                         onChange={e => setHeritage({
                             ...heritage,
-                            ShortDescription: e.target.value
+                            time: e.target.value,
                         })}
-                        placeholder="Nhập mô tả ngắn"
-                        className="description mb-4 sec h-20 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false"></textarea>
-                     {errors.ShortDescription &&
+                        placeholder="Nhập thời gian"
+                        className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+                    {errors.time &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.ShortDescription}
+                            {errors.time}
                         </p>
                     }
-                    
+
                     <h2 className="font-semibold text-sm text-teal-500">
                         Mô tả chi tiết
                     </h2>
@@ -273,64 +321,17 @@ export default ({ type = "" }) => {
                         name="description"
                         required
                         type="text"
-                        value={heritage.Description || ''}
+                        value={heritage.description || ''}
                         onChange={e => setHeritage({
                             ...heritage,
-                            Description: e.target.value
+                            description: e.target.value
                         })}
                         placeholder="Nhập mô tả chi tiết"
                         className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false" ></textarea>
-                    {errors.Description &&
+                    {errors.description &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.Description}
-                        </p>
-                    }
-                    
-                    <h2 className="font-semibold text-sm text-teal-500">
-                        Địa điểm
-                    </h2>
-                    <input
-                        name="location"
-                        required
-                        type="text"
-                        value={heritage.Location || ''}
-                        onChange={e => setHeritage({
-                            ...heritage,
-                            Location: e.target.value
-                        })}
-                        placeholder="Nhập địa điểm"
-                        className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                      {errors.Location &&
-                        <p className="text-red-500 mb-6 text-sm font-semibold">
-                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.Location}
-                        </p>
-                    }
-                    
-                    <h2 className="font-semibold text-sm text-teal-500">
-                        Trạng thái
-                    </h2>
-                    <select
-                        name='status'
-                        value={heritage.Status}
-                        required
-                        onChange={e => {
-                            setHeritage({
-                                ...heritage,
-                                Status: e.target.value
-                            })
-                        }}
-                        className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
-                        <option value=''>--- Chọn trạng thái ---</option>
-                        <option value={"Đang bảo tồn"}>Đang bảo tồn</option>
-                        <option value={"Bị đe dọa"}>Bị đe dọa</option>
-                        <option value={"Nguy cơ biến mất"}>Nguy cơ biến mất</option>
-                    </select>
-                    {errors.Status &&
-                        <p className="text-red-500 mb-6 text-sm font-semibold">
-                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.Status}
+                            {errors.description}
                         </p>
                     }
 
@@ -338,26 +339,26 @@ export default ({ type = "" }) => {
                         Hình ảnh
                     </h2>
                     <input
-                        name="imageUrl"
+                        name="image_url"
                         required
                         type="text"
-                        value={heritage.ImageUrl || ''}
+                        value={heritage.image_url || ''}
                         onChange={e => setHeritage({
                             ...heritage,
-                            ImageUrl: e.target.value,
+                            image_url: e.target.value,
                         })}
                         placeholder="Nhập link ảnh"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.ImageUrl &&
+                    {errors.image_url &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.ImageUrl}
+                            {errors.image_url}
                         </p>
                     }
 
-                    {!isEmptyOrSpaces(heritage.ImageUrl) && <>
+                    {!isEmptyOrSpaces(heritage.image_url) && <>
                         <p className="text-gray-600 mb-4 text-center">Ảnh hiện tại</p>
-                        <img src={heritage.ImageUrl} className="w-full h-auto mb-4 rounded-lg" />
+                        <img src={heritage.image_url} className="w-full h-auto mb-4 rounded-lg" />
                     </>}
 
                     <div className="buttons flex">
@@ -370,7 +371,7 @@ export default ({ type = "" }) => {
                         </button>
                     </div>
 
-                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="heritage"/>
+                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="heritage" />
                 </div>
 
             </div>
