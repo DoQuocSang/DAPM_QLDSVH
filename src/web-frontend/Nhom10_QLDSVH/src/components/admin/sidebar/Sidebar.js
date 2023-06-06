@@ -87,7 +87,7 @@ export default () => {
                                  <svg className={activeBtn === 4 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-cyan-400 flex-shrink-0 group-hover:text-cyan-500 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faCalendar} />
                                  </svg>
-                                 <span className="ml-3 flex-1 whitespace-nowrap">Sự kiện</span>
+                                 <span className="ml-3 flex-1 whitespace-nowrap">Địa điểm</span>
                               </p>
                            </Link>
                         </li>
@@ -97,37 +97,17 @@ export default () => {
                                  <svg className={activeBtn === 5 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-blue-500 flex-shrink-0 group-hover:text-blue-600 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faFileLines} />
                                  </svg>
-                                 <span className="ml-3 flex-1 whitespace-nowrap">Bài viết</span>
+                                 <span className="ml-3 flex-1 whitespace-nowrap">Đơn vị quản lý</span>
                               </p>
                            </Link>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard/all-tag" onClick={() => setActiveBtn(6)}>
+                           <Link to="/admin/dashboard/all-user" onClick={() => setActiveBtn(6)}>
                               <p href="#" className={activeBtn === 6 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 6 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-purple-500 flex-shrink-0 group-hover:text-purple-600 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <FontAwesomeIcon icon={faTicket} />
-                                 </svg>
-                                 <span className="ml-3 flex-1 whitespace-nowrap">Vé</span>
-                              </p>
-                           </Link>
-                        </li>
-                        <li>
-                           <Link to="/admin/dashboard/all-user" onClick={() => setActiveBtn(7)}>
-                              <p href="#" className={activeBtn === 7 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 7 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-pink-400 flex-shrink-0 group-hover:text-pink-500 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                 <svg className={activeBtn === 6 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-pink-400 flex-shrink-0 group-hover:text-pink-500 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faUser} />
                                  </svg>
                                  <span className="ml-3 flex-1 whitespace-nowrap">Tài khoản</span>
-                              </p>
-                           </Link>
-                        </li>
-                        <li>
-                           <Link to="#" onClick={() => setActiveBtn(8)}>
-                              <p href="#" className={activeBtn === 8 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
-                                 <svg className={activeBtn === 8 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-rose-400 flex-shrink-0 group-hover:text-rose-500 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <FontAwesomeIcon icon={faComment} />
-                                 </svg>
-                                 <span className="ml-3 flex-1 whitespace-nowrap">Góp ý</span>
                               </p>
                            </Link>
                         </li>

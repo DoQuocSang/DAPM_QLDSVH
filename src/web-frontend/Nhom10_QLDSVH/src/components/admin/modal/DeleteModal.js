@@ -81,7 +81,7 @@ export default ({ mainText = 'item', deleteId = 0, type='', isDelete }) => {
                                 </>
                             ) : (
                                 <>
-                                    <button onClick={() => setTimeout(() => { setChangeContent(false); }, 1000)} id="delete_closebutton" className="mb-2 md:mb-0 bg-teal-500 border border-teal-500 px-10 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-teal-600">
+                                    <button onClick={() => setTimeout(() => { setChangeContent(false); }, 500)} id="delete_closebutton" className="mb-2 md:mb-0 bg-teal-500 border border-teal-500 px-10 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-teal-600">
                                         Tiếp tục
                                     </button>
                                 </>

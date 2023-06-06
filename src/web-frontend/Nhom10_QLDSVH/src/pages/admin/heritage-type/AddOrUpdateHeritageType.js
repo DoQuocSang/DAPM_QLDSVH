@@ -25,11 +25,10 @@ export default ({ type = "" }) => {
     let mainText = AddOrUpdateText(type, "loại di sản");
     const initialState = {
         id: 0,
-        Name: '',
-        Description: '',
-        UrlSlug: '',
-    },
-        [heritageType, setHeritageType] = useState(initialState);
+        name: '',
+        description: '',
+        urlslug: '',
+    },[heritageType, setHeritageType] = useState(initialState);
     const [successFlag, SetSuccessFlag] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -65,16 +64,16 @@ export default ({ type = "" }) => {
     const validateAllInput = () => {
         const validationErrors = {};
 
-        if (heritageType.Name.trim() === '') {
-            validationErrors.Name = 'Vui lòng nhập tên loại di sản';
+        if (heritageType.name.trim() === '') {
+            validationErrors.name = 'Vui lòng nhập tên loại di sản';
         }
 
-        if (heritageType.UrlSlug.trim() === '') {
-            validationErrors.UrlSlug = 'Slug chưa được tạo';
+        if (heritageType.urlslug.trim() === '') {
+            validationErrors.urlslug = 'Slug chưa được tạo';
         }
 
-        if (heritageType.Description.trim() === '') {
-            validationErrors.Description = 'Vui lòng nhập mô tả chi tiết';
+        if (heritageType.description.trim() === '') {
+            validationErrors.description = 'Vui lòng nhập mô tả chi tiết';
         }
 
         setErrors(validationErrors);
@@ -92,23 +91,13 @@ export default ({ type = "" }) => {
         if (validateAllInput() === false) {
             if (id === 0) {
                 addHeritageType(heritageType).then(data => {
-                    if (data) {
-                        SetSuccessFlag(true);
-                    }
-                    else {
-                        SetSuccessFlag(false);
-                    }
+                    SetSuccessFlag(data);
                     //console.log(data);
                 });
             }
             else {
                 patchHeritageType(id, heritageType).then(data => {
-                    if (data) {
-                        SetSuccessFlag(true);
-                    }
-                    else {
-                        SetSuccessFlag(false);
-                    }
+                    SetSuccessFlag(data);
                     //console.log(data);
                 });
             }
@@ -119,6 +108,8 @@ export default ({ type = "" }) => {
     const childToParent = (isContinue) => {
         if (isContinue === true && id === 0) {
             setHeritageType(initialState);
+            // Reset flag sau khi thêm thành công
+            setTimeout(() => { SetSuccessFlag(false); }, 1000)
         }
     }
 
@@ -141,18 +132,18 @@ export default ({ type = "" }) => {
                         name="name"
                         required
                         type="text"
-                        value={heritageType.Name || ''}
+                        value={heritageType.name || ''}
                         onChange={e => setHeritageType({
                             ...heritageType,
-                            Name: e.target.value,
-                            UrlSlug: generateSlug(e.target.value),
+                            name: e.target.value,
+                            urlslug: generateSlug(e.target.value),
                         })}
                         placeholder="Nhập tên di sản"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.Name &&
+                    {errors.name &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.Name}
+                            {errors.name}
                         </p>
                     }
 
@@ -160,20 +151,20 @@ export default ({ type = "" }) => {
                         UrlSlug
                     </h2>
                     <input
-                        name="slug"
+                        name="urlslug"
                         required
                         type="text"
-                        value={heritageType.UrlSlug || ''}
+                        value={heritageType.urlslug || ''}
                         // onChange={e => setHeritage({
                         //     ...heritage,
                         //     UrlSlug: e.target.value
                         // })}
                         placeholder="Nhập định danh slug"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.UrlSlug &&
+                    {errors.urlslug &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.UrlSlug}
+                            {errors.urlslug}
                         </p>
                     }
 
@@ -184,17 +175,17 @@ export default ({ type = "" }) => {
                         name="description"
                         required
                         type="text"
-                        value={heritageType.Description || ''}
+                        value={heritageType.description || ''}
                         onChange={e => setHeritageType({
                             ...heritageType,
-                            Description: e.target.value
+                            description: e.target.value
                         })}
                         placeholder="Nhập mô tả chi tiết"
                         className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false" ></textarea>
-                    {errors.Description &&
+                    {errors.description &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.Description}
+                            {errors.description}
                         </p>
                     }
 

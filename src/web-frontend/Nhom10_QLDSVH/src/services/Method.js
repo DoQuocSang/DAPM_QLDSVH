@@ -19,12 +19,7 @@ export async function get_api(your_api) {
 export async function delete_api(your_api) {
   try {
       const response = await axios.delete(your_api); 
-      if(response.status === 200){
-        return response.data.data
-      }
-      else{
-        return null
-      }
+      return response.data.success;
       
     } catch (error) {
       console.log('Error', error.message);
@@ -34,28 +29,17 @@ export async function delete_api(your_api) {
 export async function post_api(your_api, formData) {
   try {
       const response = await axios.post(your_api, formData); 
-      if(response.status === 200){
-        return response.data.data
-      }
-      else{
-        return null
-      }
-      
+      return response.data.success;
+
     } catch (error) {
       console.log('Error', error.message);
     }
 }
 
-export async function patch_api(your_api, formData) {
+export async function put_api(your_api, formData) {
   try {
-      const response = await axios.patch(your_api, formData); 
-      //console.log(response);
-      if(response.status === 200){
-        return response.data.data
-      }
-      else{
-        return null
-      }
+      const response = await axios.put(your_api, formData); 
+      return response.data.success;
       
     } catch (error) {
       console.log('Error', error.message);

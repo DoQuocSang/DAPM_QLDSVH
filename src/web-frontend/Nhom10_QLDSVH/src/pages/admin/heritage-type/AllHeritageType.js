@@ -32,7 +32,7 @@ export default () => {
 
         getHeritageTypes().then(data => {
             if (data) {
-                setHeritageTypeList(data);
+                setHeritageTypeList(data.data);
             }
             else
                 setHeritageTypeList([]);
@@ -135,7 +135,7 @@ export default () => {
                                                             Tên loại di sản
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Mô tả ngắn
+                                                            Mô tả
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Sửa
@@ -152,10 +152,10 @@ export default () => {
                                                                 {index + 1}
                                                             </td>
                                                             <td className="p-4 text-sm font-semibold text-gray-500">
-                                                                {item.Name}
+                                                                {item.name}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500 align-middle">
-                                                                {item.Description}
+                                                                {item.description}
                                                             </td>
                                                             <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider hover:text-emerald-600 transition duration-75">
                                                                 <Link to={`/admin/dashboard/update-heritage-type/${item.id}`}>

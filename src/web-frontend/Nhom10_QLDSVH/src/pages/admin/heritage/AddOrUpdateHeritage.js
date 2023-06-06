@@ -11,8 +11,10 @@ import { generateSlug } from "../../../components/utils/Utils";
 
 import { getHeritageById } from "services/HeritageRepository";
 import { getHeritageTypes } from "services/HeritageTypeRepository";
+import { getLocations } from "../../../services/LocationRepository";
+import { getManagementUnits } from "../../../services/ManagementUnitRepository";
 import { addHeritage } from "../../../services/HeritageRepository";
-import { patchHeritage } from "../../../services/HeritageRepository";
+import { putHeritage } from "../../../services/HeritageRepository";
 import NotificationModal from "../../../components/admin/modal/NotificationModal";
 
 import DefaultImage from "images/post-default-full.png"
@@ -32,6 +34,8 @@ export default ({ type = "" }) => {
     }, [heritage, setHeritage] = useState(initialState);
 
     const [heritageTypeList, setHeritageTypeList] = useState([]);
+    const [locationList, setLocationList] = useState([]);
+    const [managementUnitList, setManagementUnitList] = useState([]);
     const [successFlag, SetSuccessFlag] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -75,8 +79,26 @@ export default ({ type = "" }) => {
                 setHeritageTypeList([]);
             //console.log(data)
         })
+
+        getLocations().then(data => {
+            if (data) {
+                setLocationList(data.data);
+            }
+            else
+                setHeritageTypeList([]);
+            //console.log(data)
+        })
+
+        getManagementUnits().then(data => {
+            if (data) {
+                setManagementUnitList(data.data);
+            }
+            else
+                setHeritageTypeList([]);
+            //console.log(data)
+        })
     }, [])
-    console.log(heritage)
+    //console.log(heritage)
 
     //validate lỗi bổ trống
     const validateAllInput = () => {
@@ -125,29 +147,17 @@ export default ({ type = "" }) => {
     }
 
     const handleSubmit = () => {
-
-
         // Nếu không có lỗi mới xóa hoặc cập nhật
         if (validateAllInput() === false) {
             if (id === 0) {
                 addHeritage(heritage).then(data => {
-                    if (data) {
-                        SetSuccessFlag(true);
-                    }
-                    else {
-                        SetSuccessFlag(false);
-                    }
+                    SetSuccessFlag(data);
                     //console.log(data);
                 });
             }
             else {
-                patchHeritage(id, heritage).then(data => {
-                    if (data) {
-                        SetSuccessFlag(true);
-                    }
-                    else {
-                        SetSuccessFlag(false);
-                    }
+                putHeritage(id, heritage).then(data => {
+                    SetSuccessFlag(data);
                     //console.log(data);
                 });
             }
@@ -158,6 +168,8 @@ export default ({ type = "" }) => {
     const childToParent = (isContinue) => {
         if (isContinue === true && id === 0) {
             setHeritage(initialState);
+             // Reset flag sau khi thêm thành công
+            setTimeout(() => { SetSuccessFlag(false); }, 1000)
         }
     }
 
@@ -256,7 +268,7 @@ export default ({ type = "" }) => {
                         }}
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
                         <option value=''>--- Chọn địa điểm ---</option>
-                        {heritageTypeList.map((item, index) => (
+                        {locationList.map((item, index) => (
                             <option key={index} value={item.id}>{item.name}</option>
                         ))}
                     </select>
@@ -282,7 +294,7 @@ export default ({ type = "" }) => {
                         }}
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
                         <option value=''>--- Chọn đơn vị quản lý ---</option>
-                        {heritageTypeList.map((item, index) => (
+                        {managementUnitList.map((item, index) => (
                             <option key={index} value={item.id}>{item.name}</option>
                         ))}
                     </select>

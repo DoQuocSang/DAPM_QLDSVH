@@ -2,7 +2,7 @@ import axios from 'axios';
 import { get_api } from './Method';
 import { delete_api } from './Method';
 import { post_api } from './Method';
-import { patch_api } from './Method';
+import { put_api } from './Method';
 
 export function getHeritageById(
     id = 0,
@@ -34,11 +34,11 @@ export function addHeritage(
     return post_api(`http://localhost:8080/api/v1/heritage`, formData);
 }
 
-export function patchHeritage(
+export function putHeritage(
     id = 0,
     formData
     ) {
-    return patch_api(`http://localhost:8080/api/v1/heritage/${id}`, formData);
+    return put_api(`http://localhost:8080/api/v1/heritage/${id}`, formData);
 }
 
 export function getHeritagesByQuerySearch(

@@ -179,7 +179,7 @@ export default () => {
                                                                 {isEmptyOrSpaces(item.image_url) ? (
                                                                     <img className="h-40 w-auto rounded-lg mx-auto" src={DefaultImage} alt="Neil image" />
                                                                 ) : (
-                                                                    <img className="h-40 w-auto rounded-lg mx-auto" src={item.ImageUrl} alt="Neil image" />
+                                                                    <img className="h-40 w-auto rounded-lg mx-auto" src={item.image_url} alt="Neil image" />
                                                                 )}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500 align-middle">
