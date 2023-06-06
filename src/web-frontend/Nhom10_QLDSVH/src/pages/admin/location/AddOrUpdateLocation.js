@@ -13,8 +13,8 @@ import { AddOrUpdateText } from "../../../components/utils/Utils";
 import { getHeritageTypeById } from "../../../services/HeritageTypeRepository";
 import { generateSlug } from "../../../components/utils/Utils";
 
-import { addHeritageType } from "../../../services/HeritageTypeRepository";
-import { patchHeritageType } from "../../../services/HeritageTypeRepository";
+import { addLocation, getLocationById } from "../../../services/LocationRepository";
+import { putLocation } from "../../../services/LocationRepository";
 
 import NotificationModal from "../../../components/admin/modal/NotificationModal";
 
@@ -22,13 +22,12 @@ import NotificationModal from "../../../components/admin/modal/NotificationModal
 
 export default ({ type = "" }) => {
 
-    let mainText = AddOrUpdateText(type, "loại di sản");
+    let mainText = AddOrUpdateText(type, "địa điểm");
     const initialState = {
         id: 0,
         name: '',
-        description: '',
         urlslug: '',
-    },[heritageType, setHeritageType] = useState(initialState);
+    },[location, setLocation] = useState(initialState);
     const [successFlag, SetSuccessFlag] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -45,16 +44,16 @@ export default ({ type = "" }) => {
     }
 
     useEffect(() => {
-        document.title = "Thêm/ cập nhật loại di sản";
+        document.title = "Thêm/ cập nhật địa điểm";
 
         if (id !== 0) {
-            getHeritageTypeById(id).then(data => {
+            getLocationById(id).then(data => {
                 if (data)
-                    setHeritageType({
+                    setLocation({
                         ...data,
                     });
                 else
-                    setHeritageType(initialState);
+                    setLocation(initialState);
                 console.log(data);
             })
         }
@@ -64,16 +63,12 @@ export default ({ type = "" }) => {
     const validateAllInput = () => {
         const validationErrors = {};
 
-        if (heritageType.name.trim() === '') {
-            validationErrors.name = 'Vui lòng nhập tên loại di sản';
+        if (location.name.trim() === '') {
+            validationErrors.name = 'Vui lòng nhập tên địa điểm';
         }
 
-        if (heritageType.urlslug.trim() === '') {
+        if (location.urlslug.trim() === '') {
             validationErrors.urlslug = 'Slug chưa được tạo';
-        }
-
-        if (heritageType.description.trim() === '') {
-            validationErrors.description = 'Vui lòng nhập mô tả chi tiết';
         }
 
         setErrors(validationErrors);
@@ -90,13 +85,13 @@ export default ({ type = "" }) => {
         // Nếu không có lỗi mới xóa hoặc cập nhật
         if (validateAllInput() === false) {
             if (id === 0) {
-                addHeritageType(heritageType).then(data => {
+                addLocation(location).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
             }
             else {
-                patchHeritageType(id, heritageType).then(data => {
+                putLocation(id, location).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
@@ -107,7 +102,7 @@ export default ({ type = "" }) => {
     //Xử lý khi bấm xóa bên component con NotificationModal
     const childToParent = (isContinue) => {
         if (isContinue === true && id === 0) {
-            setHeritageType(initialState);
+            setLocation(initialState);
             // Reset flag sau khi thêm thành công
             setTimeout(() => { SetSuccessFlag(false); }, 1000)
         }
@@ -126,19 +121,19 @@ export default ({ type = "" }) => {
                         </div>
                     </div>
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Tên loại di sản
+                        Tên địa điểm
                     </h2>
                     <input
                         name="name"
                         required
                         type="text"
-                        value={heritageType.name || ''}
-                        onChange={e => setHeritageType({
-                            ...heritageType,
+                        value={location.name || ''}
+                        onChange={e => setLocation({
+                            ...location,
                             name: e.target.value,
                             urlslug: generateSlug(e.target.value),
                         })}
-                        placeholder="Nhập tên di sản"
+                        placeholder="Nhập tên địa điểm"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
                     {errors.name &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
@@ -154,7 +149,7 @@ export default ({ type = "" }) => {
                         name="urlslug"
                         required
                         type="text"
-                        value={heritageType.urlslug || ''}
+                        value={location.urlslug || ''}
                         // onChange={e => setHeritage({
                         //     ...heritage,
                         //     UrlSlug: e.target.value
@@ -168,30 +163,9 @@ export default ({ type = "" }) => {
                         </p>
                     }
 
-                    <h2 className="font-semibold text-sm text-teal-500">
-                        Mô tả chi tiết
-                    </h2>
-                    <textarea
-                        name="description"
-                        required
-                        type="text"
-                        value={heritageType.description || ''}
-                        onChange={e => setHeritageType({
-                            ...heritageType,
-                            description: e.target.value
-                        })}
-                        placeholder="Nhập mô tả chi tiết"
-                        className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false" ></textarea>
-                    {errors.description &&
-                        <p className="text-red-500 mb-6 text-sm font-semibold">
-                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.description}
-                        </p>
-                    }
-
                     <div className="buttons flex">
                         <hr className="mt-4" />
-                        <Link to="/admin/dashboard/all-heritage-type" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
+                        <Link to="/admin/dashboard/all-location" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
                             Hủy
                         </Link>
                         <button id="notification_buttonmodal" onClick={() => { handleSubmit() }} type="submit" className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer !hover:bg-indigo-700 !bg-indigo-500 p-2 px-5 font-semibold text-white">
@@ -199,7 +173,7 @@ export default ({ type = "" }) => {
                         </button>
                     </div>
 
-                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="heritage-type"/>
+                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="location"/>
                 </div>
 
             </div>

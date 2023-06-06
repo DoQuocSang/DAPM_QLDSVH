@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { getHeritageTypes } from "services/HeritageTypeRepository";
+import { getManagementUnits } from "../../../services/ManagementUnitRepository";
 
 import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 import DefaultImage from "images/post-default.png"
@@ -16,26 +16,26 @@ import Error404 from "../../../components/admin/other/Error404";
 import DeleteModal from "../../../components/admin/modal/DeleteModal";
 
 export default () => {
-    const [heritageTypeList, setHeritageTypeList] = useState([]);
+    const [managementUnitList, setManagementUnitList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
 
     //Xử lý khi bấm xóa bên component con DeleteModal
     const childToParent = (isDelete) => {
         if (isDelete === true && deleteId !== 0) {
-            setHeritageTypeList(heritageTypeList.filter(item => item.id !== deleteId));
+            setManagementUnitList(managementUnitList.filter(item => item.id !== deleteId));
         }
-        console.log(heritageTypeList.length)
+        console.log(managementUnitList.length)
     }
 
     useEffect(() => {
         window.scrollTo(0, 0);
 
-        getHeritageTypes().then(data => {
+        getManagementUnits().then(data => {
             if (data) {
-                setHeritageTypeList(data.data);
+                setManagementUnitList(data.data);
             }
             else
-                setHeritageTypeList([]);
+                setManagementUnitList([]);
             console.log(data)
         })
     }, []);
@@ -107,12 +107,12 @@ export default () => {
                             <div className="mb-4 flex items-center justify-between">
                                 <div>
                                     <h3 className="text-xl font-bold text-gray-900 mb-2">
-                                        Quản lý loại di sản
+                                        Quản lý đơn vị quản lý
                                     </h3>
-                                    <span className="text-base font-normal text-gray-500">Các loại di sản hiện có trong database</span>
+                                    <span className="text-base font-normal text-gray-500">Các đơn vị quản lý hiện có trong database</span>
                                 </div>
                                 <div className="flex-shrink-0">
-                                    <Link to="/admin/dashboard/add-heritage-type">
+                                    <Link to="/admin/dashboard/add-management-unit">
                                         <a className="hidden transition duration-300 sm:inline-flex ml-5 text-white bg-teal-400 hover:bg-teal-600 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center items-center mr-3">
                                             <FontAwesomeIcon icon={faPlus} className="text-base mr-3" />
                                             Thêm
@@ -132,7 +132,7 @@ export default () => {
                                                             STT
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Tên loại di sản
+                                                            Tên đơn vị quản lý
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Mô tả
@@ -146,7 +146,7 @@ export default () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="bg-white">
-                                                    {heritageTypeList.map((item, index) => (
+                                                    {managementUnitList.map((item, index) => (
                                                         <tr className={index % 2 !== 0 && "bg-gray-100"}>
                                                             <td className="p-4 text-center text-sm font-bold text-gray-500">
                                                                 {index + 1}
@@ -158,7 +158,7 @@ export default () => {
                                                                 {item.description}
                                                             </td>
                                                             <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider hover:text-emerald-600 transition duration-75">
-                                                                <Link to={`/admin/dashboard/update-heritage-type/${item.id}`}>
+                                                                <Link to={`/admin/dashboard/update-management-unit/${item.id}`}>
                                                                     <FontAwesomeIcon icon={faPenToSquare} />
                                                                 </Link>
                                                             </th>
@@ -169,10 +169,10 @@ export default () => {
                                                     ))}
                                                 </tbody>
                                             </table>
-                                            {heritageTypeList.length === 0 ?
+                                            {managementUnitList.length === 0 ?
                                                 <Error404 />
                                                 :
-                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} type="heritage-type"/>}
+                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} type="management-unit"/>}
                                         </div>
                                     </div>
                                 </div>

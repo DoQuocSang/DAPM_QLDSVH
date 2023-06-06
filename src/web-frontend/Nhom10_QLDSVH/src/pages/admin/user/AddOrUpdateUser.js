@@ -10,11 +10,11 @@ import { Link } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
 import { AddOrUpdateText } from "../../../components/utils/Utils";
-import { getHeritageTypeById } from "../../../services/HeritageTypeRepository";
 import { generateSlug } from "../../../components/utils/Utils";
+import { getUserById } from "../../../services/UserRepository";
 
-import { addHeritageType } from "../../../services/HeritageTypeRepository";
-import { patchHeritageType } from "../../../services/HeritageTypeRepository";
+import { addUser } from "../../../services/UserRepository";
+import { putUser } from "../../../services/UserRepository";
 
 import NotificationModal from "../../../components/admin/modal/NotificationModal";
 
@@ -22,13 +22,15 @@ import NotificationModal from "../../../components/admin/modal/NotificationModal
 
 export default ({ type = "" }) => {
 
-    let mainText = AddOrUpdateText(type, "loại di sản");
+    let mainText = AddOrUpdateText(type, "tài khoản");
+    const currentDate = new Date().toISOString().substring(0, 19) + 'Z';
     const initialState = {
         id: 0,
-        name: '',
-        description: '',
-        urlslug: '',
-    },[heritageType, setHeritageType] = useState(initialState);
+        user_name: '',
+        password: '',
+        permission: 0,
+        subscribe_day: currentDate
+    }, [user, setUser] = useState(initialState);
     const [successFlag, SetSuccessFlag] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -45,16 +47,16 @@ export default ({ type = "" }) => {
     }
 
     useEffect(() => {
-        document.title = "Thêm/ cập nhật loại di sản";
+        document.title = "Thêm/ cập nhật tài khoản";
 
         if (id !== 0) {
-            getHeritageTypeById(id).then(data => {
+            getUserById(id).then(data => {
                 if (data)
-                    setHeritageType({
+                    setUser({
                         ...data,
                     });
                 else
-                    setHeritageType(initialState);
+                    setUser(initialState);
                 console.log(data);
             })
         }
@@ -64,16 +66,12 @@ export default ({ type = "" }) => {
     const validateAllInput = () => {
         const validationErrors = {};
 
-        if (heritageType.name.trim() === '') {
-            validationErrors.name = 'Vui lòng nhập tên loại di sản';
+        if (user.user_name.trim() === '') {
+            validationErrors.user_name = 'Vui lòng nhập tên tài khoản';
         }
 
-        if (heritageType.urlslug.trim() === '') {
-            validationErrors.urlslug = 'Slug chưa được tạo';
-        }
-
-        if (heritageType.description.trim() === '') {
-            validationErrors.description = 'Vui lòng nhập mô tả chi tiết';
+        if (user.password.trim() === '') {
+            validationErrors.password = 'Vui lòng nhập mật khẩu';
         }
 
         setErrors(validationErrors);
@@ -88,15 +86,17 @@ export default ({ type = "" }) => {
 
     const handleSubmit = () => {
         // Nếu không có lỗi mới xóa hoặc cập nhật
+                    console.log(user);
+
         if (validateAllInput() === false) {
             if (id === 0) {
-                addHeritageType(heritageType).then(data => {
+                addUser(user).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
             }
             else {
-                patchHeritageType(id, heritageType).then(data => {
+                putUser(id, user).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
@@ -107,7 +107,7 @@ export default ({ type = "" }) => {
     //Xử lý khi bấm xóa bên component con NotificationModal
     const childToParent = (isContinue) => {
         if (isContinue === true && id === 0) {
-            setHeritageType(initialState);
+            setUser(initialState);
             // Reset flag sau khi thêm thành công
             setTimeout(() => { SetSuccessFlag(false); }, 1000)
         }
@@ -126,72 +126,67 @@ export default ({ type = "" }) => {
                         </div>
                     </div>
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Tên loại di sản
+                        Tên tài khoản
                     </h2>
                     <input
                         name="name"
                         required
                         type="text"
-                        value={heritageType.name || ''}
-                        onChange={e => setHeritageType({
-                            ...heritageType,
-                            name: e.target.value,
-                            urlslug: generateSlug(e.target.value),
+                        value={user.user_name || ''}
+                        onChange={e => setUser({
+                            ...user,
+                            user_name: e.target.value,
                         })}
-                        placeholder="Nhập tên di sản"
+                        placeholder="Nhập tên tài khoản"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.name &&
+                    {errors.user_name &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.name}
+                            {errors.user_name}
                         </p>
                     }
 
                     <h2 className="font-semibold text-sm text-teal-500">
-                        UrlSlug
+                        Password
                     </h2>
                     <input
-                        name="urlslug"
+                        name="password"
                         required
                         type="text"
-                        value={heritageType.urlslug || ''}
-                        // onChange={e => setHeritage({
-                        //     ...heritage,
-                        //     UrlSlug: e.target.value
-                        // })}
-                        placeholder="Nhập định danh slug"
+                        value={user.password || ''}
+                        onChange={e => setUser({
+                            ...user,
+                            password: e.target.value
+                        })}
+                        placeholder="Nhập mật khẩu"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.urlslug &&
+                    {errors.password &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.urlslug}
+                            {errors.password}
                         </p>
                     }
 
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Mô tả chi tiết
+                        Quyền truy cập
                     </h2>
-                    <textarea
-                        name="description"
+                    <input
+                        name="permission"
                         required
                         type="text"
-                        value={heritageType.description || ''}
-                        onChange={e => setHeritageType({
-                            ...heritageType,
-                            description: e.target.value
-                        })}
-                        placeholder="Nhập mô tả chi tiết"
-                        className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false" ></textarea>
-                    {errors.description &&
+                        disabled
+                        placeholder="Người dùng"
+                        className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-300  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+                    {errors.permission &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.description}
+                            {errors.permission}
                         </p>
                     }
 
                     <div className="buttons flex">
                         <hr className="mt-4" />
-                        <Link to="/admin/dashboard/all-heritage-type" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
+                        <Link to="/admin/dashboard/all-user" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
                             Hủy
                         </Link>
                         <button id="notification_buttonmodal" onClick={() => { handleSubmit() }} type="submit" className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer !hover:bg-indigo-700 !bg-indigo-500 p-2 px-5 font-semibold text-white">
@@ -199,7 +194,7 @@ export default ({ type = "" }) => {
                         </button>
                     </div>
 
-                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="heritage-type"/>
+                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="user" />
                 </div>
 
             </div>

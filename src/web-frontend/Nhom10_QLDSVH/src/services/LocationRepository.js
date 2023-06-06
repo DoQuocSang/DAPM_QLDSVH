@@ -34,7 +34,7 @@ export function addLocation(
     return post_api(`http://localhost:8080/api/v1/location`, formData);
 }
 
-export function patchLocation(
+export function putLocation(
     id = 0,
     formData
     ) {

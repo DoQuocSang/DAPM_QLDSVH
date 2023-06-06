@@ -138,7 +138,7 @@ export default ({ type = "" }) => {
                             name: e.target.value,
                             urlslug: generateSlug(e.target.value),
                         })}
-                        placeholder="Nhập tên di sản"
+                        placeholder="Nhập tên loại di sản"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
                     {errors.name &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">

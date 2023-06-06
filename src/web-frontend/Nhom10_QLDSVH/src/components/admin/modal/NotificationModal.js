@@ -23,6 +23,15 @@ export default ({mainAction='text', mainText = 'item', type = '', isSuccess, isC
     if(type === 'heritage-type'){
         page = 'all-heritage-type';
     }
+    if(type === 'location'){
+        page = 'all-location';
+    }
+    if(type === 'management-unit'){
+        page = 'all-management-unit';
+    }
+    if(type === 'user'){
+        page = 'all-user';
+    }
 
     const handleContinue = () => {
         isContinue(true);
