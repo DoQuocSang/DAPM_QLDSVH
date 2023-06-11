@@ -25,6 +25,9 @@ import AddOrUpdateUser from "pages/admin/user/AddOrUpdateUser"
 
 import AdminLogin from "pages/admin/login/Login"
 
+import HomePage from "pages/user/HomePage"
+import NotFound404 from "pages/user/NotFound404"
+
 import { Route, Routes } from "react-router-dom"
 
 function App() {
@@ -32,8 +35,8 @@ function App() {
     <AnimationRevealPage>
       <Routes>
         <Route path="/" element={<UserLayout />}>
-          {/* <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<UserLogin />} />
+          <Route path="/" element={<HomePage />} />
+          {/* <Route path="/login" element={<UserLogin />} />
           <Route path="/signup" element={<UserSignup />} />
           <Route path="/all-product" element={<AllProductPage />} />
           <Route path="/all-product/:type/:slug" element={<AllProductPage />} />
@@ -71,7 +74,7 @@ function App() {
           <Route path="/admin/dashboard/update-user/:id" element={<AddOrUpdateUser type="update" />} />
         </Route>
 
-        {/* <Route path="*" element={<NotFound404 />} /> */}
+        <Route path="*" element={<NotFound404 />} />
 
       </Routes>
     </AnimationRevealPage>

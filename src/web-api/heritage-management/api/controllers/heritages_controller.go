@@ -37,7 +37,7 @@ func GetPagedHeritages(c *gin.Context) {
 	// Phân trang
 	offset := (page - 1) * limit
 	orderClause := columnName + " " + sortOrder
-	if err := db.GetDB().Order(orderClause).Offset(offset).Limit(limit).Preload("HeritageType").Preload("Location").Preload("Management_Unit").Find(&heritages).Error; err != nil {
+	if err := db.GetDB().Order(orderClause).Offset(offset).Limit(limit).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("Management_Unit").Find(&heritages).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}
