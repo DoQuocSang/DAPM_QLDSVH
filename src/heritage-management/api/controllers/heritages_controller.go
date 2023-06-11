@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	"heritage-management/api/db"
 	"heritage-management/api/models"
@@ -11,53 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetPagedHeritages trả về danh sách tất cả các di sản văn hóa với phân trang
-func GetPagedHeritages(c *gin.Context) {
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-	columnName := c.DefaultQuery("columnName", "id")
-	sortOrder := c.DefaultQuery("sortOrder", "desc")
-
-	var total int64
+// GetAllHeritages trả về danh sách tất cả các di sản văn hóa
+func GetAllHeritages(c *gin.Context) {
 	var heritages []models.Heritage
 
-	// Đếm tổng số lượng
-	if err := db.GetDB().Model(&models.Heritage{}).Count(&total).Error; err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+	if err := db.GetDB().Find(&heritages).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritages")
 		return
 	}
 
-	// Đếm tổng số trang
-	// Chia % vì nếu chia có dư thì đồng nghĩa vẫn còn trang sau nên phải tăng thêm 1
-	totalPages := int(total) / limit
-	if int(total)%limit != 0 {
-		totalPages++
-	}
-
-	// Phân trang
-	offset := (page - 1) * limit
-	orderClause := columnName + " " + sortOrder
-	if err := db.GetDB().Order(orderClause).Offset(offset).Limit(limit).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("Management_Unit").Find(&heritages).Error; err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
-		return
-	}
-
-	// Kiểm tra dữ liệu trả về rỗng
-	if len(heritages) == 0 {
-		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
-		return
-	}
-
-	// Tạo đối tượng phản hồi phân trang
-	pagination := utils.Pagination{
-		Total:      total,
-		Page:       page,
-		Limit:      limit,
-		TotalPages: totalPages,
-		Data:       heritages,
-	}
-
-	utils.SuccessResponse(c, http.StatusOK, pagination)
+	utils.SuccessResponse(c, http.StatusOK, heritages)
 }
 
 // GetHeritageByID trả về thông tin của một di sản văn hóa dựa trên ID

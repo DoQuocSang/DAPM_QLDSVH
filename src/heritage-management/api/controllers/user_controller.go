@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,7 +13,7 @@ import (
 type UserController struct{}
 
 // RegisterUser đăng ký tài khoản mới
-func RegisterUser(c *gin.Context) {
+func (uc *UserController) RegisterUser(c *gin.Context) {
 	var user models.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -40,7 +39,7 @@ func RegisterUser(c *gin.Context) {
 }
 
 // ResetPassword đặt lại mật khẩu của người dùng
-func ResetPassword(c *gin.Context) {
+func (uc *UserController) ResetPassword(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User
 
@@ -64,58 +63,20 @@ func ResetPassword(c *gin.Context) {
 	utils.SuccessResponse(c, http.StatusOK, gin.H{"message": "Password reset successful"})
 }
 
-// GetUsers trả về danh sách tất cả người dùng (không bao gồm mật khẩu) với phân trang
-func GetPagedUsers(c *gin.Context) {
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-	columnName := c.DefaultQuery("columnName", "id")
-	sortOrder := c.DefaultQuery("sortOrder", "desc")
-
-	var total int64
+// GetUsers trả về danh sách tất cả người dùng (không bao gồm mật khẩu)
+func (uc *UserController) GetUsers(c *gin.Context) {
 	var users []models.User
 
-	// Đếm tổng số lượng người dùng
-	if err := db.GetDB().Model(&models.User{}).Count(&total).Error; err != nil {
+	if err := db.GetDB().Select("id, user_name, permission").Find(&users).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get users")
 		return
 	}
 
-	// Đếm tổng số trang
-	// Chia % vì nếu chia có dư thì đồng nghĩa vẫn còn trang sau nên phải tăng thêm 1
-	totalPages := int(total) / limit
-	if int(total)%limit != 0 {
-		totalPages++
-	}
-
-	// Phân trang
-	offset := (page - 1) * limit
-	orderClause := columnName + " " + sortOrder
-	if err := db.GetDB().Order(orderClause).Offset(offset).Limit(limit).Find(&users).Error; err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
-		return
-	}
-
-	// Kiểm tra dữ liệu trả về rỗng
-	if len(users) == 0 {
-		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
-		return
-	}
-
-	// Tạo đối tượng phản hồi phân trang
-	pagination := utils.Pagination{
-		Total:      total,
-		Page:       page,
-		Limit:      limit,
-		TotalPages: totalPages,
-		Data:       users,
-	}
-
-	utils.SuccessResponse(c, http.StatusOK, pagination)
+	utils.SuccessResponse(c, http.StatusOK, users)
 }
 
 // UpdateUser cập nhật thông tin của một người dùng dựa trên ID
-func UpdateUser(c *gin.Context) {
-
+func (uc *UserController) UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 
 	var user models.User
@@ -141,7 +102,7 @@ func UpdateUser(c *gin.Context) {
 }
 
 // DeleteUser xóa một người dùng dựa trên ID
-func DeleteUser(c *gin.Context) {
+func (uc *UserController) DeleteUser(c *gin.Context) {
 	id := c.Param("id")
 
 	var user models.User
@@ -157,18 +118,4 @@ func DeleteUser(c *gin.Context) {
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, gin.H{"message": "User deleted successfully"})
-}
-
-// GetUserByID trả về thông tin của một người dùng dựa trên ID
-func GetUserByID(c *gin.Context) {
-	id := c.Param("id")
-
-	var user models.User
-
-	if err := db.GetDB().Where("id = ?", id).First(&user).Error; err != nil {
-		utils.ErrorResponse(c, http.StatusNotFound, "User not found")
-		return
-	}
-
-	utils.SuccessResponse(c, http.StatusOK, user)
 }
