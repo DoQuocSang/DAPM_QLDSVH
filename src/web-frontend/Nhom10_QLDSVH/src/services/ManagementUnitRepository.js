@@ -34,7 +34,7 @@ export function addManagementUnit(
     return post_api(`http://localhost:8080/api/v1/management-unit`, formData);
 }
 
-export function patchManagementUnit(
+export function putManagementUnit(
     id = 0,
     formData
     ) {

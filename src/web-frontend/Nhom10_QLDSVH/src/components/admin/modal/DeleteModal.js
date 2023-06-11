@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { deleteHeritageById } from "../../../services/HeritageRepository";
 import { deleteHeritageTypeById } from "../../../services/HeritageTypeRepository";
+import { deleteLocationById } from "../../../services/LocationRepository";
+import { deleteManagementUnitById } from "../../../services/ManagementUnitRepository";
+import { deleteUserById } from "../../../services/UserRepository";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
@@ -32,6 +35,39 @@ export default ({ mainText = 'item', deleteId = 0, type='', isDelete }) => {
         }
         if(type === 'heritage-type'){
             deleteHeritageTypeById(deleteId).then(data => {
+                //Ở đây Data có kiểu trả về là boolean
+                //Gọi hàm isDelete để thực thi bên component cha AllHeritage  
+                isDelete(data);
+    
+                //Thay đổi nội dung thông báo nếu xóa thành công
+                setChangeContent(true);
+            })
+            //console.log('loai di san')
+        }
+        if(type === 'location'){
+            deleteLocationById(deleteId).then(data => {
+                //Ở đây Data có kiểu trả về là boolean
+                //Gọi hàm isDelete để thực thi bên component cha AllHeritage  
+                isDelete(data);
+    
+                //Thay đổi nội dung thông báo nếu xóa thành công
+                setChangeContent(true);
+            })
+            //console.log('loai di san')
+        }
+        if(type === 'management-unit'){
+            deleteManagementUnitById(deleteId).then(data => {
+                //Ở đây Data có kiểu trả về là boolean
+                //Gọi hàm isDelete để thực thi bên component cha AllHeritage  
+                isDelete(data);
+    
+                //Thay đổi nội dung thông báo nếu xóa thành công
+                setChangeContent(true);
+            })
+            //console.log('loai di san')
+        }
+        if(type === 'user'){
+            deleteUserById(deleteId).then(data => {
                 //Ở đây Data có kiểu trả về là boolean
                 //Gọi hàm isDelete để thực thi bên component cha AllHeritage  
                 isDelete(data);

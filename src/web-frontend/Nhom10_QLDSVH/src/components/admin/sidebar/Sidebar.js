@@ -23,6 +23,15 @@ export default () => {
       if (location.includes('heritage-type')) {
          setActiveBtn(3)
       }
+      if (location.includes('location')) {
+         setActiveBtn(4)
+      }
+      if (location.includes('management-unit')) {
+         setActiveBtn(5)
+      }
+      if (location.includes('user')) {
+         setActiveBtn(6)
+      }
    }, [])
 
    return (
@@ -82,7 +91,7 @@ export default () => {
                            </Link>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard/all-author" onClick={() => setActiveBtn(4)}>
+                           <Link to="/admin/dashboard/all-location" onClick={() => setActiveBtn(4)}>
                               <p className={activeBtn === 4 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
                                  <svg className={activeBtn === 4 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-cyan-400 flex-shrink-0 group-hover:text-cyan-500 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faCalendar} />
@@ -92,7 +101,7 @@ export default () => {
                            </Link>
                         </li>
                         <li>
-                           <Link to="/admin/dashboard/all-blog" onClick={() => setActiveBtn(5)}>
+                           <Link to="/admin/dashboard/all-management-unit" onClick={() => setActiveBtn(5)}>
                               <p href="#" className={activeBtn === 5 ? "text-sm text-white font-semibold rounded-lg bg-red-400 hover:bg-red-500 flex items-center p-2 group transition duration-75" : "text-sm text-gray-900 font-semibold rounded-lg hover:bg-gray-100 flex items-center p-2 group transition duration-75"}>
                                  <svg className={activeBtn === 5 ? "w-5 h-5 text-white flex-shrink-0 transition duration-75" : "w-5 h-5 text-blue-500 flex-shrink-0 group-hover:text-blue-600 transition duration-75"} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <FontAwesomeIcon icon={faFileLines} />

@@ -49,6 +49,22 @@ func SetupRouter() *gin.Engine {
 			location.PUT("/:id", controllers.UpdateLocation)
 			location.DELETE("/:id", controllers.DeleteLocation)
 		}
+		user := v1.Group("/user")
+		{
+			user.GET("", controllers.GetPagedUsers)
+			user.GET("/:id", controllers.GetUserByID)
+			user.POST("", controllers.RegisterUser)
+			user.PUT("/:id", controllers.UpdateUser)
+			user.DELETE("/:id", controllers.DeleteUser)
+		}
+		heritage_category := v1.Group("/heritage-category")
+		{
+			heritage_category.GET("", controllers.GetPagedHeritageCategories)
+			heritage_category.GET("/:id", controllers.GetHeritageCategoryByID)
+			heritage_category.POST("", controllers.CreateHeritageCategory)
+			heritage_category.PUT("/:id", controllers.UpdateHeritageCategory)
+			heritage_category.DELETE("/:id", controllers.DeleteHeritageCategory)
+		}
 	}
 
 	return r

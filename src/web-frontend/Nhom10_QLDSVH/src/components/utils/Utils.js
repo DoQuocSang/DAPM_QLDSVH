@@ -21,7 +21,7 @@ export function toVND(value) {
 
 export function formatDateTme(value) {
     const time = " - " + Moment(value).format("kk:mm:ss");
-    const date = "Ngày đăng: " + Moment(value).format("DD/MM/YYYY");
+    const date = Moment(value).format("DD/MM/YYYY");
     return date + time;
 }
 

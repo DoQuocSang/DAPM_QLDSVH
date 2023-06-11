@@ -29,6 +29,7 @@ export async function delete_api(your_api) {
 export async function post_api(your_api, formData) {
   try {
       const response = await axios.post(your_api, formData); 
+      console.log(response)
       return response.data.success;
 
     } catch (error) {

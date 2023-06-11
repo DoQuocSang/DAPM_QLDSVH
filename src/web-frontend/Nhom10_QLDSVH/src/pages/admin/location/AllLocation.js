@@ -5,46 +5,38 @@ import Book1 from "images/book1.png"
 import Book2 from "images/book2.jpg"
 import Book3 from "images/book3.jpg"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartPie, faDizzy, faLaughBeam, faPenToSquare, faShield, faTired } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { toVND } from "../../../components/utils/Utils";
+import { getLocations } from "../../../services/LocationRepository";
+
 import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 import DefaultImage from "images/post-default.png"
 import Error404 from "../../../components/admin/other/Error404";
-import { getHeritages } from "services/HeritageRepository";
 import DeleteModal from "../../../components/admin/modal/DeleteModal";
-import { getHeritageById } from "../../../services/HeritageRepository";
 
 export default () => {
-    const [heritageList, setHeritageList] = useState([]);
+    const [locationList, setLocationList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
 
     //Xử lý khi bấm xóa bên component con DeleteModal
     const childToParent = (isDelete) => {
         if (isDelete === true && deleteId !== 0) {
-            setHeritageList(heritageList.filter(item => item.id !== deleteId));
+            setLocationList(locationList.filter(item => item.id !== deleteId));
         }
-        console.log(heritageList.length)
-    }
-
-    //Xử lý khi tìm kiếm bên component header
-    const datafromHeader = (data) => {
-        if (data.length > 0) {
-            setHeritageList(data);
-        }
-        //console.log(heritageList.length)
+        console.log(locationList.length)
     }
 
     useEffect(() => {
         window.scrollTo(0, 0);
 
-        getHeritages().then(data => {
+        getLocations().then(data => {
             if (data) {
-                setHeritageList(data.data);
+                setLocationList(data.data);
             }
             else
-                setHeritageList([]);
+                setLocationList([]);
+            console.log(data)
         })
     }, []);
 
@@ -64,7 +56,7 @@ export default () => {
                                     <h3 className="text-2xl text-slate-600 font-bold leading-normal my-1">12</h3>
                                     <div className="text-xs mt-0 mb-2 text-slate-400 font-bold uppercase">
                                         <i className="fas fa-map-marker-alt mr-2 text-slate-400 opacity-75"></i>
-                                        Tổng số di sản
+                                        Tổng số địa điểm
                                     </div>
                                 </div>
                             </div>
@@ -115,12 +107,12 @@ export default () => {
                             <div className="mb-4 flex items-center justify-between">
                                 <div>
                                     <h3 className="text-xl font-bold text-gray-900 mb-2">
-                                        Quản lý di sản
+                                        Quản lý địa điểm
                                     </h3>
-                                    <span className="text-base font-normal text-gray-500">Các di sản hiện có trong database</span>
+                                    <span className="text-base font-normal text-gray-500">Các địa điểm hiện có trong database</span>
                                 </div>
                                 <div className="flex-shrink-0">
-                                    <Link to="/admin/dashboard/add-heritage">
+                                    <Link to="/admin/dashboard/add-location">
                                         <a className="hidden transition duration-300 sm:inline-flex ml-5 text-white bg-teal-400 hover:bg-teal-600 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center items-center mr-3">
                                             <FontAwesomeIcon icon={faPlus} className="text-base mr-3" />
                                             Thêm
@@ -140,19 +132,7 @@ export default () => {
                                                             STT
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Tên di sản
-                                                        </th>
-                                                        <th scope="col" width="10%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Loại di sản
-                                                        </th>
-                                                        <th scope="col" width="20%" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                           Hình ảnh
-                                                        </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Địa điểm
-                                                        </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Đơn vị quản lý
+                                                            Tên địa điểm
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Sửa
@@ -160,11 +140,10 @@ export default () => {
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Xóa
                                                         </th>
-
                                                     </tr>
                                                 </thead>
                                                 <tbody className="bg-white">
-                                                    {heritageList.map((item, index) => (
+                                                    {locationList.map((item, index) => (
                                                         <tr className={index % 2 !== 0 && "bg-gray-100"}>
                                                             <td className="p-4 text-center text-sm font-bold text-gray-500">
                                                                 {index + 1}
@@ -172,25 +151,8 @@ export default () => {
                                                             <td className="p-4 text-sm font-semibold text-gray-500">
                                                                 {item.name}
                                                             </td>
-                                                            <td className="p-4 text-sm font-normal text-gray-500">
-                                                                {item.heritage_type.name}
-                                                            </td>
-                                                            <td className="p-4 text-sm font-normal text-gray-500">
-                                                                {isEmptyOrSpaces(item.image_url) ? (
-                                                                    <img className="h-auto rounded-lg mx-auto" src={DefaultImage} alt="Neil image" />
-                                                                ) : (
-                                                                    <img className="h-auto rounded-lg mx-auto" src={item.image_url} alt="Neil image" />
-                                                                )}
-                                                            </td>
-                                                            <td className="p-4 text-sm font-normal text-gray-500 align-middle">
-                                                                {item.location.name}
-                                                            </td>
-                                                            <td className="p-4 text-sm font-semibold text-gray-500">
-                                                                {item.management_unit.name}
-                                                            </td>
-
                                                             <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider hover:text-emerald-600 transition duration-75">
-                                                                <Link to={`/admin/dashboard/update-heritage/${item.id}`}>
+                                                                <Link to={`/admin/dashboard/update-location/${item.id}`}>
                                                                     <FontAwesomeIcon icon={faPenToSquare} />
                                                                 </Link>
                                                             </th>
@@ -201,10 +163,10 @@ export default () => {
                                                     ))}
                                                 </tbody>
                                             </table>
-                                            {heritageList.length === 0 ?
+                                            {locationList.length === 0 ?
                                                 <Error404 />
                                                 :
-                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} type="heritage" />}
+                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} type="location"/>}
                                         </div>
                                     </div>
                                 </div>
@@ -216,3 +178,4 @@ export default () => {
         </>
     );
 }
+

@@ -10,25 +10,24 @@ import { Link } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
 import { AddOrUpdateText } from "../../../components/utils/Utils";
-import { getHeritageTypeById } from "../../../services/HeritageTypeRepository";
 import { generateSlug } from "../../../components/utils/Utils";
+import { getManagementUnitById } from "../../../services/ManagementUnitRepository";
 
-import { addHeritageType } from "../../../services/HeritageTypeRepository";
-import { patchHeritageType } from "../../../services/HeritageTypeRepository";
-
+import { addManagementUnit } from "../../../services/ManagementUnitRepository";
+import { putManagementUnit } from "../../../services/ManagementUnitRepository";
 import NotificationModal from "../../../components/admin/modal/NotificationModal";
 
 
 
 export default ({ type = "" }) => {
 
-    let mainText = AddOrUpdateText(type, "loại di sản");
+    let mainText = AddOrUpdateText(type, "đơn vị quản lý");
     const initialState = {
         id: 0,
         name: '',
         description: '',
         urlslug: '',
-    },[heritageType, setHeritageType] = useState(initialState);
+    },[managementUnit, setManagementUnit] = useState(initialState);
     const [successFlag, SetSuccessFlag] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -45,16 +44,16 @@ export default ({ type = "" }) => {
     }
 
     useEffect(() => {
-        document.title = "Thêm/ cập nhật loại di sản";
+        document.title = "Thêm/ cập nhật đơn vị quản lý";
 
         if (id !== 0) {
-            getHeritageTypeById(id).then(data => {
+            getManagementUnitById(id).then(data => {
                 if (data)
-                    setHeritageType({
+                    setManagementUnit({
                         ...data,
                     });
                 else
-                    setHeritageType(initialState);
+                    setManagementUnit(initialState);
                 console.log(data);
             })
         }
@@ -64,15 +63,15 @@ export default ({ type = "" }) => {
     const validateAllInput = () => {
         const validationErrors = {};
 
-        if (heritageType.name.trim() === '') {
-            validationErrors.name = 'Vui lòng nhập tên loại di sản';
+        if (managementUnit.name.trim() === '') {
+            validationErrors.name = 'Vui lòng nhập tên đơn vị quản lý';
         }
 
-        if (heritageType.urlslug.trim() === '') {
+        if (managementUnit.urlslug.trim() === '') {
             validationErrors.urlslug = 'Slug chưa được tạo';
         }
 
-        if (heritageType.description.trim() === '') {
+        if (managementUnit.description.trim() === '') {
             validationErrors.description = 'Vui lòng nhập mô tả chi tiết';
         }
 
@@ -90,13 +89,13 @@ export default ({ type = "" }) => {
         // Nếu không có lỗi mới xóa hoặc cập nhật
         if (validateAllInput() === false) {
             if (id === 0) {
-                addHeritageType(heritageType).then(data => {
+                addManagementUnit(managementUnit).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
             }
             else {
-                patchHeritageType(id, heritageType).then(data => {
+                putManagementUnit(id, managementUnit).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
@@ -107,7 +106,7 @@ export default ({ type = "" }) => {
     //Xử lý khi bấm xóa bên component con NotificationModal
     const childToParent = (isContinue) => {
         if (isContinue === true && id === 0) {
-            setHeritageType(initialState);
+            setManagementUnit(initialState);
             // Reset flag sau khi thêm thành công
             setTimeout(() => { SetSuccessFlag(false); }, 1000)
         }
@@ -126,19 +125,19 @@ export default ({ type = "" }) => {
                         </div>
                     </div>
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Tên loại di sản
+                        Tên đơn vị quản lý
                     </h2>
                     <input
                         name="name"
                         required
                         type="text"
-                        value={heritageType.name || ''}
-                        onChange={e => setHeritageType({
-                            ...heritageType,
+                        value={managementUnit.name || ''}
+                        onChange={e => setManagementUnit({
+                            ...managementUnit,
                             name: e.target.value,
                             urlslug: generateSlug(e.target.value),
                         })}
-                        placeholder="Nhập tên loại di sản"
+                        placeholder="Nhập tên di sản"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
                     {errors.name &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
@@ -154,7 +153,7 @@ export default ({ type = "" }) => {
                         name="urlslug"
                         required
                         type="text"
-                        value={heritageType.urlslug || ''}
+                        value={managementUnit.urlslug || ''}
                         // onChange={e => setHeritage({
                         //     ...heritage,
                         //     UrlSlug: e.target.value
@@ -175,9 +174,9 @@ export default ({ type = "" }) => {
                         name="description"
                         required
                         type="text"
-                        value={heritageType.description || ''}
-                        onChange={e => setHeritageType({
-                            ...heritageType,
+                        value={managementUnit.description || ''}
+                        onChange={e => setManagementUnit({
+                            ...managementUnit,
                             description: e.target.value
                         })}
                         placeholder="Nhập mô tả chi tiết"
@@ -191,7 +190,7 @@ export default ({ type = "" }) => {
 
                     <div className="buttons flex">
                         <hr className="mt-4" />
-                        <Link to="/admin/dashboard/all-heritage-type" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
+                        <Link to="/admin/dashboard/all-management-unit" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
                             Hủy
                         </Link>
                         <button id="notification_buttonmodal" onClick={() => { handleSubmit() }} type="submit" className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer !hover:bg-indigo-700 !bg-indigo-500 p-2 px-5 font-semibold text-white">
@@ -199,7 +198,7 @@ export default ({ type = "" }) => {
                         </button>
                     </div>
 
-                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="heritage-type"/>
+                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="management-unit"/>
                 </div>
 
             </div>
