@@ -1,5 +1,6 @@
 import React from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
+import Hero from "components/user/hero/BackgroundAsImageWithCenteredContent";
 // import Hero from "components/user/hero/TwoColumnWithInput";
 // import Features from "components/user/features/DashedBorderSixFeatures";
 // import MainFeature from "components/user/features/VerticalWithAlternateImageAndText";
@@ -10,6 +11,7 @@ import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 
 export default () => (
   <AnimationRevealPage>
+    <Hero />
     {/* <Hero />
     <Features />
     <MainFeature />
