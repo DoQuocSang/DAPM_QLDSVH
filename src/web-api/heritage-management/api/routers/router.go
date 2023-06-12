@@ -24,6 +24,7 @@ func SetupRouter() *gin.Engine {
 			heritage.POST("", controllers.CreateHeritage)
 			heritage.PUT("/:id", controllers.UpdateHeritage)
 			heritage.DELETE("/:id", controllers.DeleteHeritage)
+			heritage.GET("/random", controllers.GetRandomHeritages)
 		}
 		heritage_type := v1.Group("/heritage-type")
 		{
@@ -32,6 +33,8 @@ func SetupRouter() *gin.Engine {
 			heritage_type.POST("", controllers.CreateHeritageType)
 			heritage_type.PUT("/:id", controllers.UpdateHeritageType)
 			heritage_type.DELETE("/:id", controllers.DeleteHeritageType)
+			heritage_type.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByTypeSlug)
+			heritage_type.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByTypeSlug)
 		}
 		management_unit := v1.Group("/management-unit")
 		{
@@ -40,6 +43,8 @@ func SetupRouter() *gin.Engine {
 			management_unit.POST("", controllers.CreateManagementUnit)
 			management_unit.PUT("/:id", controllers.UpdateManagementUnit)
 			management_unit.DELETE("/:id", controllers.DeleteManagementUnit)
+			management_unit.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByUnitSlug)
+			management_unit.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByUnitSlug)
 		}
 		location := v1.Group("/location")
 		{
@@ -48,6 +53,8 @@ func SetupRouter() *gin.Engine {
 			location.POST("", controllers.CreateLocation)
 			location.PUT("/:id", controllers.UpdateLocation)
 			location.DELETE("/:id", controllers.DeleteLocation)
+			location.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByLocationSlug)
+			location.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByLocationSlug)
 		}
 		user := v1.Group("/user")
 		{
@@ -64,6 +71,8 @@ func SetupRouter() *gin.Engine {
 			heritage_category.POST("", controllers.CreateHeritageCategory)
 			heritage_category.PUT("/:id", controllers.UpdateHeritageCategory)
 			heritage_category.DELETE("/:id", controllers.DeleteHeritageCategory)
+			heritage_category.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByCategorySlug)
+			heritage_category.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByCategorySlug)
 		}
 	}
 

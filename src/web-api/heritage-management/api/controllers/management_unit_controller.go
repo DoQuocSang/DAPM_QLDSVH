@@ -137,3 +137,74 @@ func DeleteManagementUnit(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, gin.H{"message": "Management unit deleted successfully"})
 }
+
+// GetHeritageByUnitSlug trả về danh sách di sản văn hóa dựa trên URL slug của đơn vị
+func GetHeritageByUnitSlug(c *gin.Context) {
+	unitSlug := c.Param("urlSlug")
+
+	var unit models.Management_Unit
+	if err := db.GetDB().Where("urlslug = ?", unitSlug).First(&unit).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Unit not found")
+		return
+	}
+
+	var heritage []models.Heritage
+	if err := db.GetDB().Where("management_unit_id = ?", unit.ID).Find(&heritage).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Heritage not found")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, heritage)
+}
+
+// GetPagedHeritageByUnitSlug trả về danh sách di sản văn hóa dựa trên URL slug của đơn vị có phân trang
+func GetPagedHeritageByUnitSlug(c *gin.Context) {
+	unitSlug := c.Param("urlSlug")
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	// Lấy thông tin của địa điểm dựa trên URL slug
+	var unit models.Management_Unit
+	if err := db.GetDB().Where("urlslug = ?", unitSlug).First(&unit).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Unit not found")
+		return
+	}
+
+	// Tìm tổng số lượng di sản văn hóa dựa trên ID của đơn vị
+	var total int64
+	if err := db.GetDB().Model(&models.Heritage{}).Where("management_unit_id = ?", unit.ID).Count(&total).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage")
+		return
+	}
+
+	// Tính toán số trang và offset
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+	offset := (page - 1) * limit
+
+	// Truy vấn di sản văn hóa dựa trên ID của đơn vị và phân trang
+	var heritage []models.Heritage
+	if err := db.GetDB().Where("management_unit_id = ?", unit.ID).Offset(offset).Limit(limit).Find(&heritage).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage")
+		return
+	}
+
+	// Kiểm tra dữ liệu trả về rỗng
+	if len(heritage) == 0 {
+		utils.ErrorResponse(c, http.StatusNotFound, "No heritage available")
+		return
+	}
+
+	// Tạo đối tượng phản hồi phân trang
+	pagination := utils.Pagination{
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
+		Data:       heritage,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, pagination)
+}

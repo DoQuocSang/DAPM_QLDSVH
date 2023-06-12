@@ -138,3 +138,17 @@ func DeleteHeritage(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, gin.H{"message": "Heritage deleted successfully"})
 }
+
+// GetRandomHeritages trả về danh sách ngẫu nhiên của di sản văn hóa với số lượng lấy được chỉ định
+func GetRandomHeritages(c *gin.Context) {
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "3"))
+
+	var heritages []models.Heritage
+
+	if err := db.GetDB().Model(&models.Heritage{}).Order("RAND()").Limit(limit).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("Management_Unit").Find(&heritages).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, heritages)
+}

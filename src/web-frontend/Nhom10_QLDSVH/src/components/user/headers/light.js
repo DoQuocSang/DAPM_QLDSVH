@@ -56,7 +56,7 @@ export const LogoLink = styled(NavLink)`
   ${tw`flex items-center font-black border-b-0 text-2xl! ml-0!`};
 
   img {
-    ${tw`w-32 mr-3`}
+    ${tw`h-12 mr-3`}
   }
 `;
 
@@ -129,7 +129,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
       else {
         setHeritageTypeList([]);
       }
-      console.log(data)
+      //console.log(data)
     })
 
     getLocations().then(data => {

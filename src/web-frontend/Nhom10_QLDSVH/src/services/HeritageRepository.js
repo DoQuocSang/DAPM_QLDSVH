@@ -22,6 +22,15 @@ export function getHeritages(
     // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
 }
 
+export function getRandomHeritages(
+    limit = 3
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/heritage?limit=${limit}`)
+    // return get_api(`http://localhost:3000/v1/heritage?page=${page}&limit=${limit}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
+
+
 export function deleteHeritageById(
     id = 0,
     ) {    

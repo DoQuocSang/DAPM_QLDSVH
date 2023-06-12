@@ -78,4 +78,10 @@ export function generateSlug(value){
     return slug;
 };
 
+//Chặt chuỗi theo kí tự và trả về mảng kết quả
+export const handleSplitString = (str) => {
+    const trimmedString = str.trim(); // Xóa khoảng trắng hai đầu chuỗi
+    const resultArray = trimmedString.split(','); // Chia chuỗi thành mảng các phần tử
+    return resultArray;
+  };
 
