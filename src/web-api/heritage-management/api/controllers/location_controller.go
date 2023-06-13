@@ -216,3 +216,32 @@ func GetPagedHeritageByLocationSlug(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, pagination)
 }
+
+// SearchLocation trả về thông tin địa điểm theo tên
+func SearchLocation(c *gin.Context) {
+	hq := models.HeritageQuery{}
+	if err := c.ShouldBindQuery(&hq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid search parameters")
+		return
+	}
+
+	query := db.GetDB().Model(&models.Location{})
+
+	if hq.Location_Name != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Location_Name+"%")
+	}
+
+	var locations []models.Location
+	if err := query.Find(&locations).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	// Kiểm tra dữ liệu trả về rỗng
+	if len(locations) == 0 {
+		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, locations)
+}

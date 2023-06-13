@@ -138,3 +138,53 @@ func DeleteHeritage(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, gin.H{"message": "Heritage deleted successfully"})
 }
+
+// SearchHeritage tìm kiếm di sản văn hóa dựa trên các thông tin như tên di sản, tên địa điểm, tên cơ sở quản lý, tên loại di sản, tên thể loại
+// SearchHeritage tìm kiếm di sản văn hóa dựa trên các thông tin như tên di sản, tên địa điểm, tên cơ sở quản lý, tên loại di sản, tên thể loại
+func SearchHeritage(c *gin.Context) {
+	hq := models.HeritageQuery{}
+	if err := c.ShouldBindQuery(&hq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid search parameters")
+		return
+	}
+
+	query := db.GetDB().Model(&models.Heritage{})
+
+	if hq.Heritage_Name != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Heritage_Name+"%")
+	}
+
+	if hq.Location_Name != "" {
+		query = query.Joins("JOIN locations ON heritages.location_id = locations.id").
+			Where("locations.name LIKE ?", "%"+hq.Location_Name+"%")
+	}
+
+	if hq.Management_Unit_Name != "" {
+		query = query.Joins("JOIN management_units ON heritages.management_unit_id = management_units.id").
+			Where("management_units.name LIKE ?", "%"+hq.Management_Unit_Name+"%")
+	}
+
+	if hq.Heritage_Type_Name != "" {
+		query = query.Joins("JOIN heritage_types ON heritages.heritage_type_id = heritage_types.id").
+			Where("heritage_types.name LIKE ?", "%"+hq.Heritage_Type_Name+"%")
+	}
+
+	if hq.Heritage_Category_Name != "" {
+		query = query.Joins("JOIN heritage_categories ON heritages.heritage_category_id = heritage_categories.id").
+			Where("heritage_categories.name LIKE ?", "%"+hq.Heritage_Category_Name+"%")
+	}
+
+	var heritages []models.Heritage
+	if err := query.Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("Management_Unit").Find(&heritages).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	// Kiểm tra dữ liệu trả về rỗng
+	if len(heritages) == 0 {
+		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, heritages)
+}

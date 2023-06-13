@@ -208,3 +208,32 @@ func GetPagedHeritageByUnitSlug(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, pagination)
 }
+
+// SearchUnit trả về thông tin đơn vị theo tên
+func SearchUnit(c *gin.Context) {
+	hq := models.HeritageQuery{}
+	if err := c.ShouldBindQuery(&hq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid search parameters")
+		return
+	}
+
+	query := db.GetDB().Model(&models.Management_Unit{})
+
+	if hq.Management_Unit_Name != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Management_Unit_Name+"%")
+	}
+
+	var units []models.Management_Unit
+	if err := query.Find(&units).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	// Kiểm tra dữ liệu trả về rỗng
+	if len(units) == 0 {
+		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, units)
+}

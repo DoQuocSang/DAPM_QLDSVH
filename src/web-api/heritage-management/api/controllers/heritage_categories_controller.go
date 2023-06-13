@@ -204,3 +204,32 @@ func GetPagedHeritageByCategorySlug(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, pagination)
 }
+
+// SearchCategory trả về thông tin danh mục theo tên
+func SearchCategory(c *gin.Context) {
+	hq := models.HeritageQuery{}
+	if err := c.ShouldBindQuery(&hq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid search parameters")
+		return
+	}
+
+	query := db.GetDB().Model(&models.Heritage_Category{})
+
+	if hq.Heritage_Category_Name != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Heritage_Category_Name+"%")
+	}
+
+	var categories []models.Heritage_Category
+	if err := query.Find(&categories).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	// Kiểm tra dữ liệu trả về rỗng
+	if len(categories) == 0 {
+		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, categories)
+}

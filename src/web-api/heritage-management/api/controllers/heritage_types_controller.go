@@ -204,3 +204,32 @@ func GetPagedHeritageByTypeSlug(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, pagination)
 }
+
+// SearchType trả về thông tin thể loại theo tên
+func SearchType(c *gin.Context) {
+	hq := models.HeritageQuery{}
+	if err := c.ShouldBindQuery(&hq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid search parameters")
+		return
+	}
+
+	query := db.GetDB().Model(&models.Heritage_Type{})
+
+	if hq.Heritage_Type_Name != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Heritage_Type_Name+"%")
+	}
+
+	var types []models.Heritage_Type
+	if err := query.Find(&types).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	// Kiểm tra dữ liệu trả về rỗng
+	if len(types) == 0 {
+		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, types)
+}

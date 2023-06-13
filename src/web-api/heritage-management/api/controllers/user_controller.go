@@ -172,3 +172,32 @@ func GetUserByID(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, user)
 }
+
+// SearchUser trả về thông tin tài khoản theo tên
+func SearchUser(c *gin.Context) {
+	hq := models.HeritageQuery{}
+	if err := c.ShouldBindQuery(&hq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid search parameters")
+		return
+	}
+
+	query := db.GetDB().Model(&models.User{})
+
+	if hq.User_Name != "" {
+		query = query.Where("user_name LIKE ?", "%"+hq.User_Name+"%")
+	}
+
+	var users []models.User
+	if err := query.Find(&users).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	// Kiểm tra dữ liệu trả về rỗng
+	if len(users) == 0 {
+		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, users)
+}
