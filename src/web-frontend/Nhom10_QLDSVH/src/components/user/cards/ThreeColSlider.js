@@ -9,17 +9,15 @@ import { ReactComponent as LocationIcon } from "feather-icons/dist/icons/map-pin
 import { ReactComponent as StarIcon } from "feather-icons/dist/icons/star.svg";
 import { ReactComponent as ChevronLeftIcon } from "feather-icons/dist/icons/chevron-left.svg";
 import { ReactComponent as ChevronRightIcon } from "feather-icons/dist/icons/chevron-right.svg";
-import  Book1  from "images/book1.png";
-import  Book2  from "images/book2.jpg";
-import  Book3  from "images/book3.jpg";
-import  BookDefault from "images/book-default.png"
+import BookDefault from "images/book-default.png"
 import CatDefault from "images/cat-404-full-2.png";
 
-
 import { Link } from "react-router-dom";
-import { getBooks, getBookByCategorySlug } from "../../../services/BookRepository";
 import { isEmptyOrSpaces } from "../../utils/Utils";
 import { toVND } from "../../utils/Utils";
+import { getManagementUnits } from "../../../services/ManagementUnitRepository";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLocationDot, faSynagogue } from "@fortawesome/free-solid-svg-icons";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-16 lg:py-20`;
@@ -51,9 +49,9 @@ const CardImage = styled.div(props => [
   tw`w-full h-56 sm:h-64 bg-cover bg-center rounded sm:rounded-none sm:rounded-tl-4xl`
 ]);
 
-const TextInfo = tw.div`py-6 sm:px-10 sm:py-6`;
+const TextInfo = tw.div`py-6 sm:px-10 sm:py-6 flex-grow`;
 const TitleReviewContainer = tw.div`flex flex-col sm:flex-row sm:justify-between sm:items-center`;
-const Title = tw.h5`text-lg font-bold line-clamp-2`;
+const Title = tw.h5`text-xl font-bold line-clamp-2`;
 
 const RatingsInfo = styled.div`
   ${tw`flex items-center sm:ml-4 mt-2 sm:mt-0`}
@@ -63,7 +61,7 @@ const RatingsInfo = styled.div`
 `;
 const Rating = tw.span`mr-2 font-bold`;
 
-const Description = tw.p`text-sm leading-loose mt-2 sm:mt-4 line-clamp-3`;
+const Description = tw.p`text-sm leading-loose mt-2 sm:mt-2 line-clamp-3`;
 
 const SecondaryInfoContainer = tw.div`flex flex-col sm:flex-row mt-2 sm:mt-4`;
 const IconWithText = tw.div`flex items-center mr-6 my-2 sm:my-0`;
@@ -77,17 +75,21 @@ const Text = tw.div`ml-2 text-sm font-semibold text-gray-800`;
 
 const InfoTagContainer = tw.div`flex flex-col mb-2 sm:flex-row`;
 const TagContainer = styled.div(({ otherColor }) => [
-  tw`flex items-center mr-3 my-2 sm:my-0 bg-red-500 rounded-md transition duration-300 hover:bg-red-600`,
+  tw`flex items-center mr-3 my-2 sm:my-0 bg-red-500 rounded-md transition duration-300 hover:bg-red-600 text-white text-xs px-2 py-1`,
   otherColor && tw`bg-teal-500 hover:bg-teal-600`,
 ]);
-const TagText = tw.a`px-2 py-1 text-xs font-semibold text-white line-clamp-1`;
+const TagText = tw.a`pl-2 font-semibold text-white line-clamp-1`;
 const ErrorImage = tw.img`max-w-3xl h-auto mx-auto rounded-lg pt-4`;
 
 const PriceContainer = tw.p`text-lg font-semibold leading-loose mt-1 sm:mt-2`;
 const PriceText = tw.span`text-xl leading-loose text-red-500`;
 
+const AddressContainer = tw.div`flex items-center text-sm mt-3 font-semibold`;
+const AddressText = tw.p`pl-2 max-w-xs`;
+const InfoImage = tw.span`bg-gray-200 rounded-full w-16 h-12 mr-3 flex items-center justify-center`;
+
 const PrimaryButton = tw(PrimaryButtonBase)`mt-auto sm:text-lg rounded-none w-full rounded sm:rounded-none sm:rounded-br-4xl py-3 sm:py-6`;
-export default ({HeadingText = "Sản phẩm", hasFilter = false}) => {
+export default ({ HeadingText = "Đơn vị quản lý" }) => {
   const [sliderRef, setSliderRef] = useState(null);
   const sliderSettings = {
     arrows: false,
@@ -109,73 +111,17 @@ export default ({HeadingText = "Sản phẩm", hasFilter = false}) => {
     ]
   };
 
-  // const cards = [
-  //   {
-  //     // imageSrc: "https://cdn0.fahasa.com/media/catalog/product/8/9/8934974185628.png",
-  //     imageSrc: Book1,
-  //     title: "Wyatt Residency",
-  //     description: "Lorem ipsum dolor sit amet, consectur dolori adipiscing elit, sed do eiusmod tempor nova incididunt ut labore et dolore magna aliqua.",
-  //     locationText: "Rome, Italy",
-  //     pricingText: "128.000 VND",
-  //     rating: "4.8",
-  //   },
-  //   {
-  //     // imageSrc: "https://cdn0.fahasa.com/media/catalog/product/c/t/cthct11_1.jpg",
-  //     imageSrc: Book2,
-  //     title: "Soho Paradise",
-  //     description: "Lorem ipsum dolor sit amet, consectur dolori adipiscing elit, sed do eiusmod tempor nova incididunt ut labore et dolore magna aliqua.",
-  //     locationText: "Ibiza, Spain",
-  //     pricingText: "128.000 VND",
-  //     rating: 4.9,
-  //   },
-  //   {
-  //     // imageSrc: "https://cdn0.fahasa.com/media/catalog/product/8/9/8934974185598.jpg",
-  //     imageSrc: Book3,
-  //     title: "Hotel Baja",
-  //     description: "Lorem ipsum dolor sit amet, consectur dolori adipiscing elit, sed do eiusmod tempor nova incididunt ut labore et dolore magna aliqua.",
-  //     locationText: "Palo Alto, CA",
-  //     pricingText: "128.000 VND",
-  //     rating: "5.0",
-  //   },
-  //   {
-  //     // imageSrc: "https://cdn0.fahasa.com/media/catalog/product/8/9/8935244888034.jpg",
-  //     imageSrc: Book1,
-  //     title: "Hudak Homes",
-  //     description: "Lorem ipsum dolor sit amet, consectur dolori adipiscing elit, sed do eiusmod tempor nova incididunt ut labore et dolore magna aliqua.",
-  //     locationText: "Arizona, RAK",
-  //     pricingText: "128.000 VND",
-  //     rating: 4.5,
-  //   },
-  // ]
-
-  const [booksList, setBooksList] = useState([]);
-  const [metadata, setMetadata] = useState([]);
+  const [managementUnitList, setManagementUnitList] = useState([]);
 
   useEffect(() => {
-    document.title = 'Trang chủ';
-
-    if(hasFilter === false){
-      getBooks().then(data => {
-        if (data) {
-          setBooksList(data.items);
-          setMetadata(data.metadata);
-        }
-        else
-          setBooksList([]);
-        //console.log(data.items)
-      })
-    }
-    else{
-      getBookByCategorySlug("giaotrinhgiaotrinh").then(data => {
-        if (data) {
-          setBooksList(data.items);
-          setMetadata(data.metadata);
-        }
-        else
-          setBooksList([]);
-        //console.log(data.items)
-      })
-    }
+    getManagementUnits().then(data => {
+      if (data) {
+        setManagementUnitList(data.data);
+      }
+      else
+        setManagementUnitList([]);
+      //console.log(data.data)
+    })
   }, []);
 
   return (
@@ -184,59 +130,43 @@ export default ({HeadingText = "Sản phẩm", hasFilter = false}) => {
         <HeadingWithControl>
           <Heading>{HeadingText}</Heading>
           <Controls>
-            <PrevButton onClick={sliderRef?.slickPrev}><ChevronLeftIcon/></PrevButton>
-            <NextButton onClick={sliderRef?.slickNext}><ChevronRightIcon/></NextButton>
+            <PrevButton onClick={sliderRef?.slickPrev}><ChevronLeftIcon /></PrevButton>
+            <NextButton onClick={sliderRef?.slickNext}><ChevronRightIcon /></NextButton>
           </Controls>
         </HeadingWithControl>
-        {booksList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
+        {managementUnitList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
         <CardSlider ref={setSliderRef} {...sliderSettings}>
-          {booksList.map((card, index) => (
+          {managementUnitList.map((card, index) => (
             <Card key={index}>
-              {isEmptyOrSpaces(card.imageUrl) ? (
+              {isEmptyOrSpaces(card.image_url) ? (
                 <CardImage imageSrc={BookDefault} />
               ) : (
-                <CardImage imageSrc={card.imageUrl} />
-              )} 
+                <CardImage imageSrc={card.image_url} />
+              )}
               <TextInfo>
-              <InfoTagContainer> 
-                  <TagContainer>
-                    <TagText href={"/all-product/" + "category/" + card.category.urlSlug}>{card.category.name}</TagText>
-                  </TagContainer>
+                <InfoTagContainer>
                   <TagContainer otherColor>
-                    <TagText href={"/all-product/" + "author/" + card.author.urlSlug}>{card.author.fullName}</TagText>
+                    <FontAwesomeIcon icon={faSynagogue} />
+                    <TagText href={"/all-product/" + "author/" + card.urlSlug}>
+                      {card.note}
+                    </TagText>
                   </TagContainer>
                 </InfoTagContainer>
 
                 <TitleReviewContainer>
-                  <Title>{card.title}</Title>
-                  <RatingsInfo>
-                    <Rating>{card.starNumber}</Rating>
-                    <StarIcon />
-                  </RatingsInfo>
+                  <Title>{card.name}</Title>
                 </TitleReviewContainer>
-                {/* <SecondaryInfoContainer>
-                  <IconWithText>
-                    <IconContainer>
-                      <LocationIcon />
-                    </IconContainer>
-                    <Text>{card.category.name}</Text>
-                  </IconWithText>
-                  <IconWithText>
-                    <IconContainer>
-                      <PriceIcon />
-                    </IconContainer>
-                    <Text>{card.price}</Text>
-                  </IconWithText>
-                </SecondaryInfoContainer> */}
-                <Description>{card.shortDescription}</Description>
-                
-                <PriceContainer>
-                  Giá bán:
-                  <PriceText>{" "}{toVND(card.price)}</PriceText>
-                </PriceContainer>
+                <Description>{card.description}</Description>
+
+                <AddressContainer>
+                  <InfoImage>
+                    <FontAwesomeIcon icon={faLocationDot} />
+                  </InfoImage>
+                    <AddressText>{card.address}</AddressText>
+                </AddressContainer>
               </TextInfo>
-              <a href={`/product-detail/${card.urlSlug}`}>
-                <PrimaryButton>Mua ngay</PrimaryButton>
+              <a href={`/product-detail/${card.urlslug}`}>
+                <PrimaryButton>Xem chi tiết</PrimaryButton>
               </a>
             </Card>
           ))}

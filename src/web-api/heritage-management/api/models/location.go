@@ -1,7 +1,10 @@
 package models
 
 type Location struct {
-	ID      int    `json:"id" gorm:"column:id;"`
-	Name    string `json:"name" gorm:"column:name;"`
-	UrlSlug string `json:"urlslug" gorm:"column:urlslug;"`
+	ID               int    `json:"id" gorm:"column:id;"`
+	Name             string `json:"name" gorm:"column:name;"`
+	UrlSlug          string `json:"urlslug" gorm:"column:urlslug;"`
+	ImageUrl         string `json:"image_url" gorm:"column:image_url;"`
+	Description      string `json:"description" gorm:"column:description;"`
+	ShortDescription string `json:"short_description" gorm:"column:short_description;"`
 }
