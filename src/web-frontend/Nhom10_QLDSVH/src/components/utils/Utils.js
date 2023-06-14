@@ -83,5 +83,12 @@ export const handleSplitString = (str) => {
     const trimmedString = str.trim(); // Xóa khoảng trắng hai đầu chuỗi
     const resultArray = trimmedString.split(','); // Chia chuỗi thành mảng các phần tử
     return resultArray;
-  };
+};
+
+// export function formatNumber(number) {
+//     if (number < 10 && number !== 0) {
+//       return '0' + number;
+//     }
+//     return number.toString();
+//   }
 

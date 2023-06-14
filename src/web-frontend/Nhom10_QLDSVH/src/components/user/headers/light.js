@@ -122,7 +122,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
   useEffect(() => {
     document.title = 'Trang chủ';
 
-    getHeritageTypes().then(data => {
+    getHeritageTypes(1, 100, "name", "ASC").then(data => {
       if (data) {
         setHeritageTypeList(data.data);
       }
@@ -132,7 +132,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
       //console.log(data)
     })
 
-    getLocations().then(data => {
+    getLocations(1, 100, "name", "ASC").then(data => {
       if (data) {
         setLocationList(data.data);
       }
@@ -141,7 +141,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
       }
     })
 
-    getManagementUnits().then(data => {
+    getManagementUnits(1, 100, "name", "ASC").then(data => {
       if (data) {
         setManagementUnitList(data.data);
       }
@@ -150,7 +150,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
       }
     })
 
-    getHeritageCategories().then(data => {
+    getHeritageCategories(1, 100, "name", "ASC").then(data => {
       if (data) {
         setHeritageCategoryList(data.data);
       }

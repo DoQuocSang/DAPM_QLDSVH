@@ -134,7 +134,7 @@ export default ({
                         <Image imageSrc={PostDefault}>
                           <CardRatingContainer>
                             <CardRating>
-                              30
+                              {location.heritage_count}
                             </CardRating>
                             <CardReview> di sản</CardReview>
                           </CardRatingContainer>
@@ -144,7 +144,7 @@ export default ({
                           <CardRatingContainer>
                             <CardRatingItem>
                             <CardRating>
-                                30
+                              {location.heritage_count}
                             </CardRating>
                             <CardReview> di sản</CardReview>
                             </CardRatingItem>

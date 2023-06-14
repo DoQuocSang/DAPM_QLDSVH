@@ -31,7 +31,7 @@ func GetPagedLocations(c *gin.Context) {
 	sortOrder := c.DefaultQuery("sortOrder", "desc")
 
 	var total int64
-	var locations []models.Location
+	var locations []models.Location_Full_Info
 
 	// Đếm tổng số lượng địa điểm
 	if err := db.GetDB().Model(&models.Location{}).Count(&total).Error; err != nil {
@@ -46,10 +46,25 @@ func GetPagedLocations(c *gin.Context) {
 		totalPages++
 	}
 
+	// // Phân trang
+	// offset := (page - 1) * limit
+	// orderClause := columnName + " " + sortOrder
+	// if err := db.GetDB().Order(orderClause).Offset(offset).Limit(limit).Find(&locations).Error; err != nil {
+	// 	utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+	// 	return
+	// }
+
 	// Phân trang
 	offset := (page - 1) * limit
 	orderClause := columnName + " " + sortOrder
-	if err := db.GetDB().Order(orderClause).Offset(offset).Limit(limit).Find(&locations).Error; err != nil {
+	if err := db.GetDB().Model(&models.Location{}).
+		Select("locations.*, COUNT(heritages.id) as heritage_count").
+		Joins("LEFT JOIN heritages ON locations.id = heritages.location_id").
+		Group("locations.id").
+		Order(orderClause).
+		Offset(offset).
+		Limit(limit).
+		Find(&locations).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}

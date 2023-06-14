@@ -18,7 +18,7 @@ func GetPagedManagementUnits(c *gin.Context) {
 	sortOrder := c.DefaultQuery("sortOrder", "desc")
 
 	var total int64
-	var ManagementUnits []models.Management_Unit
+	var ManagementUnits []models.Management_Unit_FullInfo
 
 	// Đếm tổng số lượng
 	if err := db.GetDB().Model(&models.Management_Unit{}).Count(&total).Error; err != nil {
@@ -33,10 +33,25 @@ func GetPagedManagementUnits(c *gin.Context) {
 		totalPages++
 	}
 
+	// // Phân trang
+	// offset := (page - 1) * limit
+	// orderClause := columnName + " " + sortOrder
+	// if err := db.GetDB().Order(orderClause).Offset(offset).Limit(limit).Find(&ManagementUnits).Error; err != nil {
+	// 	utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+	// 	return
+	// }
+
 	// Phân trang
 	offset := (page - 1) * limit
 	orderClause := columnName + " " + sortOrder
-	if err := db.GetDB().Order(orderClause).Offset(offset).Limit(limit).Find(&ManagementUnits).Error; err != nil {
+	if err := db.GetDB().Model(&models.Management_Unit{}).
+		Select("management_units.*, COUNT(heritages.id) as heritage_count").
+		Joins("LEFT JOIN heritages ON management_units.id = heritages.management_unit_id").
+		Group("management_units.id").
+		Order(orderClause).
+		Offset(offset).
+		Limit(limit).
+		Find(&ManagementUnits).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}

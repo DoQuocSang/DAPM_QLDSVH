@@ -114,7 +114,7 @@ export default ({
                   <CardRatingContainer>
                     <CardRatingItem>
                       <CardRating>
-                        30
+                        {item.heritage_count}
                       </CardRating>
                       <CardReview> di sản</CardReview>
                     </CardRatingItem>
