@@ -158,6 +158,8 @@ func GetPagedHeritageByTypeSlug(c *gin.Context) {
 	typeSlug := c.Param("urlSlug")
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	columnName := c.DefaultQuery("columnName", "id")
+	sortOrder := c.DefaultQuery("sortOrder", "desc")
 
 	// Lấy thông tin của thể loại dựa trên URL slug
 	var heritage_type models.Heritage_Type
@@ -173,16 +175,17 @@ func GetPagedHeritageByTypeSlug(c *gin.Context) {
 		return
 	}
 
-	// Tính toán số trang và offset
+	// Tính toán số trang, offset và loại sắp xếp
 	totalPages := int(total) / limit
 	if int(total)%limit != 0 {
 		totalPages++
 	}
 	offset := (page - 1) * limit
+	orderClause := columnName + " " + sortOrder
 
 	// Truy vấn di sản văn hóa dựa trên ID của địa điểm và phân trang
 	var heritage []models.Heritage
-	if err := db.GetDB().Where("heritage_type_id = ?", heritage_type.ID).Offset(offset).Limit(limit).Find(&heritage).Error; err != nil {
+	if err := db.GetDB().Order(orderClause).Where("heritage_type_id = ?", heritage_type.ID).Offset(offset).Limit(limit).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("ManagementUnit").Find(&heritage).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage")
 		return
 	}
@@ -203,4 +206,18 @@ func GetPagedHeritageByTypeSlug(c *gin.Context) {
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, pagination)
+}
+
+// GetLocationBySlug trả về thông tin của một địa điểm dựa trên slug
+func GetHeritageTypeBySlug(c *gin.Context) {
+	slug := c.Param("urlSlug")
+
+	var heritageType models.Heritage_Type
+
+	if err := db.GetDB().Where("urlslug = ?", slug).First(&heritageType).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Heritage Type not found")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, heritageType)
 }

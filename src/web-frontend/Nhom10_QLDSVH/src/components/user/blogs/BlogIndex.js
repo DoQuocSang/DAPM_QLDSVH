@@ -129,7 +129,7 @@ export default ({
                 <>
                   {index % 7 === 0 ? featured = true : featured = false}
                   <PostContainer key={index} featured={featured}>
-                    <Post className="group" as="a" href={`/blog-detail/${location.urlslug}`}>
+                    <Post className="group" as="a" href={"/all-heritage/"+ "by-location/" + location.urlslug}>
                       {isEmptyOrSpaces(location.image_url) ? (
                         <Image imageSrc={PostDefault}>
                           <CardRatingContainer>
@@ -159,7 +159,7 @@ export default ({
                       )}
                       <Info>
                         <Category>Địa điểm</Category>
-                        <a href={`/blog-detail/${location.url_Slug}`}>
+                        <a href={"/all-heritage/"+ "by-location/" + location.urlslug}>
                           <Title>{location.name}</Title>
                         </a>
                         {featured === true ?

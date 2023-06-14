@@ -15,8 +15,9 @@ type Heritage struct {
 	Management_Unit_ID   int               `json:"management_unit_id" gorm:"column:management_unit_id;"`
 	Heritage_Type_ID     int               `json:"heritage_type_id" gorm:"column:heritage_type_id;"`
 	Heritage_Category_ID int               `json:"heritage_category_id" gorm:"column:heritage_category_id;"`
+	View_Count           int               `json:"view_count" gorm:"column:view_count;"`
 	HeritageCategory     Heritage_Category `json:"heritage_category" gorm:"foreignKey:heritage_category_id"`
 	HeritageType         Heritage_Type     `json:"heritage_type" gorm:"foreignKey:heritage_type_id"`
 	Location             Location          `json:"location" gorm:"foreignKey:location_id"`
-	Management_Unit      Management_Unit   `json:"management_unit" gorm:"foreignKey:management_unit_id"`
+	ManagementUnit       Management_Unit   `json:"management_unit" gorm:"foreignKey:management_unit_id"`
 }

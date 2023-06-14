@@ -12,22 +12,27 @@ import { ReactComponent as SvgDecoratorBlob1 } from "images/svg-decorator-blob-5
 import { ReactComponent as SvgDecoratorBlob2 } from "images/svg-decorator-blob-7.svg";
 import CatDefault from "images/cat-404-full-2.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDownAZ, faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDownAZ, faCube, faDollarSign, faEye } from "@fortawesome/free-solid-svg-icons";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import { getBooks } from "../../../services/BookRepository";
-import { getRandomBooks } from "../../../services/BookRepository";
 import { isEmptyOrSpaces } from "../../utils/Utils";
 import { toVND } from "../../utils/Utils";
-import { getBookByAuthorSlug } from "../../../services/BookRepository";
-import { getBookByCategorySlug } from "../../../services/BookRepository";
-import { getAuthorBySlug } from "../../../services/AuthorRepository";
-import { getCategoryBySlug } from "../../../services/CategoryRepository";
-import { getBookRelatedBySlug } from "../../../services/BookRepository";
 import { icon } from "@fortawesome/fontawesome-svg-core";
+import { getHeritages } from "../../../services/HeritageRepository";
+import { handleGetFirstString } from "../../utils/Utils";
+import { toThousandFormat } from "../../utils/Utils";
+import { getHeritagesByLocationSlug } from "../../../services/LocationRepository";
+import { getLocationBySlug } from "../../../services/LocationRepository";
+import { scrollToTop } from "../../utils/Utils";
+import { getHeritagesByManagementUnitSlug } from "../../../services/ManagementUnitRepository";
+import { getManagementUnitBySlug } from "../../../services/ManagementUnitRepository";
+import { getHeritagesByTypeSlug } from "../../../services/HeritageTypeRepository.js";
+import { getHeritageTypeBySlug } from "../../../services/HeritageTypeRepository.js";
+import { getHeritagesByCategorySlug } from "../../../services/HeritageCategoryRepository.js";
+import { getHeritageCategoryBySlug } from "../../../services/HeritageCategoryRepository.js";
 
 const HeaderRow = tw.div`flex justify-between items-center flex-col xl:flex-row`;
-const Header = tw.h2`text-4xl sm:text-4xl font-black tracking-wide text-left`
+const Header = tw.h2`text-3xl font-black tracking-wide text-left`
 const TabsControl = tw.div`flex flex-wrap bg-gray-200 px-2 py-2 rounded leading-none mt-12 xl:mt-0`;
 
 const TabControl = styled.div`
@@ -41,14 +46,14 @@ const TabControl = styled.div`
 
 const TabContent = tw(motion.div)`mt-6 flex flex-wrap sm:-mr-10 md:-mr-6 lg:-mr-12`;
 const CardContainer = tw.div`mt-10 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 sm:pr-10 md:pr-6 lg:pr-12`;
-const Card = tw(motion.a)`bg-gray-200 rounded-b block max-w-xs mx-auto sm:max-w-none sm:mx-0 shadow-md`;
+const Card = tw(motion.a)`bg-gray-200 rounded-b block max-w-xs mx-auto sm:max-w-none sm:mx-0 shadow-md h-full`;
 const CardImageContainer = styled.div`
   ${props => css`background-image: url("${props.imageSrc}");`}
   ${tw`h-56 xl:h-64 bg-center bg-cover relative rounded-t`}
 `;
 const CardRatingContainer = tw.div`leading-none absolute inline-flex bg-gray-100 bottom-0 left-0 ml-4 mb-4 rounded-full px-5 py-2 items-end`;
 const CardRating = styled.div`
-  ${tw`mr-1 text-sm font-bold flex items-end`}
+  ${tw`mr-1 text-sm font-bold flex items-center`}
   svg {
     ${tw`w-4 h-4 fill-current text-orange-400 mr-1`}
   }
@@ -63,7 +68,7 @@ const CardButton = tw(PrimaryButtonBase)`text-sm`;
 const CardReview = tw.div`font-medium text-xs text-gray-600`;
 
 const CardText = tw.div`p-4 text-gray-900`;
-const CardTitle = tw.h5`text-lg font-semibold group-hover:text-primary-500 line-clamp-2`;
+const CardTitle = tw.h5`text-lg text-gray-800 font-semibold group-hover:text-primary-500 line-clamp-2`;
 const CardContent = tw.p`mt-1 text-sm font-medium text-gray-600 line-clamp-3`;
 const CardPrice = tw.p`mt-4 text-lg font-bold text-red-500`;
 
@@ -74,9 +79,18 @@ const DecoratorBlob2 = styled(SvgDecoratorBlob2)`
   ${tw`pointer-events-none -z-20 absolute left-0 bottom-0 h-80 w-80 opacity-15 transform -translate-x-2/3 text-primary-500`}
 `;
 
+const SubCardHeading = styled.div`
+  ${tw`mr-1 text-xs font-semibold flex items-center mb-2 text-gray-700`}
+  svg {
+    ${tw`w-4 h-4 fill-current text-orange-400 mr-1`}
+  }
+`;
+
 const BlogImage = tw.img`w-full h-auto rounded-lg pt-4`;
 
 export default ({hasTab = true, isProductPage = false}) => {
+
+  scrollToTop();
 
   let { slug } = useParams();
   let { type } = useParams();
@@ -89,102 +103,129 @@ export default ({hasTab = true, isProductPage = false}) => {
     type = "";
   }
 
-  const [booksList, setBooksList] = useState([]);
-  const [headingText, setheadingText] = useState("Danh mục sản phẩm");
-  const [metadata, setMetadata] = useState([]);
+  const [heritageList, setHeritageList] = useState([]);
+  const [headingText, setheadingText] = useState("Danh sách di sản");
 
   useEffect(() => {
     document.title = 'Trang chủ';
 
     if (isEmptyOrSpaces(slug)) {
-      getBooks().then(data => {
+      getHeritages(1, 100, "name", "ASC").then(data => {
         if (data) {
-          setBooksList(data.items);
-          setMetadata(data.metadata);
+          setHeritageList(data.data);
         }
         else
-          setBooksList([]);
+          setHeritageList([]);
         //console.log(data.items)
       })
     }
     else {
-      if(type === "author"){
-        getAuthorBySlug(slug).then(data => {
+      if(type === "by-location"){
+        getLocationBySlug(slug).then(data => {
           if (data) {
-            setheadingText("Sản phẩm của " + data.fullName);
+            setheadingText("Các di sản tại " + data.name);
+          }
+          else
+            setheadingText("Danh sách di sản");
+          // console.log(data.items)
+        })
+
+        getHeritagesByLocationSlug(slug, 1, 100, "name", "ASC").then(data => {
+          if (data) {
+            setHeritageList(data.data);
           }
           else{
-              setheadingText("Danh mục sản phẩm");
+           
+            setHeritageList([]);
           }
           //console.log(data.fullName)
         })
+      }
 
-        getBookByAuthorSlug(slug).then(data => {
+      if(type === "by-management-unit"){
+        getManagementUnitBySlug(slug).then(data => {
           if (data) {
-            setBooksList(data.items);
+            setheadingText("Các di sản thuộc " + data.name);
           }
           else
-            setBooksList([]);
+            setheadingText("Danh sách di sản");
           // console.log(data.items)
         })
+
+        getHeritagesByManagementUnitSlug(slug, 1, 100, "name", "ASC").then(data => {
+          if (data) {
+            setHeritageList(data.data);
+          }
+          else{
+           
+            setHeritageList([]);
+          }
+          //console.log(data.fullName)
+        })
       }
 
-      if(type === "category"){
-        getCategoryBySlug(slug).then(data => {
+      if(type === "by-heritage-category"){
+        getHeritageCategoryBySlug(slug).then(data => {
           if (data) {
-            setheadingText("Sản phẩm thuộc loại " + data.name);
+            setheadingText("Các di sản thuộc loại hình " + data.name);
           }
           else
-            setheadingText("Danh mục sản phẩm");
-          //console.log(data.name)
-        })
-
-        getBookByCategorySlug(slug).then(data => {
-          if (data) {
-            setBooksList(data.items);
-          }
-          else
-            setBooksList([]);
+            setheadingText("Danh sách di sản");
           // console.log(data.items)
         })
-      }
 
-      if(isProductPage === true){
-        getBookRelatedBySlug(slug).then(data => {
+        getHeritagesByCategorySlug(slug, 1, 100, "name", "ASC").then(data => {
           if (data) {
-            setheadingText("Các sản phẩm liên quan");
-            setBooksList(data.items);
+            setHeritageList(data.data);
           }
-          else
-          {
-            setheadingText("Danh mục sản phẩm");
-            setBooksList([]);
+          else{
+           
+            setHeritageList([]);
           }
-          console.log(data.items)
+          //console.log(data.fullName)
         })
       }
 
+      if(type === "by-heritage-type"){
+        getHeritageTypeBySlug(slug).then(data => {
+          if (data) {
+            setheadingText("Các di sản thuộc loại " + data.name);
+          }
+          else
+            setheadingText("Danh sách di sản");
+          // console.log(data.items)
+        })
+
+        getHeritagesByTypeSlug(slug, 1, 100, "name", "ASC").then(data => {
+          if (data) {
+            setHeritageList(data.data);
+          }
+          else{
+           
+            setHeritageList([]);
+          }
+          //console.log(data.fullName)
+        })
+      }
   }
   }, []);
 
   // const onLoadMoreClick = () => {
   //   getRandomBooks(8).then(data => {
   //     if (data) {
-  //       setBooksList(data.items);
+  //       setHeritageList(data.items);
   //       setMetadata(data.metadata);
   //     }
   //     else
-  //       setBooksList([]);
+  //       setHeritageList([]);
   //     //console.log(data.items)
   //   })
-  //   return booksList;
+  //   return heritageList;
   // };
 
   let tabs = {
-    "A-Z" : ["Title", "ASC"],
-    "Z-A": ["Title", "DESC"],
-    "Giá tăng": ["Price", "ASC"],
-    "Giá giảm": ["Price", "DESC"]
+    "A-Z" : ["name", "ASC"],
+    "Z-A": ["name", "DESC"],
   }
 
   const tabsKeys = Object.keys(tabs);
@@ -199,43 +240,72 @@ export default ({hasTab = true, isProductPage = false}) => {
             {headingText}
           </Header>
 
-          {booksList.length > 0 ? (
+          {heritageList.length > 0 ? (
             <TabsControl>
               {hasTab && Object.keys(tabs).map((tabName, index) => (
                 <TabControl key={index} active={activeTab === tabName} onClick={() => {{ setActiveTab(tabName); 
                   if (isEmptyOrSpaces(slug)) {
-                    getBooks(tabs[tabName][0], tabs[tabName][1]).then(data => {
+                    getHeritages(1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
                       if (data) {
-                        setBooksList(data.items);
+                        setHeritageList(data.data);
                       }
                       else
                       {
-                        setBooksList([]);
+                        setHeritageList([]);
                       }
-                      //console.log(booksList);
+                      //console.log(heritageList);
                     })}
-  
                   }
                   
-                  if(type === "author"){
-                    getBookByAuthorSlug(slug, tabs[tabName][0], tabs[tabName][1]).then(data => {
+                  if(type === "by-management-unit"){
+                    getHeritagesByManagementUnitSlug(slug, 1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
                       if (data) {
-                        setBooksList(data.items);
+                        setHeritageList(data.data);
                       }
-                      else
-                        setBooksList([]);
-                      // console.log(data.items)
+                      else{
+                       
+                        setHeritageList([]);
+                      }
+                      //console.log(data.fullName)
                     })
                   }
             
-                  if(type === "category"){
-                    getBookByCategorySlug(slug, tabs[tabName][0], tabs[tabName][1]).then(data => {
+                  if(type === "by-location"){
+                    getHeritagesByLocationSlug(slug, 1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
                       if (data) {
-                        setBooksList(data.items);
+                        setHeritageList(data.data);
                       }
-                      else
-                        setBooksList([]);
-                      // console.log(data.items)
+                      else{
+                       
+                        setHeritageList([]);
+                      }
+                      //console.log(data.data)
+                    })
+                  }
+
+                  if(type === "by-heritage-category"){
+                    getHeritagesByCategorySlug(slug, 1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
+                      if (data) {
+                        setHeritageList(data.data);
+                      }
+                      else{
+                       
+                        setHeritageList([]);
+                      }
+                      //console.log(data.fullName)
+                    })
+                  }
+            
+                  if(type === "by-heritage-type"){
+                    getHeritagesByTypeSlug(slug, 1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
+                      if (data) {
+                        setHeritageList(data.data);
+                      }
+                      else{
+                       
+                        setHeritageList([]);
+                      }
+                      //console.log(data.fullName)
                     })
                   }
                 }}>
@@ -247,7 +317,7 @@ export default ({hasTab = true, isProductPage = false}) => {
             : ("")}
         </HeaderRow>
 
-        {booksList.length === 0 ? <BlogImage src={CatDefault} /> : ""}
+        {heritageList.length === 0 ? <BlogImage src={CatDefault} /> : ""}
 
         {tabsKeys.map((tabKey, index) => (
           <TabContent
@@ -268,16 +338,16 @@ export default ({hasTab = true, isProductPage = false}) => {
             initial={activeTab === tabKey ? "current" : "hidden"}
             animate={activeTab === tabKey ? "current" : "hidden"}
           >
-            {booksList.map((card, index) => (  
+            {heritageList.map((card, index) => (  
               <CardContainer key={index}>
-                <Card className="group" href={"/product-detail/" + card.urlSlug} initial="rest" whileHover="hover" animate="rest">
-                  <CardImageContainer imageSrc={card.imageUrl}>
+                <Card className="group" href={"/product-detail/" + card.urlslug} initial="rest" whileHover="hover" animate="rest">
+                  <CardImageContainer imageSrc={handleGetFirstString(card.image_url)}>
                     <CardRatingContainer>
                       <CardRating>
-                        <StarIcon />
-                        {card.starNumber}
+                        <FontAwesomeIcon icon={faCube} className="pr-1"/>
+                        {card.heritage_category.name}
                       </CardRating>
-                      <CardReview>({card.reviewNumber})</CardReview>
+                      {/* <CardReview>({card.name})</CardReview> */}
                     </CardRatingContainer>
                     <CardHoverOverlay
                       variants={{
@@ -292,17 +362,21 @@ export default ({hasTab = true, isProductPage = false}) => {
                       }}
                       transition={{ duration: 0.3 }}
                     >
-                      <a href={`/product-detail/${card.urlSlug}`}>
-                        <CardButton>Mua ngay</CardButton>
+                      <a href={`/product-detail/${card.urlslug}`}>
+                        <CardButton>Xem chi tiết</CardButton>
                       </a>
                     </CardHoverOverlay>
                   </CardImageContainer>
                   <CardText>
-                    <CardTitle>{card.title}</CardTitle>
-                    <CardContent>{card.shortDescription}</CardContent>
-                    <CardPrice>
-                      {toVND(card.price)}
-                    </CardPrice>
+                    <SubCardHeading> 
+                      <FontAwesomeIcon icon={faEye} className="pr-1 text-teal-500"/>
+                        {toThousandFormat(card.view_count)} lượt xem
+                    </SubCardHeading>
+                    <CardTitle>{card.name}</CardTitle>
+                    <CardContent>{card.short_description}</CardContent>
+                    {/* <CardPrice>
+                      {card.time}
+                    </CardPrice> */}
                   </CardText>
                 </Card> 
               </CardContainer>
@@ -315,95 +389,4 @@ export default ({hasTab = true, isProductPage = false}) => {
     </Container>
   );
 };
-
-// const getRandomCards = () => {
-//   const cards = [
-//     {
-//       imageSrc: Book1,
-//       title: "Veg Mixer",
-//       content: "To customize the tabs, pass in data using the `tabs` prop. It should be an object which contains the name of the tab",
-//       price: "120.000VND",
-//       rating: "5.0",
-//       reviews: "87",
-//       url: "#"
-//     },
-//     {
-//       imageSrc: Book2,
-//       title: "Macaroni",
-//       content: "To customize the tabs, pass in data using the `tabs` prop. It should be an object which contains the name of the tab",
-//       price: "120.000VND",
-//       rating: "4.8",
-//       reviews: "32",
-//       url: "#"
-//     },
-//     {
-//       imageSrc: Book3,
-//       title: "Nelli",
-//       content: "To customize the tabs, pass in data using the `tabs` prop. It should be an object which contains the name of the tab",
-//       price: "120.000VND",
-//       rating: "4.9",
-//       reviews: "89",
-//       url: "#"
-//     },
-//     {
-//       imageSrc: Book1,
-//       title: "Jalapeno Poppers",
-//       content: "To customize the tabs, pass in data using the `tabs` prop. It should be an object which contains the name of the tab",
-//       price: "120.000VND",
-//       rating: "4.6",
-//       reviews: "12",
-//       url: "#"
-//     },
-//     {
-//       imageSrc: Book2,
-//       title: "Cajun Chicken",
-//       content: "To customize the tabs, pass in data using the `tabs` prop. It should be an object which contains the name of the tab",
-//       price: "120.000VND",
-//       rating: "4.2",
-//       reviews: "19",
-//       url: "#"
-//     },
-//     {
-//       imageSrc: Book3,
-//       title: "Chillie Cake",
-//       content: "To customize the tabs, pass in data using the `tabs` prop. It should be an object which contains the name of the tab",
-//       price: "120.000VND",
-//       rating: "5.0",
-//       reviews: "61",
-//       url: "#"
-//     },
-//     {
-//       imageSrc: Book3,
-//       title: "Guacamole Mex",
-//       content: "To customize the tabs, pass in data using the `tabs` prop. It should be an object which contains the name of the tab",
-//       price: "120.000VND",
-//       rating: "4.2",
-//       reviews: "95",
-//       url: "#"
-//     },
-//     {
-//       imageSrc: Book3,
-//       title: "Carnet Nachos",
-//       content: "To customize the tabs, pass in data using the `tabs` prop. It should be an object which contains the name of the tab",
-//       price: "120.000VND",
-//       rating: "3.9",
-//       reviews: "26",
-//       url: "#"
-//     }
-//   ];
-
-//   // Shuffle array
-//   return cards.sort(() => Math.random() - 0.5);
-// };
-
-// const getRandomCards = ({booksList}) => {
-//   let arr = [];
-//   getBooks().then(data => {
-//     if (data) {
-//       arr = data.items;
-//     }
-//     //console.log(arr);
-//   })
-//   return arr;
-// };
 

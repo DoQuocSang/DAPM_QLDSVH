@@ -158,6 +158,8 @@ func GetPagedHeritageByCategorySlug(c *gin.Context) {
 	categorySlug := c.Param("urlSlug")
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	columnName := c.DefaultQuery("columnName", "id")
+	sortOrder := c.DefaultQuery("sortOrder", "desc")
 
 	// Lấy thông tin của thể loại dựa trên URL slug
 	var heritage_category models.Heritage_Category
@@ -169,7 +171,7 @@ func GetPagedHeritageByCategorySlug(c *gin.Context) {
 	// Tìm tổng số lượng di sản văn hóa dựa trên ID của thể loại
 	var total int64
 	if err := db.GetDB().Model(&models.Heritage{}).Where("heritage_category_id = ?", heritage_category.ID).Count(&total).Error; err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage category")
 		return
 	}
 
@@ -179,17 +181,18 @@ func GetPagedHeritageByCategorySlug(c *gin.Context) {
 		totalPages++
 	}
 	offset := (page - 1) * limit
+	orderClause := columnName + " " + sortOrder
 
 	// Truy vấn di sản văn hóa dựa trên ID của địa điểm và phân trang
 	var heritage []models.Heritage
-	if err := db.GetDB().Where("heritage_type_id = ?", heritage_category.ID).Offset(offset).Limit(limit).Find(&heritage).Error; err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage")
+	if err := db.GetDB().Order(orderClause).Where("heritage_category_id = ?", heritage_category.ID).Offset(offset).Limit(limit).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("ManagementUnit").Find(&heritage).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage category")
 		return
 	}
 
 	// Kiểm tra dữ liệu trả về rỗng
 	if len(heritage) == 0 {
-		utils.ErrorResponse(c, http.StatusNotFound, "No heritage available")
+		utils.ErrorResponse(c, http.StatusNotFound, "No heritage category available")
 		return
 	}
 
@@ -203,4 +206,18 @@ func GetPagedHeritageByCategorySlug(c *gin.Context) {
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, pagination)
+}
+
+// GetHeritageCategoryBySlug trả về thông tin của một loại hình di sản dựa trên slug
+func GetHeritageCategoryBySlug(c *gin.Context) {
+	slug := c.Param("urlSlug")
+
+	var heritageCategory models.Heritage_Category
+
+	if err := db.GetDB().Where("urlslug = ?", slug).First(&heritageCategory).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Heritage category not found")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, heritageCategory)
 }

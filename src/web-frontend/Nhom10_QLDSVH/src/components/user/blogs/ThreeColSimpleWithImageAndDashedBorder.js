@@ -70,6 +70,8 @@ const CardRating = styled.div`
 `;
 const CardReview = tw.div`font-medium text-xs text-white`;
 
+const CustomLink = tw.a`hover:text-primary-500 transition duration-300`;
+
 export default ({
   subheading = "",
   heading = <>Danh sách<span tw="text-primary-500"> đơn vị quản lý di sản</span></>,
@@ -125,7 +127,9 @@ export default ({
                     <FontAwesomeIcon icon={faSynagogue} />
                     <TagText>{item.note}</TagText>
                   </TagContainer>
-                  <Title>{item.name}</Title>
+                  <CustomLink href={"/all-heritage/"+ "by-management-unit/" + item.urlslug}>
+                    <Title>{item.name}</Title>
+                  </CustomLink>
                   <Description>{item.short_description}</Description>
                   <AddressContainer>
                     <InfoImage>
@@ -133,7 +137,7 @@ export default ({
                     </InfoImage>
                     <AddressText>{item.address}</AddressText>
                   </AddressContainer>
-                  <Link href={item.urlslug}>Xem chi tiết</Link>
+                  <Link href={"/all-heritage/"+ "by-management-unit/" + item.urlslug}>Xem chi tiết</Link>
                 </Details>
               </Card>
             </Column>

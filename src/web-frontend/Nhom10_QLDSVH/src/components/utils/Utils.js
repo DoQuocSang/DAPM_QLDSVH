@@ -85,6 +85,14 @@ export const handleSplitString = (str) => {
     return resultArray;
 };
 
+// Chặt chuỗi và trả về chuỗi đầu tiên
+export const handleGetFirstString = (str) => {
+    const trimmedString = str.trim(); // Xóa khoảng trắng hai đầu chuỗi
+    const resultArray = trimmedString.split(','); // Chia chuỗi thành mảng các phần tử
+    return resultArray[0]; // Trả về phần tử đầu tiên của mảng
+};
+  
+
 // export function formatNumber(number) {
 //     if (number < 10 && number !== 0) {
 //       return '0' + number;
@@ -92,3 +100,22 @@ export const handleSplitString = (str) => {
 //     return number.toString();
 //   }
 
+// Định dạng số 1.000.000
+export const toThousandFormat = (str) => {
+    return str.toLocaleString('en'); 
+};
+
+// Làm mượt hoạt ảnh cuộn lên đầu trang
+export const scrollToTop = () => {
+    // Điều chỉnh tốc độ
+    const scrollStep = window.scrollY / (1000 / 5);
+  
+    const scrollAnimation = () => {
+      if (window.scrollY !== 0) {
+        window.scrollBy(0, -scrollStep);
+        requestAnimationFrame(scrollAnimation);
+      }
+    };
+  
+    requestAnimationFrame(scrollAnimation);
+};

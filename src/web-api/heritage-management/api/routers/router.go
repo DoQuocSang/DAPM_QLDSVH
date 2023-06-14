@@ -34,6 +34,7 @@ func SetupRouter() *gin.Engine {
 			heritage_type.PUT("/:id", controllers.UpdateHeritageType)
 			heritage_type.DELETE("/:id", controllers.DeleteHeritageType)
 			heritage_type.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByTypeSlug)
+			heritage_type.GET("/slug/:urlSlug", controllers.GetHeritageTypeBySlug)
 			heritage_type.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByTypeSlug)
 		}
 		management_unit := v1.Group("/management-unit")
@@ -44,6 +45,7 @@ func SetupRouter() *gin.Engine {
 			management_unit.PUT("/:id", controllers.UpdateManagementUnit)
 			management_unit.DELETE("/:id", controllers.DeleteManagementUnit)
 			management_unit.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByUnitSlug)
+			management_unit.GET("/slug/:urlSlug", controllers.GetManagementUnitBySlug)
 			management_unit.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByUnitSlug)
 		}
 		location := v1.Group("/location")
@@ -54,6 +56,7 @@ func SetupRouter() *gin.Engine {
 			location.PUT("/:id", controllers.UpdateLocation)
 			location.DELETE("/:id", controllers.DeleteLocation)
 			location.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByLocationSlug)
+			location.GET("/slug/:urlSlug", controllers.GetLocationBySlug)
 			location.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByLocationSlug)
 		}
 		user := v1.Group("/user")
@@ -72,6 +75,7 @@ func SetupRouter() *gin.Engine {
 			heritage_category.PUT("/:id", controllers.UpdateHeritageCategory)
 			heritage_category.DELETE("/:id", controllers.DeleteHeritageCategory)
 			heritage_category.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByCategorySlug)
+			heritage_category.GET("/slug/:urlSlug", controllers.GetHeritageCategoryBySlug)
 			heritage_category.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByCategorySlug)
 		}
 	}

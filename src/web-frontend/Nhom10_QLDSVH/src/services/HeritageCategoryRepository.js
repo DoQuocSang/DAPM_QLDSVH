@@ -11,6 +11,13 @@ export function getHeritageCategoryById(
     // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
 }
 
+export function getHeritageCategoryBySlug(
+    slug = "",
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/heritage-category/slug/${slug}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
+
 export function getHeritageCategories(
     page = 1,
     limit = 30,
@@ -38,4 +45,14 @@ export function patchHeritageCategory(
     formData
     ) {
     return put_api(`http://localhost:8080/api/v1/heritage-category/${id}`, formData);
+}
+
+export function getHeritagesByCategorySlug(
+    slug = "",
+    page = 1,
+    limit = 30,
+    columnName = "id",
+    sortOrder = "DESC"
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/heritage-category/slug/${slug}/heritages/paged?page=${page}&limit=${limit}&columnName=${columnName}&sortOrder=${sortOrder}`)
 }

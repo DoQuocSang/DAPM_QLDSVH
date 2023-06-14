@@ -27,6 +27,7 @@ import { getLocations } from "../../../services/LocationRepository.js";
 import { getManagementUnits } from "../../../services/ManagementUnitRepository.js";
 import { getHeritageTypes } from "../../../services/HeritageTypeRepository.js";
 import { getHeritageCategories } from "../../../services/HeritageCategoryRepository.js";
+
 // import { getAuthors } from "../../../services/AuthorRepository.js";
 // import { getCategories } from "../../../services/CategoryRepository.js";
 
@@ -163,7 +164,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
   const defaultLinks = [
     <NavLinks key={1}>
       <NavLink className="group" css={tw`cursor-pointer`}>
-        <a href="/all-product">
+        <a href="/all-heritage">
           <FontAwesomeIcon icon={faListUl} css={tw`mr-2 text-base`} />
           Danh mục
         </a>
@@ -176,7 +177,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
             {heritageTypeList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
             <MenuContainer flexCol>
               {heritageTypeList.map((item, i) => (
-                <MenuItem isNormal href={"/all-product/" + "heritage-type/" + item.urlslug}>
+                <MenuItem isNormal href={"/all-heritage/"+ "by-heritage-type/" + item.urlslug}>
                   {item.name}
                 </MenuItem>
               ))}
@@ -192,7 +193,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
               {heritageCategoryList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
               <MenuContainer >
                 {heritageCategoryList.slice(0, visible).map((item, i) => (
-                  <MenuItem isNormal href={"/all-product/" + "management-unit/" + item.urlslug}>
+                  <MenuItem isNormal href={"/all-heritage/"+ "by-heritage-category/" + item.urlslug}>
                     {item.name}
                   </MenuItem>
                 ))}
@@ -222,7 +223,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
               {locationList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
               <MenuContainer >
                 {locationList.slice(0, visible).map((item, i) => (
-                  <MenuItem isNormal href={"/all-product/" + "management-unit/" + item.urlslug}>
+                  <MenuItem isNormal href={"/all-heritage/"+ "by-location/" + item.urlslug}>
                     {item.name}
                   </MenuItem>
                 ))}
@@ -252,7 +253,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
               {managementUnitList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
               <MenuContainer >
                 {managementUnitList.slice(0, visible).map((item, i) => (
-                  <MenuItem isNormal href={"/all-product/" + "management-unit/" + item.urlslug}>
+                  <MenuItem isNormal href={"/all-heritage/"+ "by-management-unit/" + item.urlslug}>
                     {item.name}
                   </MenuItem>
                 ))}

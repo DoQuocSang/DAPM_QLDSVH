@@ -177,6 +177,8 @@ func GetPagedHeritageByUnitSlug(c *gin.Context) {
 	unitSlug := c.Param("urlSlug")
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	columnName := c.DefaultQuery("columnName", "id")
+	sortOrder := c.DefaultQuery("sortOrder", "desc")
 
 	// Lấy thông tin của địa điểm dựa trên URL slug
 	var unit models.Management_Unit
@@ -192,16 +194,17 @@ func GetPagedHeritageByUnitSlug(c *gin.Context) {
 		return
 	}
 
-	// Tính toán số trang và offset
+	// Tính toán số trang, offset và loại sắp xếp
 	totalPages := int(total) / limit
 	if int(total)%limit != 0 {
 		totalPages++
 	}
 	offset := (page - 1) * limit
+	orderClause := columnName + " " + sortOrder
 
 	// Truy vấn di sản văn hóa dựa trên ID của đơn vị và phân trang
 	var heritage []models.Heritage
-	if err := db.GetDB().Where("management_unit_id = ?", unit.ID).Offset(offset).Limit(limit).Find(&heritage).Error; err != nil {
+	if err := db.GetDB().Order(orderClause).Where("management_unit_id = ?", unit.ID).Offset(offset).Limit(limit).Find(&heritage).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage")
 		return
 	}
@@ -222,4 +225,18 @@ func GetPagedHeritageByUnitSlug(c *gin.Context) {
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, pagination)
+}
+
+// GetManagementUnitBySlug trả về thông tin của một đơn vị quản lý dựa trên slug
+func GetManagementUnitBySlug(c *gin.Context) {
+	slug := c.Param("urlSlug")
+
+	var managementUnit models.Management_Unit
+
+	if err := db.GetDB().Where("urlslug = ?", slug).First(&managementUnit).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Management Unit not found")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, managementUnit)
 }
