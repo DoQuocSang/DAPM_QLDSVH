@@ -217,23 +217,44 @@ func SearchUnit(c *gin.Context) {
 		return
 	}
 
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	columnName := c.DefaultQuery("columnName", "id")
+	sortOrder := c.DefaultQuery("sortOrder", "desc")
+
 	query := db.GetDB().Model(&models.Management_Unit{})
 
-	if hq.Management_Unit_Name != "" {
-		query = query.Where("name LIKE ?", "%"+hq.Management_Unit_Name+"%")
+	if hq.Key != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Key+"%")
 	}
 
-	var units []models.Management_Unit
-	if err := query.Find(&units).Error; err != nil {
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}
 
-	// Kiểm tra dữ liệu trả về rỗng
-	if len(units) == 0 {
-		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+
+	offset := (page - 1) * limit
+	orderClause := columnName + " " + sortOrder
+
+	var units []models.Management_Unit
+	if err := query.Order(orderClause).Offset(offset).Limit(limit).Find(&units).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, units)
+	pagination := utils.Pagination{
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
+		Data:       units,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, pagination)
 }

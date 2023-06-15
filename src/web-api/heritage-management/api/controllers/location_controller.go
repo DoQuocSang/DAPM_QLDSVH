@@ -225,23 +225,44 @@ func SearchLocation(c *gin.Context) {
 		return
 	}
 
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	columnName := c.DefaultQuery("columnName", "id")
+	sortOrder := c.DefaultQuery("sortOrder", "desc")
+
 	query := db.GetDB().Model(&models.Location{})
 
-	if hq.Location_Name != "" {
-		query = query.Where("name LIKE ?", "%"+hq.Location_Name+"%")
+	if hq.Key != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Key+"%")
 	}
 
-	var locations []models.Location
-	if err := query.Find(&locations).Error; err != nil {
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}
 
-	// Kiểm tra dữ liệu trả về rỗng
-	if len(locations) == 0 {
-		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+
+	offset := (page - 1) * limit
+	orderClause := columnName + " " + sortOrder
+
+	var locations []models.Location
+	if err := query.Order(orderClause).Offset(offset).Limit(limit).Find(&locations).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, locations)
+	pagination := utils.Pagination{
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
+		Data:       locations,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, pagination)
 }

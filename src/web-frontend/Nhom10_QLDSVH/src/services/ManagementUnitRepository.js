@@ -47,7 +47,7 @@ export function getManagementUnitsByQuerySearch(
     page = 1,
     limit = 30
     ) {    
-    return get_api(`http://localhost:3000/api/v1/management-unit/search?page=${page}&limit=${limit}&key=${key}&column=${column}`)
+    return get_api(`http://localhost:8080/api/v1/management-unit/search?Key=${key}&page=${page}&limit=${limit}&column=${column}`)
 }
 
 

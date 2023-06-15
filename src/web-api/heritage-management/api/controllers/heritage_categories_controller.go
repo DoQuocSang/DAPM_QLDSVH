@@ -213,23 +213,44 @@ func SearchCategory(c *gin.Context) {
 		return
 	}
 
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	columnName := c.DefaultQuery("columnName", "id")
+	sortOrder := c.DefaultQuery("sortOrder", "desc")
+
 	query := db.GetDB().Model(&models.Heritage_Category{})
 
-	if hq.Heritage_Category_Name != "" {
-		query = query.Where("name LIKE ?", "%"+hq.Heritage_Category_Name+"%")
+	if hq.Key != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Key+"%")
 	}
 
-	var categories []models.Heritage_Category
-	if err := query.Find(&categories).Error; err != nil {
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}
 
-	// Kiểm tra dữ liệu trả về rỗng
-	if len(categories) == 0 {
-		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+
+	offset := (page - 1) * limit
+	orderClause := columnName + " " + sortOrder
+
+	var categories []models.Heritage_Category
+	if err := query.Order(orderClause).Offset(offset).Limit(limit).Find(&categories).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, categories)
+	pagination := utils.Pagination{
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
+		Data:       categories,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, pagination)
 }

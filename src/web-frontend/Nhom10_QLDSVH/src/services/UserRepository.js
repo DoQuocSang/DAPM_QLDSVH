@@ -41,6 +41,15 @@ export function putUser(
     return put_api(`http://localhost:8080/api/v1/user/${id}`, formData);
 }
 
+export function getUsersByQuerySearch(
+    key = "",
+    column = "name",
+    page = 1,
+    limit = 30
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/user/search?Key=${key}&page=${page}&limit=${limit}&column=${column}`)
+}
+
 
 
 

@@ -47,7 +47,7 @@ export function getLocationsByQuerySearch(
     page = 1,
     limit = 30
     ) {    
-    return get_api(`http://localhost:3000/api/v1/location/search?page=${page}&limit=${limit}&key=${key}&column=${column}`)
+    return get_api(`http://localhost:8080/api/v1/location/search?Key=${key}&page=${page}&limit=${limit}&column=${column}`)
 }
 
 

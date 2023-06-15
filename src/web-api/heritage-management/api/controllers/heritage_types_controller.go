@@ -213,23 +213,44 @@ func SearchType(c *gin.Context) {
 		return
 	}
 
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	columnName := c.DefaultQuery("columnName", "id")
+	sortOrder := c.DefaultQuery("sortOrder", "desc")
+
 	query := db.GetDB().Model(&models.Heritage_Type{})
 
-	if hq.Heritage_Type_Name != "" {
-		query = query.Where("name LIKE ?", "%"+hq.Heritage_Type_Name+"%")
+	if hq.Key != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Key+"%")
 	}
 
-	var types []models.Heritage_Type
-	if err := query.Find(&types).Error; err != nil {
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}
 
-	// Kiểm tra dữ liệu trả về rỗng
-	if len(types) == 0 {
-		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+
+	offset := (page - 1) * limit
+	orderClause := columnName + " " + sortOrder
+
+	var types []models.Heritage_Type
+	if err := query.Order(orderClause).Offset(offset).Limit(limit).Find(&types).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, types)
+	pagination := utils.Pagination{
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
+		Data:       types,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, pagination)
 }

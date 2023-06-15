@@ -66,7 +66,9 @@ export default () => {
                            name="key" 
                            id="topbar-search" 
                            onChange={e => handleSearch(e.target.value)}
-                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-full focus:ring-cyan-600 focus:border-cyan-600 block w-full pl-10 p-2.5 transition duration-500 ease-in-out border-transparent focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-1 ring-purple-400" placeholder="Tìm kiếm" />
+                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-full focus:ring-cyan-600 focus:border-cyan-600 block w-full pl-10 p-2.5 transition duration-500 ease-in-out border-transparent focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-1 ring-purple-400" 
+                           style={{ color: 'white' }}
+                           placeholder="Tìm kiếm" />
                      </div>
                   </form>
 
