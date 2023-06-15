@@ -3,8 +3,7 @@ import { useLocation } from "react-router-dom";
 import Moment from 'moment';
 import tw from "twin.macro";
 import { remove } from 'diacritics';
-
-
+import PostDefault from "images/post-default.png";
 
 export function isEmptyOrSpaces(str) {
     return str == null || (typeof str === 'string' && str.match(/^ *$/) !== null);
@@ -119,3 +118,11 @@ export const scrollToTop = () => {
   
     requestAnimationFrame(scrollAnimation);
 };
+
+export const checkImageUrl = (value) => {
+  if(isEmptyOrSpaces(value)){
+    return PostDefault;
+  }else {
+    return value;
+  }
+}

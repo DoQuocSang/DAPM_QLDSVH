@@ -95,7 +95,7 @@ export default ({
     setVisible(v => v + 7);
   };
   const onShortenClick = () => {
-    setVisible(v => v - 7);
+    setVisible(7);
   };
 
   let featured = false;
@@ -180,6 +180,7 @@ export default ({
             )
               :
               (
+                locationList.length > 7 &&
                 <ButtonContainer>
                   <ShortenButton onClick={onShortenClick}>Ẩn bớt</ShortenButton>
                 </ButtonContainer>

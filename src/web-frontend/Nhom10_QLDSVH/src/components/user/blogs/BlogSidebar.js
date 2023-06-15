@@ -5,14 +5,8 @@ import { motion } from "framer-motion";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { SectionHeading } from "components/user/misc/Headings.js";
 import { Container, ContentWithPaddingXl } from "components/user/misc/Layouts.js";
-import { getFeaturedPosts } from "../../../services/PostRepository";
-import { getRandomPosts } from "../../../services/PostRepository";
 import PostDefault from "images/post-default.png";
 import { useParams } from 'react-router-dom';
-import { getPostBySlug } from "../../../services/PostRepository";
-import { getCategories } from "../../../services/CategoryRepository";
-import { getTags } from "../../../services/TagRepository";
-import { getAuthors } from "../../../services/AuthorRepository";
 import { isEmptyOrSpaces } from "../../utils/Utils";
 
 
@@ -70,43 +64,43 @@ export default ({ isDetailPage = false }) => {
 
 
     useEffect(() => {
-        getCategories().then(data => {
-            if (data) {
-                setCategoriesList(data.items);
-            }
-            else
-                setCategoriesList([]);
-            //console.log(data)
-        })
+        // getCategories().then(data => {
+        //     if (data) {
+        //         setCategoriesList(data.items);
+        //     }
+        //     else
+        //         setCategoriesList([]);
+        //     //console.log(data)
+        // })
 
-        getAuthors().then(data => {
-            if (data) {
-                setAuthorsList(data.items);
-            }
-            else
-                setAuthorsList([]);
-            //console.log(data)
-        })
+        // getAuthors().then(data => {
+        //     if (data) {
+        //         setAuthorsList(data.items);
+        //     }
+        //     else
+        //         setAuthorsList([]);
+        //     //console.log(data)
+        // })
 
-        getTags().then(data => {
-            if (data) {
-                setTagsList(data.items);
-            }
-            else
-                setTagsList([]);
-            //console.log(data)
-        })
+        // getTags().then(data => {
+        //     if (data) {
+        //         setTagsList(data.items);
+        //     }
+        //     else
+        //         setTagsList([]);
+        //     //console.log(data)
+        // })
 
-        if (isDetailPage === true) {
-            getRandomPosts(5).then(data => {
-                if (data) {
-                    setRandomPostList(data.items);
-                }
-                else
-                    setRandomPostList([]);
-                //console.log(data)
-            })
-        }
+        // if (isDetailPage === true) {
+        //     getRandomPosts(5).then(data => {
+        //         if (data) {
+        //             setRandomPostList(data.items);
+        //         }
+        //         else
+        //             setRandomPostList([]);
+        //         //console.log(data)
+        //     })
+        // }
 
     }, []);
 

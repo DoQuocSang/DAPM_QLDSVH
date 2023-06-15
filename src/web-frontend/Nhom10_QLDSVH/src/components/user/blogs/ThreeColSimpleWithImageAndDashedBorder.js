@@ -12,7 +12,8 @@ import { PrimaryButton } from "components/user/misc/Buttons";
 import { getManagementUnits } from "../../../services/ManagementUnitRepository";
 import { faLocationDot, faSynagogue } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import PostDefault from "images/post-default.png";
+import { checkImageUrl } from "../../utils/Utils";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
@@ -97,7 +98,7 @@ export default ({
     setVisible(v => v + 6);
   };
   const onShortenClick = () => {
-    setVisible(v => v - 6);
+    setVisible(6);
   };
 
   return (
@@ -109,10 +110,10 @@ export default ({
           <HeadingDescription>{description}</HeadingDescription>
         </HeadingInfoContainer>
         <ThreeColumn>
-          {managementUnitList.map((item, index) => (
+          {managementUnitList.slice(0, visible).map((item, index) => (
             <Column key={index}>
               <Card>
-                <Image imageSrc={item.image_url}>
+                <Image imageSrc={checkImageUrl(item.image_url)}>
                   <CardRatingContainer>
                     <CardRatingItem>
                       <CardRating>
@@ -150,7 +151,7 @@ export default ({
         )
           :
           (
-            managementUnitList.length > 6 &&
+            managementUnitList.length > 6 && 
             <ButtonContainer>
               <ShortenButton onClick={onShortenClick}>Ẩn bớt</ShortenButton>
             </ButtonContainer>

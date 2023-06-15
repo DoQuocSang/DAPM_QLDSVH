@@ -30,6 +30,9 @@ import { getHeritagesByTypeSlug } from "../../../services/HeritageTypeRepository
 import { getHeritageTypeBySlug } from "../../../services/HeritageTypeRepository.js";
 import { getHeritagesByCategorySlug } from "../../../services/HeritageCategoryRepository.js";
 import { getHeritageCategoryBySlug } from "../../../services/HeritageCategoryRepository.js";
+import MainInfoSection from "components/user/hero/BackgroundAsImageWithCenteredContent.js";
+import { checkImageUrl } from "../../utils/Utils";
+
 
 const HeaderRow = tw.div`flex justify-between items-center flex-col xl:flex-row`;
 const Header = tw.h2`text-3xl font-black tracking-wide text-left`
@@ -88,7 +91,7 @@ const SubCardHeading = styled.div`
 
 const BlogImage = tw.img`w-full h-auto rounded-lg pt-4`;
 
-export default ({hasTab = true, isProductPage = false}) => {
+export default ({ hasTab = true, isProductPage = false }) => {
 
   scrollToTop();
 
@@ -106,6 +109,13 @@ export default ({hasTab = true, isProductPage = false}) => {
   const [heritageList, setHeritageList] = useState([]);
   const [headingText, setheadingText] = useState("Danh sách di sản");
 
+  const initialState = {
+    subHeading: '',
+    heading: '',
+    description: '',
+    image_url: '',
+  }, [mainInfo, setMainInfo] = useState(initialState);
+
   useEffect(() => {
     document.title = 'Trang chủ';
 
@@ -120,35 +130,45 @@ export default ({hasTab = true, isProductPage = false}) => {
       })
     }
     else {
-      if(type === "by-location"){
+      if (type === "by-location") {
         getLocationBySlug(slug).then(data => {
           if (data) {
             setheadingText("Các di sản tại " + data.name);
+            setMainInfo({
+              ...data,
+            });
           }
-          else
+          else{
             setheadingText("Danh sách di sản");
-          // console.log(data.items)
+            setMainInfo(initialState);
+          }
+          //console.log(data.items)
         })
 
         getHeritagesByLocationSlug(slug, 1, 100, "name", "ASC").then(data => {
           if (data) {
             setHeritageList(data.data);
           }
-          else{
-           
+          else {
             setHeritageList([]);
           }
           //console.log(data.fullName)
         })
       }
 
-      if(type === "by-management-unit"){
+      if (type === "by-management-unit") {
         getManagementUnitBySlug(slug).then(data => {
           if (data) {
             setheadingText("Các di sản thuộc " + data.name);
+            setMainInfo({
+              ...data,
+            });
           }
-          else
+          else {
             setheadingText("Danh sách di sản");
+            setMainInfo(initialState);
+          }
+            
           // console.log(data.items)
         })
 
@@ -156,21 +176,25 @@ export default ({hasTab = true, isProductPage = false}) => {
           if (data) {
             setHeritageList(data.data);
           }
-          else{
-           
+          else {
             setHeritageList([]);
           }
           //console.log(data.fullName)
         })
       }
 
-      if(type === "by-heritage-category"){
+      if (type === "by-heritage-category") {
         getHeritageCategoryBySlug(slug).then(data => {
           if (data) {
             setheadingText("Các di sản thuộc loại hình " + data.name);
+            setMainInfo({
+              ...data,
+            });
           }
-          else
+          else {
             setheadingText("Danh sách di sản");
+            setMainInfo(initialState);
+          }
           // console.log(data.items)
         })
 
@@ -178,21 +202,26 @@ export default ({hasTab = true, isProductPage = false}) => {
           if (data) {
             setHeritageList(data.data);
           }
-          else{
-           
+          else {
+
             setHeritageList([]);
           }
           //console.log(data.fullName)
         })
       }
 
-      if(type === "by-heritage-type"){
+      if (type === "by-heritage-type") {
         getHeritageTypeBySlug(slug).then(data => {
           if (data) {
             setheadingText("Các di sản thuộc loại " + data.name);
+            setMainInfo({
+              ...data,
+            });
           }
-          else
+          else {
             setheadingText("Danh sách di sản");
+            setMainInfo(initialState);
+          }
           // console.log(data.items)
         })
 
@@ -200,14 +229,14 @@ export default ({hasTab = true, isProductPage = false}) => {
           if (data) {
             setHeritageList(data.data);
           }
-          else{
-           
+          else {
+
             setHeritageList([]);
           }
           //console.log(data.fullName)
         })
       }
-  }
+    }
   }, []);
 
   // const onLoadMoreClick = () => {
@@ -224,16 +253,18 @@ export default ({hasTab = true, isProductPage = false}) => {
   // };
 
   let tabs = {
-    "A-Z" : ["name", "ASC"],
+    "A-Z": ["name", "ASC"],
     "Z-A": ["name", "DESC"],
   }
 
   const tabsKeys = Object.keys(tabs);
   const [activeTab, setActiveTab] = useState(tabsKeys[0]);
 
+  //  console.log(mainInfo)
 
   return (
     <Container>
+      {/* <MainInfoSection /> */}
       <ContentWithPaddingXl>
         <HeaderRow>
           <Header>
@@ -243,66 +274,67 @@ export default ({hasTab = true, isProductPage = false}) => {
           {heritageList.length > 0 ? (
             <TabsControl>
               {hasTab && Object.keys(tabs).map((tabName, index) => (
-                <TabControl key={index} active={activeTab === tabName} onClick={() => {{ setActiveTab(tabName); 
-                  if (isEmptyOrSpaces(slug)) {
-                    getHeritages(1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
-                      if (data) {
-                        setHeritageList(data.data);
-                      }
-                      else
-                      {
-                        setHeritageList([]);
-                      }
-                      //console.log(heritageList);
-                    })}
+                <TabControl key={index} active={activeTab === tabName} onClick={() => {
+                  {
+                    setActiveTab(tabName);
+                    if (isEmptyOrSpaces(slug)) {
+                      getHeritages(1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
+                        if (data) {
+                          setHeritageList(data.data);
+                        }
+                        else {
+                          setHeritageList([]);
+                        }
+                        //console.log(heritageList);
+                      })
+                    }
                   }
-                  
-                  if(type === "by-management-unit"){
+
+                  if (type === "by-management-unit") {
                     getHeritagesByManagementUnitSlug(slug, 1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
                       if (data) {
                         setHeritageList(data.data);
                       }
-                      else{
-                       
+                      else {
                         setHeritageList([]);
                       }
                       //console.log(data.fullName)
                     })
                   }
-            
-                  if(type === "by-location"){
+
+                  if (type === "by-location") {
                     getHeritagesByLocationSlug(slug, 1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
                       if (data) {
                         setHeritageList(data.data);
                       }
-                      else{
-                       
+                      else {
+
                         setHeritageList([]);
                       }
                       //console.log(data.data)
                     })
                   }
 
-                  if(type === "by-heritage-category"){
+                  if (type === "by-heritage-category") {
                     getHeritagesByCategorySlug(slug, 1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
                       if (data) {
                         setHeritageList(data.data);
                       }
-                      else{
-                       
+                      else {
+
                         setHeritageList([]);
                       }
                       //console.log(data.fullName)
                     })
                   }
-            
-                  if(type === "by-heritage-type"){
+
+                  if (type === "by-heritage-type") {
                     getHeritagesByTypeSlug(slug, 1, 100, tabs[tabName][0], tabs[tabName][1]).then(data => {
                       if (data) {
                         setHeritageList(data.data);
                       }
-                      else{
-                       
+                      else {
+
                         setHeritageList([]);
                       }
                       //console.log(data.fullName)
@@ -338,13 +370,13 @@ export default ({hasTab = true, isProductPage = false}) => {
             initial={activeTab === tabKey ? "current" : "hidden"}
             animate={activeTab === tabKey ? "current" : "hidden"}
           >
-            {heritageList.map((card, index) => (  
+            {heritageList.map((card, index) => (
               <CardContainer key={index}>
-                <Card className="group" href={"/product-detail/" + card.urlslug} initial="rest" whileHover="hover" animate="rest">
-                  <CardImageContainer imageSrc={handleGetFirstString(card.image_url)}>
+                <Card className="group" href={"/heritage-detail/" + card.urlslug} initial="rest" whileHover="hover" animate="rest">
+                  <CardImageContainer imageSrc={handleGetFirstString(checkImageUrl(card.image_url))}>
                     <CardRatingContainer>
                       <CardRating>
-                        <FontAwesomeIcon icon={faCube} className="pr-1"/>
+                        <FontAwesomeIcon icon={faCube} className="pr-1" />
                         {card.heritage_category.name}
                       </CardRating>
                       {/* <CardReview>({card.name})</CardReview> */}
@@ -362,15 +394,15 @@ export default ({hasTab = true, isProductPage = false}) => {
                       }}
                       transition={{ duration: 0.3 }}
                     >
-                      <a href={`/product-detail/${card.urlslug}`}>
+                      <a href={`/heritage-detail/${card.urlslug}`}>
                         <CardButton>Xem chi tiết</CardButton>
                       </a>
                     </CardHoverOverlay>
                   </CardImageContainer>
                   <CardText>
-                    <SubCardHeading> 
-                      <FontAwesomeIcon icon={faEye} className="pr-1 text-teal-500"/>
-                        {toThousandFormat(card.view_count)} lượt xem
+                    <SubCardHeading>
+                      <FontAwesomeIcon icon={faEye} className="pr-1 text-teal-500" />
+                      {toThousandFormat(card.view_count)} lượt xem
                     </SubCardHeading>
                     <CardTitle>{card.name}</CardTitle>
                     <CardContent>{card.short_description}</CardContent>
@@ -378,7 +410,7 @@ export default ({hasTab = true, isProductPage = false}) => {
                       {card.time}
                     </CardPrice> */}
                   </CardText>
-                </Card> 
+                </Card>
               </CardContainer>
             ))}
           </TabContent>

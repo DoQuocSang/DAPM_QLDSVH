@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faBriefcase, faCube, faLocation, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { getHeritages } from "../../../services/HeritageRepository.js";
 import { handleSplitString } from "../../utils/Utils.js";
+import { checkImageUrl } from "../../utils/Utils";
 
 
 const Container = tw.div`relative`;
@@ -131,7 +132,7 @@ export default ({
           <Testimonials>
             <Testimonial>
               <TestimonialImageSlider arrows={false} ref={setImageSliderRef} fade={true}>
-                {handleSplitString(heritage.image_url).map((item, index) => (
+                {handleSplitString(checkImageUrl(heritage.image_url)).map((item, index) => (
                   <ImageAndControlContainer key={index}>
                     <Image imageSrc={item} />
                     <ControlContainer>

@@ -8,13 +8,9 @@ import styled from "styled-components";
 import { SectionHeading } from "components/user/misc/Headings";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck, faTag, faUserPen } from "@fortawesome/free-solid-svg-icons";
-import { getPostBySlug } from "../../services/PostRepository";
 import PostDefault from "images/post-default.png";
 import PostDefaultFull from "images/post-default-full.png";
-import { getRandomPosts } from "../../services/PostRepository";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
-import { getCategories } from "../../services/CategoryRepository";
-import { getTags } from "../../services/TagRepository";
 import BlogSidebar from "../../components/user/blogs/BlogSidebar";
 import { formatDateTme } from "../../components/utils/Utils";
 import { isEmptyOrSpaces } from "../../components/utils/Utils";
@@ -79,25 +75,25 @@ export default () => {
   useEffect(() => {
     document.title = 'Thông tin sản phẩm';
 
-    getPostBySlug(slug).then(data => {
-      if (data) {
-        setPostsList(data.items);
-        setMetadata(data.metadata);
-      }
-      else
-        setPostsList([]);
-      console.log(data.items[0])
-    })
+    // getPostBySlug(slug).then(data => {
+    //   if (data) {
+    //     setPostsList(data.items);
+    //     setMetadata(data.metadata);
+    //   }
+    //   else
+    //     setPostsList([]);
+    //   console.log(data.items[0])
+    // })
 
-    getTags().then(data => {
-      if (data) {
-        setTagsList(data.items);
-        setMetadata(data.metadata);
-      }
-      else
-        setTagsList([]);
-      //console.log(data)
-    })
+    // getTags().then(data => {
+    //   if (data) {
+    //     setTagsList(data.items);
+    //     setMetadata(data.metadata);
+    //   }
+    //   else
+    //     setTagsList([]);
+    //   //console.log(data)
+    // })
 
   }, []);
 

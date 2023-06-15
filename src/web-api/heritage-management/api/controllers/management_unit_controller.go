@@ -204,7 +204,7 @@ func GetPagedHeritageByUnitSlug(c *gin.Context) {
 
 	// Truy vấn di sản văn hóa dựa trên ID của đơn vị và phân trang
 	var heritage []models.Heritage
-	if err := db.GetDB().Order(orderClause).Where("management_unit_id = ?", unit.ID).Offset(offset).Limit(limit).Find(&heritage).Error; err != nil {
+	if err := db.GetDB().Order(orderClause).Where("management_unit_id = ?", unit.ID).Offset(offset).Limit(limit).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("ManagementUnit").Find(&heritage).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage")
 		return
 	}

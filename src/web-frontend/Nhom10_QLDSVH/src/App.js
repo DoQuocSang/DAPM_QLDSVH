@@ -34,6 +34,7 @@ import UserSignup from "pages/user/Signup"
 import UserAllHeritage from "pages/user/AllHeritagePage"
 import Cart from "pages/user/Cart"
 import AboutUs from "pages/user/AboutUs"
+import UserHeritageDetail from "pages/user/HeritageDetail"
 
 import { Route, Routes } from "react-router-dom"
 
@@ -47,7 +48,7 @@ function App() {
           <Route path="/signup" element={<UserSignup />} />
           <Route path="/all-heritage" element={<UserAllHeritage />} />
           <Route path="/all-heritage/:type/:slug" element={<UserAllHeritage />} />
-          {/* <Route path="/product-detail/:slug" element={<AllProductPage />} /> */}
+          <Route path="/heritage-detail/:slug" element={<UserHeritageDetail />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/cart" element={<Cart />} />
           {/* <Route path="/blog" element={<BlogIndex />} />
