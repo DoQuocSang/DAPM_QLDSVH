@@ -236,18 +236,18 @@ func CreateHeritageAndParagraphs(c *gin.Context) {
 	})
 }
 
-// GetHeritageWithParagraphsByID lấy thông tin di sản và các đoạn mô tả của di sản dựa trên ID di sản
-func GetHeritageWithParagraphsByID(c *gin.Context) {
-	heritageID := c.Param("id") // Lấy giá trị ID di sản từ URL parameter
+// GetHeritageWithParagraphsBySlug lấy thông tin di sản và các đoạn mô tả của di sản dựa trên slug di sản
+func GetHeritageWithParagraphsBySlug(c *gin.Context) {
+	heritageSlug := c.Param("urlSlug")
 
 	var heritage models.Heritage
-	if err := db.GetDB().First(&heritage, heritageID).Error; err != nil {
+	if err := db.GetDB().Where("urlslug = ?", heritageSlug).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("ManagementUnit").First(&heritage).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusNotFound, "Heritage not found")
 		return
 	}
 
 	var paragraphs []models.Heritage_Paragraph
-	if err := db.GetDB().Where("heritage_id = ?", heritageID).Find(&paragraphs).Error; err != nil {
+	if err := db.GetDB().Where("heritage_id = ?", heritage.ID).Find(&paragraphs).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
 		return
 	}

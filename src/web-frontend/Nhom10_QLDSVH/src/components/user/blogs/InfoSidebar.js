@@ -53,10 +53,10 @@ const RecentPostsContainer = styled.div`
 `;
 const PostTextContainer = tw.div`mr-8`
 
-const Heading = tw(SectionHeading)`text-gray-900 mb-0 mt-3 text-3xl text-left`;
+const Heading = tw(SectionHeading)`text-gray-900 mb-0 mt-3 text-2xl text-left`;
 
 
-export default ({ isDetailPage = false }) => {
+export default () => {
     const [categoriesList, setCategoriesList] = useState([]);
     const [authorsList, setAuthorsList] = useState([]);
     const [tagsList, setTagsList] = useState([]);
@@ -106,48 +106,26 @@ export default ({ isDetailPage = false }) => {
 
     return (
         <RecentPostsContainer>
-            {
-                isDetailPage ?
-                    (
-                        <>
-                            <Heading>Các bài viết</Heading>
-                            <PostsContainer>
-                                {randomPostList.map((post, index) => (
-                                    <Post key={index} href={`/blog-detail/${post.urlSlug}`} className="group">
-                                        <PostTextContainer>
-                                            <Title>{post.title}</Title>
-                                            <Description moreShort>{post.shortDescription}</Description>
-                                        </PostTextContainer>
+            <Heading>Các di sản liên quan</Heading>
+            <PostsContainer>
+                {randomPostList.map((post, index) => (
+                    <Post key={index} href={`/blog-detail/${post.urlSlug}`} className="group">
+                        <PostTextContainer>
+                            <Title>{post.title}</Title>
+                            <Description moreShort>{post.shortDescription}</Description>
+                        </PostTextContainer>
 
-                                        {isEmptyOrSpaces(post.imageUrl) ? (
-                                            <Image $imageSrc={PostDefault} />
+                        {isEmptyOrSpaces(post.imageUrl) ? (
+                            <Image $imageSrc={PostDefault} />
 
-                                        ) : (
-                                            <Image $imageSrc={post.imageUrl} />
-                                        )}
-                                    </Post>
-                                ))}
-                            </PostsContainer>
-                        </>
-                    )
-                    :
-                    (
-                        <>
-                            <Heading>Các thẻ</Heading>
-                            <PostsContainer>
-                                {tagsList.map((tag, index) => (
-                                    <Category key={index} href={`/blog/${"tag/"}${tag.urlSlug}`} className="group">
-                                        <PostTextContainer>
-                                            <CategoryTitle>{`${tag.name} (${tag.postCount})`}</CategoryTitle>
-                                        </PostTextContainer>
-                                    </Category>
-                                ))}
-                            </PostsContainer>
-                        </>
-                    )
-            }
+                        ) : (
+                            <Image $imageSrc={post.imageUrl} />
+                        )}
+                    </Post>
+                ))}
+            </PostsContainer>
 
-            <Heading>Các chủ đề</Heading>
+            {/* <Heading>Các chủ đề</Heading>
             <PostsContainer>
                 {categoriesList.map((category, index) => (
                     <Category key={index} href={`/blog/${"category/"}${category.urlSlug}`} className="group">
@@ -167,7 +145,7 @@ export default ({ isDetailPage = false }) => {
                         </PostTextContainer>
                     </Category>
                 ))}
-            </PostsContainer>
+            </PostsContainer> */}
         </RecentPostsContainer>
     );
 };
