@@ -19,12 +19,24 @@ func SetupRouter() *gin.Engine {
 	{
 		heritage := v1.Group("/heritage")
 		{
-			heritage.GET("", controllers.GetPagedHeritages)
+			heritage.GET("", controllers.GetPagedHeritagesWithImages)
 			heritage.GET("/:id", controllers.GetHeritageByID)
 			heritage.POST("", controllers.CreateHeritage)
 			heritage.PUT("/:id", controllers.UpdateHeritage)
 			heritage.DELETE("/:id", controllers.DeleteHeritage)
 			heritage.GET("/random", controllers.GetRandomHeritages)
+			heritage.GET(":id/paragraphs", controllers.GetHeritageParagraphsByHeritageID)
+			heritage.GET(":id/images", controllers.GetAllImagesByHeritageID)
+			heritage.POST("/full-info", controllers.CreateHeritageAndParagraphs)
+			heritage.GET("/:id/full-info", controllers.GetHeritageWithParagraphsByID)
+		}
+		heritage_paragraph := v1.Group("/heritage-paragraph")
+		{
+			heritage_paragraph.GET("", controllers.GetAllHeritageParagraphs)
+			heritage_paragraph.GET("/:id", controllers.GetHeritageParagraphByID)
+			heritage_paragraph.POST("", controllers.CreateHeritageParagraph)
+			heritage_paragraph.PUT("/:id", controllers.UpdateHeritageParagraph)
+			heritage_paragraph.DELETE("/:id", controllers.DeleteHeritageParagraph)
 		}
 		heritage_type := v1.Group("/heritage-type")
 		{

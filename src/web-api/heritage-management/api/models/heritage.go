@@ -4,11 +4,8 @@ package models
 type Heritage struct {
 	ID                   int               `json:"id" gorm:"column:id;"`
 	Name                 string            `json:"name" gorm:"column:name;"`
-	Description          string            `json:"description" gorm:"column:description;"`
 	Short_Description    string            `json:"short_description" gorm:"column:short_description;"`
 	Times                string            `json:"time" gorm:"column:time;"`
-	ImageURL             string            `json:"image_url" gorm:"column:image_url;"`
-	VideoURL             string            `json:"video_url" gorm:"column:video_url;"`
 	Image_360_URL        string            `json:"image_360_url" gorm:"column:image_360_url;"`
 	UrlSlug              string            `json:"urlslug" gorm:"column:urlslug;"`
 	Location_ID          int               `json:"location_id" gorm:"column:location_id;"`
@@ -20,4 +17,5 @@ type Heritage struct {
 	HeritageType         Heritage_Type     `json:"heritage_type" gorm:"foreignKey:heritage_type_id"`
 	Location             Location          `json:"location" gorm:"foreignKey:location_id"`
 	ManagementUnit       Management_Unit   `json:"management_unit" gorm:"foreignKey:management_unit_id"`
+	Images               []string          `json:"images" gorm:"-"`
 }
