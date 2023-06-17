@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faBriefcase, faCube, faLocation, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { getHeritages } from "../../../services/HeritageRepository.js";
 import { handleSplitString } from "../../utils/Utils.js";
-import { checkImageUrl } from "../../utils/Utils";
+import { checkImageArray } from "../../utils/Utils";
 
 
 const Container = tw.div`relative`;
@@ -132,7 +132,7 @@ export default ({
           <Testimonials>
             <Testimonial>
               <TestimonialImageSlider arrows={false} ref={setImageSliderRef} fade={true}>
-                {handleSplitString(checkImageUrl(heritage.image_url)).map((item, index) => (
+                {checkImageArray(heritage.images).map((item, index) => (
                   <ImageAndControlContainer key={index}>
                     <Image imageSrc={item} />
                     <ControlContainer>
@@ -194,7 +194,7 @@ export default ({
                       </div>
                     </GridItem>
                   </GridContainer>
-                  <PrimaryButtonContent buttonRounded={buttonRounded} as="a" href="#">
+                  <PrimaryButtonContent buttonRounded={buttonRounded} as="a" href={"/heritage-detail/" + heritage.urlslug}>
                     Tìm hiểu thêm
                   </PrimaryButtonContent>
                 </TextContent>
@@ -207,7 +207,6 @@ export default ({
       <DecoratorBlob2 />
     </Container>
     }
-      
     </>
   );
 };

@@ -8,7 +8,7 @@ import styled from "styled-components";
 import { css } from "styled-components/macro";
 import { SectionHeading } from "components/user/misc/Headings";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faCalendarCheck, faCaretDown, faCaretUp, faTag, faUserPen } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faCalendarCheck, faCaretDown, faCaretUp, faClapperboard, faFaceFrownOpen, faFaceLaughBeam, faFaceMeh, faImage, faTag, faUserPen } from "@fortawesome/free-solid-svg-icons";
 import PostDefault from "images/post-default.png";
 import PostDefaultFull from "images/post-default-full.png";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +19,12 @@ import { FormatParagraph } from "../../components/utils/Utils";
 import { getHeritageWithDetailBySlug } from "../../services/HeritageRepository";
 import { DescriptionWithImage } from "../../components/utils/Utils";
 import { PrimaryButton } from "components/user/misc/Buttons";
+import ThreeColSlider from "components/user/cards/ThreeColSlider.js";
+import { increaseViewCount } from "../../services/HeritageRepository";
+import { ReactComponent as FacebookIcon } from "images/facebook-icon.svg";
+import { ReactComponent as TwitterIcon } from "images/twitter-icon.svg";
+import { ReactComponent as YoutubeIcon } from "images/youtube-icon.svg";
+import { FacebookShareButton } from "react-share";
 
 const HeadingRow = tw.div`flex`;
 const BlogImage = tw.img`w-full h-auto rounded-lg my-4 shadow-lg`;
@@ -60,9 +66,9 @@ const Text = styled.div`
   }
 `;
 
-const Row = tw.div`flex flex-col lg:flex-row mx-20 max-w-screen-xl mx-auto`;
+const Row = tw.div`flex flex-col lg:flex-row mx-20 max-w-screen-xl mx-auto my-5`;
 
-const PopularPostsContainer = tw.div`lg:w-2/3 mr-16 my-5`;
+const PopularPostsContainer = tw.div`lg:w-2/3 mr-16`;
 const PostsContainer = tw.div`mt-5 `;
 
 const SubHeading = tw.p`cursor-pointer font-semibold text-base text-teal-600`;
@@ -90,7 +96,7 @@ const DescriptionContainer = styled.div`
   }
 `;
 
-const TableOfContentContainer = tw.div`mx-0 my-5 bg-gray-100 flex flex-col px-4 py-3 rounded-lg shadow`;
+const TableOfContentContainer = tw.div`mx-20 my-5 bg-gray-100 flex flex-col px-4 py-3 rounded-lg shadow`;
 const TableOfContentHeadeing = tw.div`leading-normal text-base text-red-400 font-semibold text-lg text-center`;
 const TableOfContent = styled.div`
   ${tw`text-sm text-gray-800 font-semibold`}
@@ -108,6 +114,43 @@ const TableOfContent = styled.div`
 const ButtonContainer = tw.div`flex justify-center`;
 const LoadMoreButton = tw.div`my-3 text-teal-400 mx-auto text-sm hover:text-primary-500 transition duration-300 cursor-pointer`;
 const ShortenButton = tw.div`my-3 text-red-400 mx-auto text-sm hover:text-primary-500 transition duration-300 cursor-pointer`;
+
+const ShareContainer = tw.div`flex mt-10 items-center`;
+const ShareText = tw.div`text-gray-800 font-semibold mr-3`;
+const SocialText = tw.div`font-semibold text-xs pl-1`;
+const SocialLinksContainer = tw.div`flex`;
+const SocialLink = styled.p`
+  ${tw`flex items-center cursor-pointer px-3 py-2 rounded-full bg-gray-700 text-gray-100 hover:bg-gray-900 transition duration-300 mr-4`}
+  svg {
+    ${tw`w-4 h-4`}
+  }
+`;
+
+const VideoContainer = tw.div`mt-8 mb-10 flex items-center justify-center`;
+const Video = tw.div`shadow-lg rounded`;
+
+const CustomHeadingContainer = tw.div`mt-10 mb-5`
+const CustomHeading = styled.p(({ color1, color2 }) => [
+  tw`px-4 py-3 rounded-tl-3xl rounded-br-3xl rounded-bl-sm rounded-tr-sm inline text-white text-base font-semibold`,
+  color1 && tw`bg-teal-500`,
+  color2 && tw`bg-primary-500`,
+])
+
+const ContactContainer = tw.div`w-full my-10 py-5 flex items-center justify-center bg-gray-100 rounded-lg shadow-lg`
+const ContactItem = styled.div(({ flexCol, normal }) => [
+  tw`flex mx-4`,
+  flexCol && tw`flex-col items-start`,
+  normal && tw`items-center`,
+])
+const ContactSubTex = tw.div`font-semibold text-primary-500 text-sm`
+const ContactText = tw.div`font-semibold text-gray-800 text-base`
+const ContactButton = styled.div(({ color1, color2, color3 }) => [
+  tw`flex flex-col items-center mx-4 text-4xl transition duration-300 cursor-pointer`,
+  color1 && tw`text-teal-500 hover:text-teal-600`,
+  color2 && tw`text-yellow-500 hover:text-yellow-600`,
+  color3 && tw`text-red-500 hover:text-red-600`,
+])
+const ContactButtonText = tw.div`font-semibold text-gray-800 text-sm mt-3`
 
 export default () => {
 
@@ -175,7 +218,7 @@ export default () => {
       ...defaultHeritage,
     },
     paragraphs: defaultParagraphs
-  }, [heritageData, setHeritageData] = useState(initialState)
+  }, [heritageData, setHeritageData] = useState(initialState);
 
   useEffect(() => {
     document.title = 'Thông tin di sản';
@@ -186,21 +229,20 @@ export default () => {
       }
       else
         setHeritageData(initialState);
+      //console.log(data)
     })
 
-    // getTags().then(data => {
-    //   if (data) {
-    //     setTagsList(data.items);
-    //     setMetadata(data.metadata);
-    //   }
-    //   else
-    //     setTagsList([]);
-    //   //console.log(data)
-    // })
+    increaseViewCount(slug).then(data => {
+      if (data) {
+        console.log(data)
+      }
+      else
+        console.log("Lỗi")
+    })
 
   }, []);
 
-  
+
   const [visible, setVisible] = useState(3);
   const onLoadMoreClick = () => {
     setVisible(v => v + 3);
@@ -218,6 +260,42 @@ export default () => {
     }
   };
 
+
+  // Youtube player
+  const videoId = "beLEQpx-uuI"; // ID video từ URL https://youtu.be/b6Tcm2rSvLc
+
+  useEffect(() => {
+    // Tạo một player YouTube khi component được tạo
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    window.onYouTubeIframeAPIReady = () => {
+      new window.YT.Player("youtube-player", {
+        videoId: videoId,
+        playerVars: {
+          autoplay: 0, // Đặt autoplay thành 0 để tắt tự động phát
+        },
+        events: {
+          onReady: onPlayerReady,
+        },
+      });
+    };
+
+    // Callback khi player YouTube đã sẵn sàng
+    function onPlayerReady(event) {
+      event.target.pauseVideo();
+    }
+
+    return () => {
+      // Loại bỏ tham chiếu đến đối tượng YT bằng cách gán nó thành undefined
+      window.YT = undefined;
+      // Xoá các script và event khác khi component bị hủy
+      delete window.onYouTubeIframeAPIReady;
+    };
+  }, [videoId]);
+
   return (
     <AnimationRevealPage>
       <Container>
@@ -229,7 +307,6 @@ export default () => {
               <FontAwesomeIcon icon={faEye} className="mr-2" />
               {"Số lượt xem: "}{heritageData.heritage.view_count}
             </InfoItem>
-
             <TableOfContentContainer>
               <TableOfContentHeadeing>
                 <FontAwesomeIcon icon={faBars} className="mr-3" />
@@ -238,29 +315,50 @@ export default () => {
               <TableOfContent>
                 <ol type="1">
                   {heritageData.paragraphs.slice(0, visible).map((paragraph, index) => (
-                    <li>
-                      <p>{paragraph.title}</p>
+                    <li key={index}>
+                      <a href={`#paragraph-${index}`} onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById(`paragraph-${index}`).scrollIntoView({ behavior: "smooth" });
+                      }}>
+                        <p>{paragraph.title}</p>
+                      </a>
                     </li>
                   ))}
+                  <li>
+                    <a href={`#paragraph-video`} onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById(`paragraph-video`).scrollIntoView({ behavior: "smooth" });
+                    }}>
+                      <p>Video chi tiết</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href={`#paragraph-image360`} onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById(`paragraph-image360`).scrollIntoView({ behavior: "smooth" });
+                    }}>
+                      <p>Ảnh 360</p>
+                    </a>
+                  </li>
                 </ol>
                 {visible < heritageData.paragraphs.length ? (
-              <ButtonContainer>
-                <LoadMoreButton onClick={onLoadMoreClick}>
-                  <FontAwesomeIcon icon={faCaretDown} css={tw`mr-2 text-base`} />
-                  Xem thêm
-                </LoadMoreButton>
-              </ButtonContainer>
-            )
-              :
-              (
-                heritageData.paragraphs.length > 3 &&
-                <ButtonContainer>
-                  <ShortenButton onClick={onShortenClick}>
-                  <FontAwesomeIcon icon={faCaretUp} css={tw`mr-2 text-base`} />
-                    Ẩn bớt
-                  </ShortenButton>
-                </ButtonContainer>
-              )}
+                  <ButtonContainer>
+                    <LoadMoreButton onClick={onLoadMoreClick}>
+                      <FontAwesomeIcon icon={faCaretDown} css={tw`mr-2 text-base`} />
+                      Xem thêm
+                    </LoadMoreButton>
+                  </ButtonContainer>
+                )
+                  :
+                  (
+                    heritageData.paragraphs.length > 3 &&
+                    <ButtonContainer>
+                      <ShortenButton onClick={onShortenClick}>
+                        <FontAwesomeIcon icon={faCaretUp} css={tw`mr-2 text-base`} />
+                        Ẩn bớt
+                      </ShortenButton>
+                    </ButtonContainer>
+                  )}
               </TableOfContent>
             </TableOfContentContainer>
 
@@ -295,44 +393,68 @@ export default () => {
                     description={paragraph.description}
                     image_description={paragraph.image_description}
                     image_url={paragraph.image_url}
+                    index={index}
                   />
                 ))}
               </DescriptionContainer>
-
-
-              {/* Thẻ được viết bằng hàm trong file Utils */}
-
-
-              {/* <InfoContainer>
-                  <InfoItem>
-                    <FontAwesomeIcon icon={faUserPen} className="mr-2" />
-                    Tác giả:{" "}
-                    <PostCategory href={`/blog/${"author/"}${heritageData.author.urlSlug}`}>{heritageData.author.fullName}</PostCategory>
-                  </InfoItem>
-                  <InfoItem>
-                    <FontAwesomeIcon icon={faCalendarCheck} className="mr-2" />
-                    {formatDateTme(heritageData.postedDate)}
-                  </InfoItem>
-                </InfoContainer> */}
-
-              {/* <TagContainer>
-                  <HeadingSmall>
-                    Thẻ:
-                  </HeadingSmall>
-                  {tagsList.map((tag, index) => (
-                    <a href={`/blog/${"tag/"}${tag.urlSlug}`}>
-                      <TagItem key={index}>
-                        <FontAwesomeIcon icon={faTag} className="pr-2" />
-                        {tag.name}
-                      </TagItem>
-                    </a>
-                  ))}
-                </TagContainer> */}
+              <CustomHeadingContainer>
+                <CustomHeading id={`paragraph-video`} color1>
+                  <FontAwesomeIcon icon={faClapperboard} className="mr-2"/>
+                  Video chi tiết
+                </CustomHeading>
+              </CustomHeadingContainer>
+              <VideoContainer>
+                <Video id="youtube-player" />
+              </VideoContainer>
+              <CustomHeadingContainer>
+                <CustomHeading id={`paragraph-image360`} color2>
+                  <FontAwesomeIcon icon={faImage} className="mr-2"/>
+                  Ảnh 360 độ
+                </CustomHeading>
+              </CustomHeadingContainer>
+              <ContactContainer>
+                <ContactItem flexCol>
+                  <ContactSubTex>Phản hồi</ContactSubTex>
+                  <ContactText>Bạn cảm thấy mô tả trên như thế nào?</ContactText>
+                </ContactItem>
+                <ContactItem normal>
+                  <ContactButton color1>
+                    <FontAwesomeIcon icon={faFaceLaughBeam} />
+                    <ContactButtonText>Hài lòng</ContactButtonText>
+                  </ContactButton>
+                  <ContactButton color2>
+                    <FontAwesomeIcon icon={faFaceMeh} />
+                    <ContactButtonText>Tạm ổn</ContactButtonText>
+                  </ContactButton>
+                  <ContactButton color3>
+                    <FontAwesomeIcon icon={faFaceFrownOpen} />
+                    <ContactButtonText>Rất tệ</ContactButtonText>
+                  </ContactButton>
+                </ContactItem>
+              </ContactContainer>
+              <ShareContainer>
+                <ShareText>
+                  Chia sẻ:
+                </ShareText>
+                <SocialLinksContainer>
+                  <FacebookShareButton url={window.location.href}>
+                    <SocialLink>
+                      <FacebookIcon />
+                      <SocialText>Facebook</SocialText>
+                    </SocialLink>
+                  </FacebookShareButton>
+                  <SocialLink>
+                    <TwitterIcon />
+                    <SocialText>Twitter</SocialText>
+                  </SocialLink>
+                </SocialLinksContainer>
+              </ShareContainer>
             </PostsContainer>
           </PopularPostsContainer>
 
-          <InfoSidebar isDetailPage={true} />
+          <InfoSidebar heritage={heritageData.heritage} image={heritageData.paragraphs[0].image_url} />
         </Row>
+        <ThreeColSlider />
       </Container>
     </AnimationRevealPage>
   );

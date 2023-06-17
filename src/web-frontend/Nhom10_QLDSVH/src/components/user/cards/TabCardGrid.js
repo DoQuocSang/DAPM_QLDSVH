@@ -31,7 +31,7 @@ import { getHeritageTypeBySlug } from "../../../services/HeritageTypeRepository.
 import { getHeritagesByCategorySlug } from "../../../services/HeritageCategoryRepository.js";
 import { getHeritageCategoryBySlug } from "../../../services/HeritageCategoryRepository.js";
 import MainInfoSection from "components/user/hero/BackgroundAsImageWithCenteredContent.js";
-import { checkImageUrl } from "../../utils/Utils";
+import { checkImageArray } from "../../utils/Utils";
 
 
 const HeaderRow = tw.div`flex justify-between items-center flex-col xl:flex-row`;
@@ -93,7 +93,7 @@ const BlogImage = tw.img`w-full h-auto rounded-lg pt-4`;
 
 export default ({ hasTab = true, isProductPage = false }) => {
 
-  scrollToTop();
+  //scrollToTop();
 
   let { slug } = useParams();
   let { type } = useParams();
@@ -152,7 +152,7 @@ export default ({ hasTab = true, isProductPage = false }) => {
           else {
             setHeritageList([]);
           }
-          //console.log(data.fullName)
+          console.log(data.data)
         })
       }
 
@@ -373,7 +373,7 @@ export default ({ hasTab = true, isProductPage = false }) => {
             {heritageList.map((card, index) => (
               <CardContainer key={index}>
                 <Card className="group" href={"/heritage-detail/" + card.urlslug} initial="rest" whileHover="hover" animate="rest">
-                  <CardImageContainer imageSrc={handleGetFirstString(checkImageUrl(card.image_url))}>
+                  <CardImageContainer imageSrc={checkImageArray(card.images)[0]}>
                     <CardRatingContainer>
                       <CardRating>
                         <FontAwesomeIcon icon={faCube} className="pr-1" />

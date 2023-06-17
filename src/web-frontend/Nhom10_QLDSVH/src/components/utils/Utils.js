@@ -121,6 +121,12 @@ export const scrollToTop = () => {
     requestAnimationFrame(scrollAnimation);
 };
 
+export const checkImageArray = (value) => {
+    //console.log(value)
+    const arr = value.map(item => item !== '' ? item : PostDefault);
+    return arr;
+}
+
 export const checkImageUrl = (value) => {
     if (isEmptyOrSpaces(value)) {
         return PostDefault;
@@ -130,7 +136,7 @@ export const checkImageUrl = (value) => {
 }
 
 // Hiển thị ảnh theo vị trí trong thuộc tính mô tả
-export const DescriptionWithImage = ({ title, description, image_description, image_url }) => {
+export const DescriptionWithImage = ({ title, description, image_description, image_url, index }) => {
     const imageTag = '<image>';
 
     if (description && image_url && description.includes(imageTag)) {
@@ -140,7 +146,7 @@ export const DescriptionWithImage = ({ title, description, image_description, im
 
         return (
             <>
-                <h2 className="title">{title}</h2>
+                <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
                 <p className="description">{textBeforeImage}</p>
                 <div className="imageContainer">
                     <img className="imageSection"  src={image_url} alt={image_description}/>
@@ -152,7 +158,7 @@ export const DescriptionWithImage = ({ title, description, image_description, im
     }else if (description && image_url) {
         return (
           <>
-            <h2 className="title">{title}</h2>
+            <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
             <p className="description">{description}</p>
             <div className="imageContainer">
               <img className="imageSection" src={image_url} alt={image_description} />
@@ -166,7 +172,7 @@ export const DescriptionWithImage = ({ title, description, image_description, im
 
     return (
         <>
-            <h2 className="title">{title}</h2>
+            <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
             <p className="description">{description}</p>
         </>
     );

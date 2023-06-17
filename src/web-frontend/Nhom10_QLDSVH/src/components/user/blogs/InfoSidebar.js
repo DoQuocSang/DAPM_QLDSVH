@@ -8,7 +8,12 @@ import { Container, ContentWithPaddingXl } from "components/user/misc/Layouts.js
 import PostDefault from "images/post-default.png";
 import { useParams } from 'react-router-dom';
 import { isEmptyOrSpaces } from "../../utils/Utils";
-
+import { getHeritages } from "../../../services/HeritageRepository";
+import { PrimaryButton } from "components/user/misc/Buttons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
+import CatDefault from "images/cat-404-full-2.png";
+import HeritageDefault from "images/post-default.png";
 
 const Row = tw.div`flex flex-col lg:flex-row mx-20 max-w-screen-xl mx-auto`;
 
@@ -53,99 +58,190 @@ const RecentPostsContainer = styled.div`
 `;
 const PostTextContainer = tw.div`mr-8`
 
-const Heading = tw(SectionHeading)`text-gray-900 mb-0 mt-3 text-2xl text-left`;
+const Heading = tw(SectionHeading)`text-gray-800 mb-0 mt-3 text-2xl text-left font-bold`;
+const HeadingLineContainer = tw.div`flex items-center mt-2`;
+const HeadingLine = styled.div`
+    ${tw`border-b border-2 border-gray-300 basis-2/3 rounded-full`}
+    ${props =>
+        props.mainColor &&
+        css`
+        ${tw`border-primary-500 basis-1/3`}
+    `}
+`
+
+const InfoContainer = tw.div`w-full rounded-3xl my-5 inline-block overflow-hidden shadow-lg cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-100 duration-300`
+const InfoImageContainer = tw.div`relative w-full overflow-hidden bg-black h-32 rounded-t-3xl`
+const InfoImage = tw.img`object-cover w-full h-full transform duration-700 backdrop-opacity-100`
+const ImageOverlay = tw.div`absolute bg-gradient-to-t from-black w-full h-full flex items-end justify-center -inset-y-0`
+const OverlayText = tw.h1`font-bold text-2xl text-white mb-2`
+const InfoContentContainer = tw.div`bg-white`
+const InfoHeading = tw.p`text-center px-3 pt-2 mt-2 max-w-xs mx-auto`
+const InfoDescriptionContent = tw.div`flex flex-col items-center px-5 py-2`
+const InfoDescriptionGrid = tw.div`grid grid-cols-2 pb-3`
+const InfoDescriptionItem = styled.div`
+    ${tw`px-5`}
+    ${props =>
+        props.leftContent &&
+        css`
+        ${tw`text-right border-r pr-3`}
+    `}
+    ${props =>
+        props.rightContent &&
+        css`
+        ${tw`text-left pl-3`}
+    `}
+    ${props =>
+        props.centerContent &&
+        css`
+        ${tw`text-center pb-3`}
+    `}
+    h2 {
+        ${tw`font-semibold text-teal-500`}
+    }
+    span {
+        ${tw``}
+    }
+`
+
+const ButtonContainer = styled.a(({ isShowMore, isShorten, isNormal }) => [
+    tw`hover:text-primary-500 transition duration-300 flex justify-center items-center cursor-pointer`,
+    isNormal && tw`text-gray-600`,
+    isShowMore && tw`text-teal-400`,
+    isShorten && tw`text-red-500`,
+]);
+
+const BlogImage = tw.img`w-full h-auto rounded-lg pt-4`;
 
 
-export default () => {
-    const [categoriesList, setCategoriesList] = useState([]);
-    const [authorsList, setAuthorsList] = useState([]);
-    const [tagsList, setTagsList] = useState([]);
-    const [randomPostList, setRandomPostList] = useState([]);
-
+export default ({ heritage = null, image = "" }) => {
+    const [heritageList, setHeritageList] = useState([]);
 
     useEffect(() => {
-        // getCategories().then(data => {
-        //     if (data) {
-        //         setCategoriesList(data.items);
-        //     }
-        //     else
-        //         setCategoriesList([]);
-        //     //console.log(data)
-        // })
-
-        // getAuthors().then(data => {
-        //     if (data) {
-        //         setAuthorsList(data.items);
-        //     }
-        //     else
-        //         setAuthorsList([]);
-        //     //console.log(data)
-        // })
-
-        // getTags().then(data => {
-        //     if (data) {
-        //         setTagsList(data.items);
-        //     }
-        //     else
-        //         setTagsList([]);
-        //     //console.log(data)
-        // })
-
-        // if (isDetailPage === true) {
-        //     getRandomPosts(5).then(data => {
-        //         if (data) {
-        //             setRandomPostList(data.items);
-        //         }
-        //         else
-        //             setRandomPostList([]);
-        //         //console.log(data)
-        //     })
-        // }
-
+        getHeritages(1, 30, "view_count", "DESC").then(data => {
+            if (data) {
+                setHeritageList(data.data);
+            }
+            else
+                setHeritageList([]);
+            //console.log(data.items)
+        })
     }, []);
 
+    const [visible, setVisible] = useState(5);
+    const onLoadMoreClick = () => {
+        setVisible(v => v + 5);
+    };
+    const onShortenClick = () => {
+        setVisible(5);
+    };
+
+
     return (
-        <RecentPostsContainer>
-            <Heading>Các di sản liên quan</Heading>
-            <PostsContainer>
-                {randomPostList.map((post, index) => (
-                    <Post key={index} href={`/blog-detail/${post.urlSlug}`} className="group">
-                        <PostTextContainer>
-                            <Title>{post.title}</Title>
-                            <Description moreShort>{post.shortDescription}</Description>
-                        </PostTextContainer>
+        <>
+            <RecentPostsContainer>
+                {heritage !== null ?
+                    <>
+                        <Heading>Thông tin di sản</Heading>
+                        <HeadingLineContainer>
+                            <HeadingLine mainColor />
+                            <HeadingLine />
+                        </HeadingLineContainer>
+                        <InfoContainer>
+                            <InfoImageContainer className="group">
+                                {isEmptyOrSpaces(image) ?
+                                    <InfoImage src={HeritageDefault} />
+                                    :
+                                    <InfoImage src={image} />
+                                }
+                                <ImageOverlay>
+                                    <OverlayText>
+                                        {heritage.name}
+                                    </OverlayText>
+                                </ImageOverlay>
+                            </InfoImageContainer>
+                            <InfoContentContainer>
+                                <InfoHeading>Bên dưới là một số thông tin chi tiết về di sản mà bạn đang xem</InfoHeading>
+                                <InfoDescriptionContent>
+                                    <InfoDescriptionItem centerContent>
+                                        <h2>Niên đại</h2>
+                                        <span>{heritage.time}</span>
+                                    </InfoDescriptionItem>
+                                    <InfoDescriptionGrid>
+                                        <InfoDescriptionItem leftContent>
+                                            <h2>Loại di sản</h2>
+                                            <span>{heritage.heritage_type.name}</span>
+                                        </InfoDescriptionItem>
+                                        <InfoDescriptionItem rightContent>
+                                            <h2>Loại hình</h2>
+                                            <span>{heritage.heritage_category.name}</span>
+                                        </InfoDescriptionItem>
+                                    </InfoDescriptionGrid>
+                                    <InfoDescriptionGrid>
+                                        <InfoDescriptionItem leftContent>
+                                            <h2>Địa điểm</h2>
+                                            <span>{heritage.location.name}</span>
+                                        </InfoDescriptionItem>
+                                        <InfoDescriptionItem rightContent>
+                                            <h2>Đơn vị quản lí</h2>
+                                            <span>{heritage.management_unit.name}</span>
+                                        </InfoDescriptionItem>
+                                    </InfoDescriptionGrid>
+                                </InfoDescriptionContent>
+                            </InfoContentContainer>
+                        </InfoContainer>
+                    </>
+                    :
+                    <>
+                        <Heading>Thông tin di sản</Heading>
+                        <HeadingLineContainer>
+                            <HeadingLine mainColor />
+                            <HeadingLine />
+                        </HeadingLineContainer>
+                        <BlogImage src={CatDefault} />
+                    </>
+                }
 
-                        {isEmptyOrSpaces(post.imageUrl) ? (
-                            <Image $imageSrc={PostDefault} />
+                <>
+                    <Heading>Các di sản được xem nhiều</Heading>
+                    <HeadingLineContainer>
+                        <HeadingLine mainColor />
+                        <HeadingLine />
+                    </HeadingLineContainer>
+                    <PostsContainer>
+                        {heritageList.slice(0, visible).map((heritage, index) => (
+                            <a href={`${heritage.urlslug}`}>
+                                <Post key={index} className="group">
+                                    <PostTextContainer>
+                                        <Title>{heritage.name}</Title>
+                                        <Description moreShort>{heritage.short_description}</Description>
+                                    </PostTextContainer>
 
-                        ) : (
-                            <Image $imageSrc={post.imageUrl} />
+                                    {isEmptyOrSpaces(heritage.images) ? (
+                                        <Image $imageSrc={PostDefault} />
+
+                                    ) : (
+                                        <Image $imageSrc={heritage.images[0]} />
+                                    )}
+                                </Post>
+                            </a>
+                        ))}
+                    </PostsContainer>
+                    {visible < heritageList.length ? (
+                        <ButtonContainer isShowMore onClick={onLoadMoreClick}>
+                            <FontAwesomeIcon icon={faCaretDown} css={tw`mr-2 text-base`} />
+                            Xem thêm
+                        </ButtonContainer>
+                    )
+                        :
+                        (
+                            heritageList.length > 5 &&
+                            <ButtonContainer isShorten onClick={onShortenClick}>
+                                <FontAwesomeIcon icon={faCaretUp} css={tw`mr-2 text-base`} />
+                                Thu gọn
+                            </ButtonContainer>
                         )}
-                    </Post>
-                ))}
-            </PostsContainer>
-
-            {/* <Heading>Các chủ đề</Heading>
-            <PostsContainer>
-                {categoriesList.map((category, index) => (
-                    <Category key={index} href={`/blog/${"category/"}${category.urlSlug}`} className="group">
-                        <PostTextContainer>
-                            <CategoryTitle>{`${category.name} (${category.postCount})`}</CategoryTitle>
-                        </PostTextContainer>
-                    </Category>
-                ))}
-            </PostsContainer>
-
-            <Heading>Các tác giả</Heading>
-            <PostsContainer>
-                {authorsList.map((author, index) => (
-                    <Category key={index} href={`/blog/${"author/"}${author.urlSlug}`} className="group">
-                        <PostTextContainer>
-                            <CategoryTitle>{`${author.fullName} (${author.postCount})`}</CategoryTitle>
-                        </PostTextContainer>
-                    </Category>
-                ))}
-            </PostsContainer> */}
-        </RecentPostsContainer>
+                </>
+            </RecentPostsContainer>
+        </>
     );
 };

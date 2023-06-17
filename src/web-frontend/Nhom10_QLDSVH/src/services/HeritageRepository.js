@@ -18,6 +18,13 @@ export function getHeritageWithDetailBySlug(
     // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
 }
 
+export function increaseViewCount(
+    slug = '',
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/heritage/increase-view-count/${slug}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
+
 export function getHeritages(
     page = 1,
     limit = 30,
@@ -25,6 +32,18 @@ export function getHeritages(
     sortOrder = "DESC"
     ) {    
     return get_api(`http://localhost:8080/api/v1/heritage?page=${page}&limit=${limit}&columnName=${columnName}&sortOrder=${sortOrder}`)
+    // return get_api(`http://localhost:3000/v1/heritage?page=${page}&limit=${limit}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
+
+export function getRelatedHeritagesBySlug(
+    slug = '',
+    page = 1,
+    limit = 30,
+    columnName = "id",
+    sortOrder = "DESC"
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/heritage/related/${slug}?page=${page}&limit=${limit}&columnName=${columnName}&sortOrder=${sortOrder}`)
     // return get_api(`http://localhost:3000/v1/heritage?page=${page}&limit=${limit}`)
     // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
 }

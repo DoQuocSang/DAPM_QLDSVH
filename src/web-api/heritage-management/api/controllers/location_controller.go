@@ -211,16 +211,35 @@ func GetPagedHeritageByLocationSlug(c *gin.Context) {
 	orderClause := columnName + " " + sortOrder
 
 	// Truy vấn di sản văn hóa dựa trên ID của địa điểm và phân trang
-	var heritage []models.Heritage
-	if err := db.GetDB().Order(orderClause).Where("location_id = ?", location.ID).Offset(offset).Limit(limit).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("ManagementUnit").Find(&heritage).Error; err != nil {
+	var heritages []models.Heritage
+	if err := db.GetDB().Order(orderClause).Where("location_id = ?", location.ID).Offset(offset).Limit(limit).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("ManagementUnit").Find(&heritages).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage")
 		return
 	}
 
 	// Kiểm tra dữ liệu trả về rỗng
-	if len(heritage) == 0 {
+	if len(heritages) == 0 {
 		utils.ErrorResponse(c, http.StatusNotFound, "No heritage available")
 		return
+	}
+
+	// Lấy danh sách hình ảnh cho mỗi di sản
+	for i := range heritages {
+		var heritageParagraphs []models.Heritage_Paragraph
+
+		if err := db.GetDB().Where("heritage_id = ?", heritages[i].ID).Find(&heritageParagraphs).Error; err != nil {
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+			return
+		}
+
+		images := make([]string, 0)
+
+		for _, paragraph := range heritageParagraphs {
+			images = append(images, paragraph.ImageURL)
+		}
+
+		// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+		heritages[i].Images = images
 	}
 
 	// Tạo đối tượng phản hồi phân trang
@@ -229,7 +248,7 @@ func GetPagedHeritageByLocationSlug(c *gin.Context) {
 		Page:       page,
 		Limit:      limit,
 		TotalPages: totalPages,
-		Data:       heritage,
+		Data:       heritages,
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, pagination)

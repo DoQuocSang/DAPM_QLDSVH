@@ -36,7 +36,7 @@ const Header = tw.header`
   max-w-screen-xl mx-auto
 `;
 
-export const PaddingContainer = tw.div`p-2`;
+export const PaddingContainer = tw.div`py-2`;
 
 export const NavLinks = tw.div`inline-block`;
 
