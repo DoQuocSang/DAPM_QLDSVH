@@ -173,6 +173,20 @@ func GetUserByID(c *gin.Context) {
 	utils.SuccessResponse(c, http.StatusOK, user)
 }
 
+// GetUserByID trả về thông tin của một người dùng dựa trên tên đăng nhập
+func GetUserByUserName(c *gin.Context) {
+	name := c.Param("username")
+
+	var user models.User
+
+	if err := db.GetDB().Where("user_name = ?", name).First(&user).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "User not found")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, user)
+}
+
 // SearchUser trả về thông tin tài khoản theo tên
 func SearchUser(c *gin.Context) {
 	hq := models.HeritageQuery{}

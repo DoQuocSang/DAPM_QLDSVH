@@ -6,27 +6,44 @@ import { faBell, faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-
 import DefaultUserImage from "images/post-default.png"
 import LogoutModal from "../../../components/admin/modal/LogoutModal";
 import { getHeritagesByQuerySearch } from "../../../services/HeritageRepository";
+import { getUserByUserName } from "services/UserRepository";
 import { isEmptyOrSpaces } from "../../utils/Utils";
+import { useLocation } from "react-router-dom";
 
 
 export default () => {
    const [heritageList, setHeritageList] = useState([]);
-
+   const location = useLocation();
+   const queryParams = new URLSearchParams(location.search);
+   const username = queryParams.get("username");
+   const [loggedInUsername, setLoggedInUsername] = useState(localStorage.getItem('loggedInUsername') || "");
+ 
    const handleSearch = (key) => {
-      if(!isEmptyOrSpaces(key)){
-         getHeritagesByQuerySearch(key).then(data => {
-            if (data) {
-               setHeritageList(data);
-            }
-            else {
-               setHeritageList([]);
-            }
-            console.log(heritageList);
-        });
-      }else{
-         setHeritageList([]);
-      }
-   }
+     if (!isEmptyOrSpaces(key)) {
+       getHeritagesByQuerySearch(key).then((data) => {
+         if (data) {
+           setHeritageList(data);
+         } else {
+           setHeritageList([]);
+         }
+         console.log(heritageList);
+       });
+     } else {
+       setHeritageList([]);
+     }
+   };
+ 
+   useEffect(() => {
+     // Lấy thông tin người dùng từ username
+     getUserByUserName(username).then((user) => {
+       if (user) {
+         setLoggedInUsername(user.username);
+         localStorage.setItem('loggedInUsername', user.username);
+       }
+     });
+   }, [username]);
+
+    
 
    return (
      <>
@@ -83,7 +100,7 @@ export default () => {
                   <div className="hidden lg:flex items-center">
                      <img className="h-8 w-8 rounded-lg mx-3" src={DefaultUserImage} alt="Neil image" />
                      <span className="text-base font-bold text-gray-500 mr-5">
-                        Sang Đỗ
+                     {loggedInUsername}
                      </span>
                      {/* <div className="-mb-1">
                         <a className="github-button" href="#" data-color-scheme="no-preference: dark; light: light; dark: light;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star themesberg/windster-tailwind-css-dashboard on GitHub">Star</a>
