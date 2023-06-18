@@ -32,7 +32,6 @@ import NotFound404 from "pages/user/NotFound404"
 import UserLogin from "pages/user/Login"
 import UserSignup from "pages/user/Signup"
 import UserAllHeritage from "pages/user/AllHeritagePage"
-import Cart from "pages/user/Cart"
 import AboutUs from "pages/user/AboutUs"
 import UserHeritageDetail from "pages/user/HeritageDetail"
 
@@ -50,7 +49,6 @@ function App() {
           <Route path="/all-heritage/:type/:slug" element={<UserAllHeritage />} />
           <Route path="/heritage-detail/:slug" element={<UserHeritageDetail />} />
           <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/cart" element={<Cart />} />
           {/* <Route path="/blog" element={<BlogIndex />} />
           <Route path="/blog/:type/:slug" element={<BlogIndex />} />
           <Route path="/blog-detail/:slug" element={<BlogDetail />} />

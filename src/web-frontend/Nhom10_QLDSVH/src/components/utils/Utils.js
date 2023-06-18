@@ -177,3 +177,21 @@ export const DescriptionWithImage = ({ title, description, image_description, im
         </>
     );
 };
+
+// Lấy Id video youtube
+export const getVideoIdFromUrl = (url) => {
+    // Kiểm tra xem URL có đúng định dạng không
+    const regex = /^(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^\s/]+)/;
+    const match = url.match(regex);
+  
+    //match[0] là https://youtu.be/
+    //match[1] là phần Id
+    if (match && match[1]) {
+      // Trả về videoId nếu tìm thấy
+      return match[1];
+    } else {
+      // Trả về null nếu không tìm thấy videoId
+      return null;
+    }
+}
+  

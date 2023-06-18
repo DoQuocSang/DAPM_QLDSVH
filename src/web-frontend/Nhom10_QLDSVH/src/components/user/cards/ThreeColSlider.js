@@ -55,7 +55,7 @@ const CardImage = styled.div(props => [
 
 const TextInfo = tw.div`py-6 sm:px-10 sm:py-6 flex-grow`;
 const TitleReviewContainer = tw.div`flex flex-col sm:flex-row sm:justify-between sm:items-center`;
-const Title = tw.h5`text-xl font-bold line-clamp-2`;
+const Title = tw.a`text-xl font-bold line-clamp-2 transition duration-300 hover:text-primary-500`;
 
 const Description = tw.p`text-sm mt-2 sm:mt-2 line-clamp-3`;
 
@@ -78,6 +78,7 @@ const CardRating = styled.div`
   }
 `;
 const CardReview = tw.div`font-medium text-xs text-white`;
+const SubTitle = tw.p`font-semibold text-xs text-primary-500`;
 
 export default ({ HeadingText = "Các di sản liên quan" }) => {
   const [sliderRef, setSliderRef] = useState(null);
@@ -155,8 +156,9 @@ export default ({ HeadingText = "Các di sản liên quan" }) => {
                   </TagContainer>
                 </InfoTagContainer> */}
 
+                <SubTitle>Di sản liên quan</SubTitle>
                 <TitleReviewContainer>
-                  <Title>{heritage.name}</Title>
+                  <Title href={`/heritage-detail/${heritage.urlslug}`}>{heritage.name}</Title>
                 </TitleReviewContainer>
                 <Description>{heritage.short_description}</Description>
 

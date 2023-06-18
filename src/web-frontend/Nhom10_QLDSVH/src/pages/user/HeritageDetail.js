@@ -25,9 +25,11 @@ import { ReactComponent as FacebookIcon } from "images/facebook-icon.svg";
 import { ReactComponent as TwitterIcon } from "images/twitter-icon.svg";
 import { ReactComponent as YoutubeIcon } from "images/youtube-icon.svg";
 import { FacebookShareButton } from "react-share";
+import { getVideoIdFromUrl } from "../../components/utils/Utils";
+import CatDefault from "images/cat-404-full-2.png";
 
 const HeadingRow = tw.div`flex`;
-const BlogImage = tw.img`w-full h-auto rounded-lg my-4 shadow-lg`;
+const BlogImage = tw.img`w-full h-auto rounded-lg my-4`;
 // const BlogImage = styled.div(props => [
 //   `background-image: url("${props.imageSrc}"); `,
 //   tw`rounded md:w-1/2 lg:w-5/12 xl:w-1/3 flex-shrink-0 h-80 md:h-144 bg-cover bg-center mx-4 sm:mx-8 md:mx-4 lg:mx-8`
@@ -127,7 +129,7 @@ const SocialLink = styled.p`
 `;
 
 const VideoContainer = tw.div`mt-8 mb-10 flex items-center justify-center`;
-const Video = tw.div`shadow-lg rounded`;
+const VideoYT = tw.div`shadow-lg rounded`;
 
 const CustomHeadingContainer = tw.div`mt-10 mb-5`
 const CustomHeading = styled.p(({ color1, color2 }) => [
@@ -163,6 +165,7 @@ export default () => {
     time: '',
     image_360_url: '',
     urlslug: '',
+    video_url: '',
     location_id: 0,
     management_unit_id: 0,
     heritage_type_id: 0,
@@ -208,7 +211,6 @@ export default () => {
       description: '',
       image_description: '',
       image_url: '',
-      video_url: '',
       heritage_id: 0
     }
   ];
@@ -220,16 +222,18 @@ export default () => {
     paragraphs: defaultParagraphs
   }, [heritageData, setHeritageData] = useState(initialState);
 
+  const [videoId, setVideoId] = useState("");
+
   useEffect(() => {
     document.title = 'Thông tin di sản';
 
     getHeritageWithDetailBySlug(slug).then(data => {
       if (data) {
         setHeritageData(data);
+        setVideoId(getVideoIdFromUrl(data.heritage.video_url))
       }
       else
         setHeritageData(initialState);
-      //console.log(data)
     })
 
     increaseViewCount(slug).then(data => {
@@ -262,8 +266,6 @@ export default () => {
 
 
   // Youtube player
-  const videoId = "beLEQpx-uuI"; // ID video từ URL https://youtu.be/b6Tcm2rSvLc
-
   useEffect(() => {
     // Tạo một player YouTube khi component được tạo
     const tag = document.createElement("script");
@@ -403,15 +405,27 @@ export default () => {
                   Video chi tiết
                 </CustomHeading>
               </CustomHeadingContainer>
-              <VideoContainer>
-                <Video id="youtube-player" />
+              {videoId === null ? (
+                <BlogImage src={CatDefault} />
+              ) : (
+                <VideoContainer>
+                <VideoYT id="youtube-player" />
               </VideoContainer>
+              )}
+    
               <CustomHeadingContainer>
                 <CustomHeading id={`paragraph-image360`} color2>
                   <FontAwesomeIcon icon={faImage} className="mr-2"/>
                   Ảnh 360 độ
                 </CustomHeading>
               </CustomHeadingContainer>
+
+              {isEmptyOrSpaces(heritageData.heritage.image_360_url) ? (
+                <BlogImage src={CatDefault} />
+              ) : (
+                <p>Có ảnh 360</p>
+              )}
+
               <ContactContainer>
                 <ContactItem flexCol>
                   <ContactSubTex>Phản hồi</ContactSubTex>
