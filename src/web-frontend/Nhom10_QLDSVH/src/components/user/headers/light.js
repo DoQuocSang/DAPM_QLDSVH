@@ -115,9 +115,19 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
   const [heritageCategoryList, setHeritageCategoryList] = useState([]);
   const [managementUnitList, setManagementUnitList] = useState([]);
 
-  const [visible, setVisible] = useState(7);
-  const onLoadMoreClick = () => {
-    setVisible(v => v + 8);
+  const [categoriesVisible, setCategoriesVisible] = useState(7);
+  const onLoadMoreCategoriesClick = () => {
+    setCategoriesVisible(v => v + 8);
+  };
+
+  const [locationsVisible, setLocationsVisible] = useState(7);
+  const onLoadMoreLocationsClick = () => {
+    setLocationsVisible(v => v + 8);
+  };
+
+  const [managementUnitsVisible, setManagementUnitsVisible] = useState(7);
+  const onLoadMoreManagementUnitsVisibleClick = () => {
+    setManagementUnitsVisible(v => v + 8);
   };
 
   useEffect(() => {
@@ -192,13 +202,13 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
               </MenuTitle>
               {heritageCategoryList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
               <MenuContainer >
-                {heritageCategoryList.slice(0, visible).map((item, i) => (
+                {heritageCategoryList.slice(0, categoriesVisible).map((item, i) => (
                   <MenuItem isNormal href={"/all-heritage/"+ "by-heritage-category/" + item.urlslug}>
                     {item.name}
                   </MenuItem>
                 ))}
-                {visible < heritageCategoryList.length ? (
-                  <MenuItem isShowMore onClick={onLoadMoreClick}>
+                {categoriesVisible < heritageCategoryList.length ? (
+                  <MenuItem isShowMore onClick={onLoadMoreCategoriesClick}>
                     <FontAwesomeIcon icon={faCaretDown} css={tw`mr-2 text-base`} />
                     Xem thêm
                   </MenuItem>
@@ -206,7 +216,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
                   :
                   (
                     heritageCategoryList.length > 7 &&
-                    <MenuItem isShorten onClick={() => { setVisible(7) }}>
+                    <MenuItem isShorten onClick={() => { setCategoriesVisible(7) }}>
                       <FontAwesomeIcon icon={faCaretUp} css={tw`mr-2 text-base`} />
                       Thu gọn
                     </MenuItem>
@@ -222,13 +232,13 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
               </MenuTitle>
               {locationList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
               <MenuContainer >
-                {locationList.slice(0, visible).map((item, i) => (
+                {locationList.slice(0, locationsVisible).map((item, i) => (
                   <MenuItem isNormal href={"/all-heritage/"+ "by-location/" + item.urlslug}>
                     {item.name}
                   </MenuItem>
                 ))}
-                {visible < locationList.length ? (
-                  <MenuItem isShowMore onClick={onLoadMoreClick}>
+                {locationsVisible < locationList.length ? (
+                  <MenuItem isShowMore onClick={onLoadMoreLocationsClick}>
                     <FontAwesomeIcon icon={faCaretDown} css={tw`mr-2 text-base`} />
                     Xem thêm
                   </MenuItem>
@@ -236,7 +246,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
                   :
                   (
                     locationList.length > 7 &&
-                    <MenuItem isShorten onClick={() => { setVisible(7) }}>
+                    <MenuItem isShorten onClick={() => { setLocationsVisible(7) }}>
                       <FontAwesomeIcon icon={faCaretUp} css={tw`mr-2 text-base`} />
                       Thu gọn
                     </MenuItem>
@@ -252,13 +262,13 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
               </MenuTitle>
               {managementUnitList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
               <MenuContainer >
-                {managementUnitList.slice(0, visible).map((item, i) => (
+                {managementUnitList.slice(0, managementUnitsVisible).map((item, i) => (
                   <MenuItem isNormal href={"/all-heritage/"+ "by-management-unit/" + item.urlslug}>
                     {item.name}
                   </MenuItem>
                 ))}
-                {visible < managementUnitList.length ? (
-                  <MenuItem isShowMore onClick={onLoadMoreClick}>
+                {managementUnitsVisible < managementUnitList.length ? (
+                  <MenuItem isShowMore onClick={onLoadMoreManagementUnitsVisibleClick}>
                     <FontAwesomeIcon icon={faCaretDown} css={tw`mr-2 text-base`} />
                     Xem thêm
                   </MenuItem>
@@ -266,7 +276,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
                   :
                   (
                     managementUnitList.length > 7 &&
-                    <MenuItem isShorten onClick={() => { setVisible(7) }}>
+                    <MenuItem isShorten onClick={() => { setManagementUnitsVisible(7) }}>
                       <FontAwesomeIcon icon={faCaretUp} css={tw`mr-2 text-base`} />
                       Thu gọn
                     </MenuItem>

@@ -123,6 +123,9 @@ export const scrollToTop = () => {
 
 export const checkImageArray = (value) => {
     //console.log(value)
+    if(value.length === 0) {
+        return [PostDefault];
+    }
     const arr = value.map(item => item !== '' ? item : PostDefault);
     return arr;
 }

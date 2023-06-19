@@ -7,13 +7,14 @@ import { SectionHeading } from "components/user/misc/Headings.js";
 import { Container, ContentWithPaddingXl } from "components/user/misc/Layouts.js";
 import PostDefault from "images/post-default.png";
 import { useParams } from 'react-router-dom';
-import { isEmptyOrSpaces } from "../../utils/Utils";
+import { checkImageUrl, isEmptyOrSpaces } from "../../utils/Utils";
 import { getHeritages } from "../../../services/HeritageRepository";
 import { PrimaryButton } from "components/user/misc/Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import CatDefault from "images/cat-404-full-2.png";
 import HeritageDefault from "images/post-default.png";
+import { checkImageArray } from "../../utils/Utils";
 
 const Row = tw.div`flex flex-col lg:flex-row mx-20 max-w-screen-xl mx-auto`;
 
@@ -113,7 +114,7 @@ const ButtonContainer = styled.a(({ isShowMore, isShorten, isNormal }) => [
 const BlogImage = tw.img`w-full h-auto rounded-lg pt-4`;
 
 
-export default ({ heritage = null, image = "" }) => {
+export default ({ heritage = null, image = [] }) => {
     const [heritageList, setHeritageList] = useState([]);
 
     useEffect(() => {
@@ -123,7 +124,7 @@ export default ({ heritage = null, image = "" }) => {
             }
             else
                 setHeritageList([]);
-            //console.log(data.items)
+            // console.log(data.data)
         })
     }, []);
 
@@ -216,12 +217,7 @@ export default ({ heritage = null, image = "" }) => {
                                         <Description moreShort>{heritage.short_description}</Description>
                                     </PostTextContainer>
 
-                                    {isEmptyOrSpaces(heritage.images) ? (
-                                        <Image $imageSrc={PostDefault} />
-
-                                    ) : (
-                                        <Image $imageSrc={heritage.images[0]} />
-                                    )}
+                                    <Image $imageSrc={checkImageArray(heritage.images)[0]} />
                                 </Post>
                             </a>
                         ))}

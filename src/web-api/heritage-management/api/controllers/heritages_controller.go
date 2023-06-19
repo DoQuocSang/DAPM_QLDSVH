@@ -162,8 +162,16 @@ func GetRandomHeritages(c *gin.Context) {
 
 		images := make([]string, 0)
 
+		// Cắt chuỗi nếu chứa dấu phẩy
 		for _, paragraph := range heritageParagraphs {
-			images = append(images, paragraph.ImageURL)
+			imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+			for _, url := range imageURLs {
+				trimmedURL := strings.TrimSpace(url)
+				if trimmedURL != "" {
+					images = append(images, trimmedURL)
+				}
+			}
 		}
 
 		// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
@@ -291,6 +299,23 @@ func GetHeritageWithParagraphsBySlug(c *gin.Context) {
 		return
 	}
 
+	images := make([]string, 0)
+
+	// Cắt chuỗi nếu chứa dấu phẩy
+	for _, paragraph := range paragraphs {
+		imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+		for _, url := range imageURLs {
+			trimmedURL := strings.TrimSpace(url)
+			if trimmedURL != "" {
+				images = append(images, trimmedURL)
+			}
+		}
+	}
+
+	// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+	heritage.Images = images
+
 	response := gin.H{
 		"heritage":   heritage,
 		"paragraphs": paragraphs,
@@ -347,8 +372,16 @@ func GetPagedHeritagesWithImages(c *gin.Context) {
 
 		images := make([]string, 0)
 
+		// Cắt chuỗi nếu chứa dấu phẩy
 		for _, paragraph := range heritageParagraphs {
-			images = append(images, paragraph.ImageURL)
+			imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+			for _, url := range imageURLs {
+				trimmedURL := strings.TrimSpace(url)
+				if trimmedURL != "" {
+					images = append(images, trimmedURL)
+				}
+			}
 		}
 
 		// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng

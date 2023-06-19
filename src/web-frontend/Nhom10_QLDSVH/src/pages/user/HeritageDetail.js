@@ -13,7 +13,7 @@ import PostDefault from "images/post-default.png";
 import PostDefaultFull from "images/post-default-full.png";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import InfoSidebar from "../../components/user/blogs/InfoSidebar";
-import { formatDateTme } from "../../components/utils/Utils";
+import { checkImageArray, checkImageUrl, formatDateTme, toThousandFormat } from "../../components/utils/Utils";
 import { isEmptyOrSpaces } from "../../components/utils/Utils";
 import { FormatParagraph } from "../../components/utils/Utils";
 import { getHeritageWithDetailBySlug } from "../../services/HeritageRepository";
@@ -86,7 +86,7 @@ const DescriptionContainer = styled.div`
   }
 
   & .imageDescription {
-    ${tw`text-gray-900 text-sm py-3 text-center`}
+    ${tw`text-gray-900 text-sm py-3 px-10 text-center`}
   }
 
   & .title {
@@ -201,7 +201,7 @@ export default () => {
       note: '',
       short_description: ''
     },
-    images: null
+    images: []
   };
 
   const defaultParagraphs = [
@@ -231,6 +231,7 @@ export default () => {
       if (data) {
         setHeritageData(data);
         setVideoId(getVideoIdFromUrl(data.heritage.video_url))
+        //console.log(data)
       }
       else
         setHeritageData(initialState);
@@ -307,7 +308,7 @@ export default () => {
             <Heading>{heritageData.heritage.name}</Heading>
             <InfoItem>
               <FontAwesomeIcon icon={faEye} className="mr-2" />
-              {"Số lượt xem: "}{heritageData.heritage.view_count}
+              {"Số lượt xem: "}{toThousandFormat(heritageData.heritage.view_count)}
             </InfoItem>
             <TableOfContentContainer>
               <TableOfContentHeading>
@@ -466,7 +467,7 @@ export default () => {
             </PostsContainer>
           </PopularPostsContainer>
 
-          <InfoSidebar heritage={heritageData.heritage} image={heritageData.paragraphs[0].image_url} />
+          <InfoSidebar heritage={heritageData.heritage} image={checkImageArray(heritageData.heritage.images)[0]} />
         </Row>
         <ThreeColSlider />
       </Container>
