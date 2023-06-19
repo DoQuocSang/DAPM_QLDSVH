@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"heritage-management/api/db"
 	"heritage-management/api/models"
@@ -423,8 +424,16 @@ func GetRelatedHeritagesWithImages(c *gin.Context) {
 
 		images := make([]string, 0)
 
+		// Cắt chuỗi nếu chứa dấu phẩy
 		for _, paragraph := range heritageParagraphs {
-			images = append(images, paragraph.ImageURL)
+			imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+			for _, url := range imageURLs {
+				trimmedURL := strings.TrimSpace(url)
+				if trimmedURL != "" {
+					images = append(images, trimmedURL)
+				}
+			}
 		}
 
 		// Gán danh sách hình ảnh vào thuộc tính Images của di sản liên quan tương ứng

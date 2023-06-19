@@ -78,7 +78,7 @@ const SubHeading = tw.p`cursor-pointer font-semibold text-base text-teal-600`;
 const DescriptionContainer = styled.div`
   ${tw``}
   & .imageContainer {
-    ${tw`flex flex-col mx-20 h-full bg-gray-200 rounded-lg`}
+    ${tw`flex flex-col my-5 mx-20 h-full bg-gray-200 rounded-lg`}
   }
 
   & .imageSection {
@@ -99,7 +99,7 @@ const DescriptionContainer = styled.div`
 `;
 
 const TableOfContentContainer = tw.div`mx-20 my-5 bg-gray-100 flex flex-col px-4 py-3 rounded-lg shadow`;
-const TableOfContentHeadeing = tw.div`leading-normal text-base text-red-400 font-semibold text-lg text-center`;
+const TableOfContentHeading = tw.div`leading-normal mb-3 text-base text-red-400 font-semibold text-lg text-center`;
 const TableOfContent = styled.div`
   ${tw`text-sm text-gray-800 font-semibold`}
   ol {
@@ -310,10 +310,10 @@ export default () => {
               {"Số lượt xem: "}{heritageData.heritage.view_count}
             </InfoItem>
             <TableOfContentContainer>
-              <TableOfContentHeadeing>
+              <TableOfContentHeading>
                 <FontAwesomeIcon icon={faBars} className="mr-3" />
                 Mục lục
-              </TableOfContentHeadeing>
+              </TableOfContentHeading>
               <TableOfContent>
                 <ol type="1">
                   {heritageData.paragraphs.slice(0, visible).map((paragraph, index) => (

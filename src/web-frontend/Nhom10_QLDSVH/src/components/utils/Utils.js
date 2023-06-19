@@ -135,63 +135,148 @@ export const checkImageUrl = (value) => {
     }
 }
 
+// // Hiển thị ảnh theo vị trí trong thuộc tính mô tả
+// export const DescriptionWithImage = ({ title, description, image_description, image_url, index }) => {
+//     const imageTag = '<image>';
+
+//     if (description && image_url && description.includes(imageTag)) {
+//         const parts = description.split(imageTag);
+//         const textBeforeImage = parts[0];
+//         const textAfterImage = parts[1];
+
+//         return (
+//             <>
+//                 <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
+//                 <p className="description">{textBeforeImage}</p>
+//                 <div className="imageContainer">
+//                     <img className="imageSection"  src={image_url} alt={image_description}/>
+//                     <p className="imageDescription">{image_description + " (Ảnh minh họa)"}</p>
+//                 </div>
+//                 <p className="description">{textAfterImage} </p>
+//             </>
+//         );
+//     }else if (description && image_url) {
+//         return (
+//           <>
+//             <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
+//             <p className="description">{description}</p>
+//             <div className="imageContainer">
+//               <img className="imageSection" src={image_url} alt={image_description} />
+//               <p className="imageDescription">
+//                 {image_description + " (Ảnh minh họa)"}
+//               </p>
+//             </div>
+//           </>
+//         );
+//       }
+
+//     return (
+//         <>
+//             <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
+//             <p className="description">{description}</p>
+//         </>
+//     );
+// };
+
+export const toStringArray = (str) => {
+    if (str.includes("<br>")) {
+        const parts = str.split("<br>");
+        return parts;
+    } else {
+        return [str];
+    }
+};
+
 // Hiển thị ảnh theo vị trí trong thuộc tính mô tả
 export const DescriptionWithImage = ({ title, description, image_description, image_url, index }) => {
     const imageTag = '<image>';
+    const imageUrls = image_url ? image_url.split(',') : []; // Tách các URL thành một mảng
+    const imageDescriptions = image_description ? image_description.split(',') : []; // Tách các mô tả ảnh thành một mảng
 
+    //Trường hợp có thẻ <image> và image_url có giá trị
     if (description && image_url && description.includes(imageTag)) {
         const parts = description.split(imageTag);
-        const textBeforeImage = parts[0];
-        const textAfterImage = parts[1];
+        const descriptionElements = parts.map((part, index) => {
+            // chỉ hiển thị ảnh cùng mô tả trừ item cuối cùng vì
+            // TH1: <image> content of description : thì chuỗi cuối cùng trong mảng là description
+            // TH2: content of description <image> : thì chuỗi cuối cùng trong mảng là ""
+            // nên cả 2 trường hợp đều không cần ảnh hiển thị
+            if (index < parts.length - 1) {
+                return (
+                    <>
+                        {/* Tách nội dung nếu có <br> */}
+                        {toStringArray(part).map((partItem, partIndex) => (
+                            <p className="description" key={partIndex}>{partItem}</p>
+                        ))}
+                        
+                        <div className="imageContainer" key={index}>
+                            <img className="imageSection" src={imageUrls[index]} alt={image_description} />
+                            <p className="imageDescription">{imageDescriptions[index] + " (Ảnh minh họa)"}</p>
+                        </div>
+                    </>
+                );
+            } else {
+                return (
+                    <>
+                        {toStringArray(part).map((partItem, partIndex) => (
+                            <p className="description">{partItem}</p>
+                        ))}
+                    </>
+                )
+            }
+        });
 
         return (
             <>
                 <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
-                <p className="description">{textBeforeImage}</p>
-                <div className="imageContainer">
-                    <img className="imageSection"  src={image_url} alt={image_description}/>
-                    <p className="imageDescription">{image_description + " (Ảnh minh họa)"}</p>
-                </div>
-                <p className="description">{textAfterImage} </p>
+                {descriptionElements}
             </>
         );
-    }else if (description && image_url) {
-        return (
-          <>
-            <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
-            <p className="description">{description}</p>
-            <div className="imageContainer">
-              <img className="imageSection" src={image_url} alt={image_description} />
-              <p className="imageDescription">
-                {image_description + " (Ảnh minh họa)"}
-              </p>
-            </div>
-          </>
-        );
-      }
 
+    //Trường hợp không có thẻ <image> nhưng image_url có giá trị
+    } else if (description && image_url) {
+        return (
+            <>
+                <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
+                {toStringArray(description).map((part, descriptionIndex) => (
+                    <p className="description" key={descriptionIndex}>{part}</p>
+                ))}
+                {imageUrls.map((imageUrl, imageIndex) => (
+                    <div className="imageContainer" key={imageIndex}>
+                        <img className="imageSection" src={imageUrl.trim()} alt={imageDescriptions[imageIndex]} />
+                        <p className="imageDescription">{imageDescriptions[imageIndex] + " (Ảnh minh họa)"}</p>
+                    </div>
+                ))}
+            </>
+        );
+    }
+
+    //Trường hợp không có thẻ <image> và image_url không có giá trị
     return (
         <>
             <h2 className="title" id={`paragraph-${index}`}>{title}</h2>
-            <p className="description">{description}</p>
+            {toStringArray(description).map((part, descriptionIndex) => (
+                <p className="description" key={descriptionIndex}>{part}</p>
+            ))}
         </>
     );
 };
+
+
 
 // Lấy Id video youtube
 export const getVideoIdFromUrl = (url) => {
     // Kiểm tra xem URL có đúng định dạng không
     const regex = /^(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^\s/]+)/;
     const match = url.match(regex);
-  
+
     //match[0] là https://youtu.be/
     //match[1] là phần Id
     if (match && match[1]) {
-      // Trả về videoId nếu tìm thấy
-      return match[1];
+        // Trả về videoId nếu tìm thấy
+        return match[1];
     } else {
-      // Trả về null nếu không tìm thấy videoId
-      return null;
+        // Trả về null nếu không tìm thấy videoId
+        return null;
     }
 }
-  
