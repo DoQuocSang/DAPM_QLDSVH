@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle, faCircleNotch, faPenToSquare, faPencil, faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faCircleInfo, faCircleNotch, faCirclePlus, faPenToSquare, faPencil, faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -39,25 +39,25 @@ export default ({ type = "" }) => {
         heritage_category_id: 0,
         view_count: 0,
         images: []
-      };
-    
-      const defaultParagraphs = [
+    };
+
+    const defaultParagraphs = [
         {
-          id: 0,
-          title: '',
-          description: '',
-          image_description: '',
-          image_url: '',
-          heritage_id: 0
+            id: 0,
+            title: '',
+            description: '',
+            image_description: '',
+            image_url: '',
+            heritage_id: 0
         }
-      ];
-    
-      const initialState = {
+    ];
+
+    const initialState = {
         heritage: {
-          ...defaultHeritage,
+            ...defaultHeritage,
         },
         paragraphs: defaultParagraphs
-      }, [heritageData, setHeritageData] = useState(initialState);
+    }, [heritageData, setHeritageData] = useState(initialState);
 
     const [heritageTypeList, setHeritageDataTypeList] = useState([]);
     const [heritageCategoryList, setHeritageDataCategoryList] = useState([]);
@@ -87,7 +87,7 @@ export default ({ type = "" }) => {
                 if (data) {
                     const {
                         id: ignoredId,
-                        ...heritageData} = data;
+                        ...heritageData } = data;
                     setHeritageData({
                         ...heritageData
                     });
@@ -138,7 +138,7 @@ export default ({ type = "" }) => {
 
     //validate lỗi bổ trống
     const validateAllInput = () => {
-        console.log(heritageData.heritage)
+        console.log(heritageData)
         const validationErrors = {};
 
         if (heritageData.heritage.heritage_type_id === 0) {
@@ -214,6 +214,79 @@ export default ({ type = "" }) => {
         }
     }
 
+    // Xử lý nút thêm <image> <br>
+    const inputRef = useRef(null);
+
+    const addString = (stringToAdd, index) => {
+        const newParagraphs = [...heritageData.paragraphs];
+        const currentParagraph = newParagraphs[index];
+        const { description } = currentParagraph;
+
+        const inputElement = inputRef.current;
+        const { selectionStart, selectionEnd, value } = inputElement;
+
+        const newValue =
+            value.substring(0, selectionStart) +
+            stringToAdd +
+            value.substring(selectionEnd);
+
+
+        currentParagraph.description = newValue;
+        setHeritageData((prevState) => ({
+            ...prevState,
+            paragraphs: newParagraphs,
+        }));
+
+
+        inputElement.value = newValue;
+        // Đặt ví trí con trỏ chuột sau chuỗi vùa thêm, và không chọn bất kì chuỗi nào sau nó
+        // = trỏ chuột đứng sau chuỗi vừa thêm
+        inputElement.setSelectionRange(
+            selectionStart + stringToAdd.length,
+            selectionStart + stringToAdd.length
+        );
+        inputElement.focus();
+
+        // Cập nhật giá trị của short_description
+        // setHeritageData(heritageData => ({
+        //     ...heritageData,
+        //     heritage: {
+        //         ...heritageData.heritage,
+        //         short_description: newValue
+        //     }
+        // }));
+    };
+
+    // Xử lý sự kiện khi thay đổi đoạn mô tả
+    const handleParagraphChange = (index, e) => {
+        const newParagraphs = [...heritageData.paragraphs];
+        newParagraphs[index][e.target.name] = e.target.value;
+        setHeritageData({ ...heritageData, paragraphs: newParagraphs });
+    };
+
+    // Xử lý sự kiện khi thêm đoạn mô tả
+    const addParagraph = () => {
+        setHeritageData({
+            ...heritageData,
+            paragraphs: [...heritageData.paragraphs, { ...defaultParagraphs[0] }]
+        });
+        // dùng ...defaultParagraphs[0] vì mảng khởi tạo mặc định có 1 phần tử duy nhất trong initialState
+    };
+
+    // Xử lý sự kiện khi xóa đoạn mô tả
+    const deleteParagraph = index => {
+        setHeritageData(heritageData => {
+            const updatedParagraphs = [...heritageData.paragraphs];
+            // xóa 1 phần tử theo index
+            updatedParagraphs.splice(index, 1);
+            return {
+                ...heritageData,
+                paragraphs: updatedParagraphs
+            };
+        });
+    };
+
+
     return (
         <main>
             <div className="mt-12 px-4">
@@ -235,12 +308,12 @@ export default ({ type = "" }) => {
                         value={heritageData.heritage.name || ''}
                         onChange={e =>
                             setHeritageData(heritageData => ({
-                              ...heritageData,
-                              heritage: {
-                                ...heritageData.heritage,
-                                name: e.target.value,
-                                urlslug: generateSlug(e.target.value),
-                              }
+                                ...heritageData,
+                                heritage: {
+                                    ...heritageData.heritage,
+                                    name: e.target.value,
+                                    urlslug: generateSlug(e.target.value),
+                                }
                             }))
                         }
                         placeholder="Nhập tên di sản"
@@ -282,11 +355,11 @@ export default ({ type = "" }) => {
                         required
                         onChange={e =>
                             setHeritageData(heritageData => ({
-                              ...heritageData,
-                              heritage: {
-                                ...heritageData.heritage,
-                                heritage_type_id: parseInt(e.target.value, 10)
-                              }
+                                ...heritageData,
+                                heritage: {
+                                    ...heritageData.heritage,
+                                    heritage_type_id: parseInt(e.target.value, 10)
+                                }
                             }))
                         }
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
@@ -311,12 +384,12 @@ export default ({ type = "" }) => {
                         required
                         onChange={e =>
                             setHeritageData(heritageData => ({
-                              ...heritageData,
-                              heritage: {
-                                ...heritageData.heritage,
-                                heritage_category_id: parseInt(e.target.value, 10)
+                                ...heritageData,
+                                heritage: {
+                                    ...heritageData.heritage,
+                                    heritage_category_id: parseInt(e.target.value, 10)
 
-                              }
+                                }
                             }))
                         }
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
@@ -341,11 +414,11 @@ export default ({ type = "" }) => {
                         required
                         onChange={e =>
                             setHeritageData(heritageData => ({
-                              ...heritageData,
-                              heritage: {
-                                ...heritageData.heritage,
-                                location_id: parseInt(e.target.value, 10)
-                              }
+                                ...heritageData,
+                                heritage: {
+                                    ...heritageData.heritage,
+                                    location_id: parseInt(e.target.value, 10)
+                                }
                             }))
                         }
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
@@ -370,12 +443,12 @@ export default ({ type = "" }) => {
                         required
                         onChange={e =>
                             setHeritageData(heritageData => ({
-                              ...heritageData,
-                              heritage: {
-                                ...heritageData.heritage,
-                                management_unit_id: parseInt(e.target.value, 10)
+                                ...heritageData,
+                                heritage: {
+                                    ...heritageData.heritage,
+                                    management_unit_id: parseInt(e.target.value, 10)
 
-                              }
+                                }
                             }))
                         }
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
@@ -401,11 +474,11 @@ export default ({ type = "" }) => {
                         value={heritageData.heritage.time || ''}
                         onChange={e =>
                             setHeritageData(heritageData => ({
-                              ...heritageData,
-                              heritage: {
-                                ...heritageData.heritage,
-                                time: e.target.value,
-                              }
+                                ...heritageData,
+                                heritage: {
+                                    ...heritageData.heritage,
+                                    time: e.target.value,
+                                }
                             }))
                         }
                         placeholder="Nhập thời gian"
@@ -427,12 +500,11 @@ export default ({ type = "" }) => {
                         value={heritageData.heritage.short_description || ''}
                         onChange={e =>
                             setHeritageData(heritageData => ({
-                              ...heritageData,
-                              heritage: {
-                                ...heritageData.heritage,
-                                short_description: e.target.value
-
-                              }
+                                ...heritageData,
+                                heritage: {
+                                    ...heritageData.heritage,
+                                    short_description: e.target.value
+                                }
                             }))
                         }
                         placeholder="Nhập mô tả chi tiết"
@@ -444,6 +516,8 @@ export default ({ type = "" }) => {
                         </p>
                     }
 
+
+
                     <h2 className="font-semibold text-sm text-teal-500">
                         Video
                     </h2>
@@ -454,11 +528,11 @@ export default ({ type = "" }) => {
                         value={heritageData.heritage.video_url || ''}
                         onChange={e =>
                             setHeritageData(heritageData => ({
-                              ...heritageData,
-                              heritage: {
-                                ...heritageData.heritage,
-                                video_url: e.target.value,
-                              }
+                                ...heritageData,
+                                heritage: {
+                                    ...heritageData.heritage,
+                                    video_url: e.target.value,
+                                }
                             }))
                         }
                         placeholder="Nhập link video"
@@ -474,15 +548,83 @@ export default ({ type = "" }) => {
                         value={heritageData.heritage.image_360_url || ''}
                         onChange={e =>
                             setHeritageData(heritageData => ({
-                              ...heritageData,
-                              heritage: {
-                                ...heritageData.heritage,
-                                image_360_url: e.target.value,
-                              }
+                                ...heritageData,
+                                heritage: {
+                                    ...heritageData.heritage,
+                                    image_360_url: e.target.value,
+                                }
                             }))
                         }
                         placeholder="Nhập link ảnh 360 độ"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+
+
+
+                    {/* Đoan mô tả ============================================================================================================*/}
+                    <div className="flex items-center justify-center mt-4">
+                        <div className="h-0.5 flex-grow bg-red-500 rounded-full"/>
+                        <h2 className="px-5 font-semibold text-base text-red-500 text-center">Phần mô tả</h2>
+                        <div className="h-0.5 flex-grow bg-red-500 rounded-full"/>
+                    </div>
+                    <ul className="bg-amber-50 rounded-xl py-5 px-10 space-y-1 my-2 text-gray-500 list-disc font-semibold text-xs ">
+                        <li>
+                            <p>Phần mô tả của di sản được chia ra làm nhiều đoạn, mỗi đoạn bao gồm câu chủ đề, nội dung, hình ảnh và chú thích ảnh</p>
+                        </li>
+                        <li>
+                            <p>Để lưu nhiều ảnh, bạn phải ngăn cách các link ảnh bằng dấu " , ". Tương tự với phần mô tả ảnh</p>
+                        </li>
+                        <li>
+                            <p>{`Để hiển thị ảnh trong phần nội dung bạn cần phải thêm <image> tại vị trí muốn hiển thị`}</p>
+                        </li>
+                        <li>
+                            <p>{`Để ngắt đoạn trong phần nội dung bạn cần phải thêm <br> tại vị trí muốn ngắt đoạn`}</p>
+                        </li>
+                    </ul>
+
+                    {heritageData.paragraphs.map((paragraph, index) => (
+                        <div key={index} className="relative bg-gray-50 my-5 px-10 py-5 rounded-xl shadow-md">
+                            <p className="absolute top-0 right-0 text-white text-xs rounded-bl-xl rounded-tr-xl font-semibold px-4 py-2 bg-teal-500">Đoạn thứ {index+1}</p>
+                            <h2 className="font-semibold text-sm text-teal-500">Tiêu đề</h2>
+                            <input
+                                name="title"
+                                required
+                                type="text"
+                                value={paragraph.title}
+                                placeholder="Nhập câu chủ đề"
+                                onChange={(e) => handleParagraphChange(index, e)}
+                                className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+
+                            <h2 className="font-semibold text-sm text-teal-500">Nội dung</h2>
+                            <textarea
+                                ref={inputRef}
+                                name="description"
+                                required
+                                value={paragraph.description}
+                                placeholder="Nhập nội dung"
+                                rows="5"
+                                onChange={(e) => handleParagraphChange(index, e)}
+                                className="text-black mb-2 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+
+                            <div className="flex items-center justify-end">
+                                <button onClick={() => addString('<image>', index)} className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-emerald-700 bg-emerald-500 p-2 px-3 font-semibold text-white text-xs">
+                                    Thêm image
+                                </button>
+                                <button onClick={() => addString('<br>', index)} className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-amber-500 bg-amber-400 p-2 px-3 font-semibold text-white text-xs">
+                                    Thêm line break
+                                </button>
+                                <button onClick={() => deleteParagraph(index)} className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-red-600 bg-red-500 p-2 px-3 font-semibold text-white text-xs">
+                                    Xóa
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+
+                    <div className="flex items-center justify-center my-4">
+                        <button onClick={addParagraph} className="btn rounded-full transition duration-300 ease-in-out cursor-pointer hover:bg-indigo-600 bg-white-500 p-2 px-5 text-sm font-semibold text-indigo-500 hover:text-white border border-2 border-indigo-500 hover:border-indigo-600">
+                            Thêm đoạn văn
+                        </button>
+                    </div>
+
 
                     <div className="buttons flex">
                         <hr className="mt-4" />
