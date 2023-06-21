@@ -11,6 +11,15 @@ type Management_Unit struct {
 	ShortDescription string `json:"short_description" gorm:"column:short_description;"`
 }
 
+type Management_Unit_DTO struct {
+	ID   int    `json:"id" gorm:"column:id;"`
+	Name string `json:"name" gorm:"column:name;"`
+}
+
+func (Management_Unit_DTO) TableName() string {
+	return "management_units"
+}
+
 type Management_Unit_FullInfo struct {
 	ID               int    `json:"id" gorm:"column:id;"`
 	Name             string `json:"name" gorm:"column:name;"`

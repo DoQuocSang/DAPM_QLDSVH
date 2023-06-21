@@ -131,8 +131,14 @@ export default () => {
                                                         <th scope="col" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             STT
                                                         </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        <th scope="col" width="20%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Tên địa điểm
+                                                        </th>
+                                                        <th scope="col" width="20%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                            Hình ảnh 
+                                                        </th>
+                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                            Mô tả ngắn
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Sửa
@@ -150,6 +156,16 @@ export default () => {
                                                             </td>
                                                             <td className="p-4 text-sm font-semibold text-gray-500">
                                                                 {item.name}
+                                                            </td>
+                                                            <td className="p-4 text-sm font-normal text-gray-500">
+                                                                {isEmptyOrSpaces(item.image_url) ? (
+                                                                    <img className="h-auto rounded-lg mx-auto" src={DefaultImage} alt="Neil image" />
+                                                                ) : (
+                                                                    <img className="h-auto rounded-lg mx-auto" src={item.image_url} alt="Neil image" />
+                                                                )}
+                                                            </td>
+                                                            <td className="p-4 text-sm font-semibold text-gray-500">
+                                                                {item.short_description}
                                                             </td>
                                                             <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider hover:text-emerald-600 transition duration-75">
                                                                 <Link to={`/admin/dashboard/update-location/${item.id}`}>

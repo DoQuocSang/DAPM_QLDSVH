@@ -15,6 +15,9 @@ import AdminAddOrUpdateHeritage from "pages/admin/heritage/AddOrUpdateHeritage"
 import AdminAllHeritageType from "pages/admin/heritage-type/AllHeritageType"
 import AdminAddOrUpdateHeritageType from "pages/admin/heritage-type/AddOrUpdateHeritageType"
 
+import AdminAllHeritageCategory from "pages/admin/heritage-category/AllHeritageCategory"
+import AdminAddOrUpdateHeritageCategory from "pages/admin/heritage-category/AddOrUpdateHeritageCategory"
+
 import AdminAllLocation from "pages/admin/location/AllLocation"
 import AdminAddOrUpdateLocation from "pages/admin/location/AddOrUpdateLocation"
 
@@ -67,6 +70,10 @@ function App() {
           <Route path="/admin/dashboard/add-heritage-type" element={<AdminAddOrUpdateHeritageType type="add" />} />
           <Route path="/admin/dashboard/update-heritage-type/:id" element={<AdminAddOrUpdateHeritageType type="update" />} />
        
+          <Route path="/admin/dashboard/all-heritage-category" element={<AdminAllHeritageCategory />} />
+          <Route path="/admin/dashboard/add-heritage-category" element={<AdminAddOrUpdateHeritageCategory type="add" />} />
+          <Route path="/admin/dashboard/update-heritage-category/:id" element={<AdminAddOrUpdateHeritageCategory type="update" />} />
+
           <Route path="/admin/dashboard/all-location" element={<AdminAllLocation />} />
           <Route path="/admin/dashboard/add-location" element={<AdminAddOrUpdateLocation type="add" />} />
           <Route path="/admin/dashboard/update-location/:id" element={<AdminAddOrUpdateLocation type="update" />} />

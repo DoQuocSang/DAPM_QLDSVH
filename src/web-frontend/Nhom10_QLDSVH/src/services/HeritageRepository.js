@@ -14,7 +14,15 @@ export function getHeritageById(
 export function getHeritageWithDetailBySlug(
     slug = '',
     ) {    
-    return get_api(`http://localhost:8080/api/v1/heritage/full-info/${slug}`)
+    return get_api(`http://localhost:8080/api/v1/heritage/full-info/slug/${slug}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
+
+
+export function getHeritageWithDetailById(
+    id = 0,
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/heritage/full-info/id/${id}`)
     // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
 }
 

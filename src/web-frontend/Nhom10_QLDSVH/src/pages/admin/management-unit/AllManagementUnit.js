@@ -131,11 +131,17 @@ export default () => {
                                                         <th scope="col" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             STT
                                                         </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        <th scope="col" width="20%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Tên đơn vị quản lý
                                                         </th>
+                                                        <th scope="col" width="20%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                            Hình ảnh 
+                                                        </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Mô tả
+                                                            Mô tả ngắn
+                                                        </th>
+                                                        <th scope="col" width="10%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                            Ghi chú
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Sửa
@@ -154,8 +160,18 @@ export default () => {
                                                             <td className="p-4 text-sm font-semibold text-gray-500">
                                                                 {item.name}
                                                             </td>
+                                                            <td className="p-4 text-sm font-normal text-gray-500">
+                                                                {isEmptyOrSpaces(item.image_url) ? (
+                                                                    <img className="h-auto rounded-lg mx-auto" src={DefaultImage} alt="Neil image" />
+                                                                ) : (
+                                                                    <img className="h-auto rounded-lg mx-auto" src={item.image_url} alt="Neil image" />
+                                                                )}
+                                                            </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500 align-middle">
                                                                 {item.description}
+                                                            </td>
+                                                            <td className="p-4 text-sm font-normal text-gray-500 align-middle">
+                                                                {item.note}
                                                             </td>
                                                             <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider hover:text-emerald-600 transition duration-75">
                                                                 <Link to={`/admin/dashboard/update-management-unit/${item.id}`}>

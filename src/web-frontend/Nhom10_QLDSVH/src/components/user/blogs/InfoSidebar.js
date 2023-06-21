@@ -173,7 +173,7 @@ export default ({ heritage = null, image = [] }) => {
                                             <span>{heritage.heritage_type.name}</span>
                                         </InfoDescriptionItem>
                                         <InfoDescriptionItem rightContent>
-                                            <h2>Loại hình</h2>
+                                            <h2>Hình thức</h2>
                                             <span>{heritage.heritage_category.name}</span>
                                         </InfoDescriptionItem>
                                     </InfoDescriptionGrid>

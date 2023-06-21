@@ -77,7 +77,7 @@ func GetHeritageByID(c *gin.Context) {
 
 // CreateHeritage tạo mới một di sản văn hóa
 func CreateHeritage(c *gin.Context) {
-	var heritage models.Heritage
+	var heritage models.Heritage_DTO
 
 	if err := c.ShouldBindJSON(&heritage); err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid request body")
@@ -96,7 +96,7 @@ func CreateHeritage(c *gin.Context) {
 func UpdateHeritage(c *gin.Context) {
 	id := c.Param("id")
 
-	var heritage models.Heritage
+	var heritage models.Heritage_DTO
 
 	// Lấy thông tin về di sản văn hóa dựa trên ID từ cơ sở dữ liệu
 	if err := db.GetDB().Where("id = ?", id).First(&heritage).Error; err != nil {
@@ -186,7 +186,7 @@ func GetHeritageParagraphsByHeritageID(c *gin.Context) {
 	heritageID := c.Param("id")
 
 	// Kiểm tra xem di sản có tồn tại không
-	var heritage models.Heritage
+	var heritage models.Heritage_DTO
 	if err := db.GetDB().First(&heritage, heritageID).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusNotFound, "Heritage not found")
 		return
@@ -232,7 +232,7 @@ func GetAllImagesByHeritageID(c *gin.Context) {
 // CreateHeritageAndParagraphs tạo một di sản mới và các mô tả di sản cho di sản đó
 func CreateHeritageAndParagraphs(c *gin.Context) {
 	var requestData struct {
-		Heritage   models.Heritage             `json:"heritage"`
+		Heritage   models.Heritage_DTO         `json:"heritage"`
 		Paragraphs []models.Heritage_Paragraph `json:"paragraphs"`
 	}
 
@@ -289,6 +289,47 @@ func GetHeritageWithParagraphsBySlug(c *gin.Context) {
 
 	var heritage models.Heritage
 	if err := db.GetDB().Where("urlslug = ?", heritageSlug).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("ManagementUnit").First(&heritage).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Heritage not found")
+		return
+	}
+
+	var paragraphs []models.Heritage_Paragraph
+	if err := db.GetDB().Where("heritage_id = ?", heritage.ID).Find(&paragraphs).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+		return
+	}
+
+	images := make([]string, 0)
+
+	// Cắt chuỗi nếu chứa dấu phẩy
+	for _, paragraph := range paragraphs {
+		imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+		for _, url := range imageURLs {
+			trimmedURL := strings.TrimSpace(url)
+			if trimmedURL != "" {
+				images = append(images, trimmedURL)
+			}
+		}
+	}
+
+	// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+	heritage.Images = images
+
+	response := gin.H{
+		"heritage":   heritage,
+		"paragraphs": paragraphs,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, response)
+}
+
+// GetHeritageWithParagraphsById lấy thông tin di sản và các đoạn mô tả của di sản dựa trên id di sản
+func GetHeritageWithParagraphsById(c *gin.Context) {
+	heritageId := c.Param("id")
+
+	var heritage models.Heritage
+	if err := db.GetDB().Where("id = ?", heritageId).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("ManagementUnit").First(&heritage).Error; err != nil {
 		utils.ErrorResponse(c, http.StatusNotFound, "Heritage not found")
 		return
 	}

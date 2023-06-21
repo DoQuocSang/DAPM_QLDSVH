@@ -10,27 +10,25 @@ import { Link } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
 import { AddOrUpdateText } from "../../../components/utils/Utils";
-import { getHeritageTypeById } from "../../../services/HeritageTypeRepository";
+import { getHeritageCategoryById } from "../../../services/HeritageCategoryRepository";
 import { generateSlug } from "../../../components/utils/Utils";
 
-import { addLocation, getLocationById } from "../../../services/LocationRepository";
-import { putLocation } from "../../../services/LocationRepository";
+import { addHeritageCategory } from "../../../services/HeritageCategoryRepository";
+import { patchHeritageCategory } from "../../../services/HeritageCategoryRepository";
 
 import NotificationModal from "../../../components/admin/modal/NotificationModal";
-import { isEmptyOrSpaces } from "../../../components/utils/Utils";
+
 
 
 export default ({ type = "" }) => {
 
-    let mainText = AddOrUpdateText(type, "địa điểm");
+    let mainText = AddOrUpdateText(type, "hình thức di sản");
     const initialState = {
         id: 0,
         name: '',
-        urlslug: '',
-        image_url: '',
         description: '',
-        short_description: '',
-    }, [location, setLocation] = useState(initialState);
+        urlslug: '',
+    },[heritageCategory, setHeritageCategory] = useState(initialState);
     const [successFlag, SetSuccessFlag] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -47,16 +45,16 @@ export default ({ type = "" }) => {
     }
 
     useEffect(() => {
-        document.title = "Thêm/ cập nhật địa điểm";
+        document.title = "Thêm/ cập nhật hình thức di sản";
 
         if (id !== 0) {
-            getLocationById(id).then(data => {
+            getHeritageCategoryById(id).then(data => {
                 if (data)
-                    setLocation({
+                    setHeritageCategory({
                         ...data,
                     });
                 else
-                    setLocation(initialState);
+                    setHeritageCategory(initialState);
                 console.log(data);
             })
         }
@@ -66,24 +64,16 @@ export default ({ type = "" }) => {
     const validateAllInput = () => {
         const validationErrors = {};
 
-        if (location.name.trim() === '') {
-            validationErrors.name = 'Vui lòng nhập tên địa điểm';
+        if (heritageCategory.name.trim() === '') {
+            validationErrors.name = 'Vui lòng nhập tên hình thức di sản';
         }
 
-        if (location.urlslug.trim() === '') {
+        if (heritageCategory.urlslug.trim() === '') {
             validationErrors.urlslug = 'Slug chưa được tạo';
         }
 
-        if (location.description.trim() === '') {
+        if (heritageCategory.description.trim() === '') {
             validationErrors.description = 'Vui lòng nhập mô tả chi tiết';
-        }
-
-        if (location.short_description.trim() === '') {
-            validationErrors.short_description = 'Vui lòng nhập mô tả ngắn';
-        }
-
-        if (location.image_url.trim() === '') {
-            validationErrors.image_url = 'Vui lòng nhập link ảnh';
         }
 
         setErrors(validationErrors);
@@ -100,13 +90,13 @@ export default ({ type = "" }) => {
         // Nếu không có lỗi mới xóa hoặc cập nhật
         if (validateAllInput() === false) {
             if (id === 0) {
-                addLocation(location).then(data => {
+                addHeritageCategory(heritageCategory).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
             }
             else {
-                putLocation(id, location).then(data => {
+                patchHeritageCategory(id, heritageCategory).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
@@ -117,7 +107,7 @@ export default ({ type = "" }) => {
     //Xử lý khi bấm xóa bên component con NotificationModal
     const childToParent = (isContinue) => {
         if (isContinue === true && id === 0) {
-            setLocation(initialState);
+            setHeritageCategory(initialState);
             // Reset flag sau khi thêm thành công
             setTimeout(() => { SetSuccessFlag(false); }, 1000)
         }
@@ -136,19 +126,19 @@ export default ({ type = "" }) => {
                         </div>
                     </div>
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Tên địa điểm
+                        Tên hình thức di sản
                     </h2>
                     <input
                         name="name"
                         required
                         type="text"
-                        value={location.name || ''}
-                        onChange={e => setLocation({
-                            ...location,
+                        value={heritageCategory.name || ''}
+                        onChange={e => setHeritageCategory({
+                            ...heritageCategory,
                             name: e.target.value,
                             urlslug: generateSlug(e.target.value),
                         })}
-                        placeholder="Nhập tên địa điểm"
+                        placeholder="Nhập tên hình thức di sản"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
                     {errors.name &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
@@ -164,7 +154,7 @@ export default ({ type = "" }) => {
                         name="urlslug"
                         required
                         type="text"
-                        value={location.urlslug || ''}
+                        value={heritageCategory.urlslug || ''}
                         // onChange={e => setHeritage({
                         //     ...heritage,
                         //     UrlSlug: e.target.value
@@ -179,37 +169,15 @@ export default ({ type = "" }) => {
                     }
 
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Mô tả ngắn
-                    </h2>
-                    <textarea
-                        name="short_description"
-                        required
-                        type="text"
-                        value={location.short_description || ''}
-                        onChange={e => setLocation({
-                            ...location,
-                            short_description: e.target.value
-                        })}
-                        placeholder="Nhập mô tả ngắn"
-                        className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false" ></textarea>
-                    {errors.short_description &&
-                        <p className="text-red-500 mb-6 text-sm font-semibold">
-                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.short_description}
-                        </p>
-                    }
-
-
-                    <h2 className="font-semibold text-sm text-teal-500">
                         Mô tả chi tiết
                     </h2>
                     <textarea
                         name="description"
                         required
                         type="text"
-                        value={location.description || ''}
-                        onChange={e => setLocation({
-                            ...location,
+                        value={heritageCategory.description || ''}
+                        onChange={e => setHeritageCategory({
+                            ...heritageCategory,
                             description: e.target.value
                         })}
                         placeholder="Nhập mô tả chi tiết"
@@ -221,35 +189,9 @@ export default ({ type = "" }) => {
                         </p>
                     }
 
-                    <h2 className="font-semibold text-sm text-teal-500">
-                        Hình ảnh
-                    </h2>
-                    <input
-                        name="image_url"
-                        required
-                        type="text"
-                        value={location.image_url || ''}
-                        onChange={e => setLocation({
-                            ...location,
-                            image_url: e.target.value,
-                        })}
-                        placeholder="Nhập link ảnh"
-                        className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.image_url &&
-                        <p className="text-red-500 mb-6 text-sm font-semibold">
-                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.image_url}
-                        </p>
-                    }
-
-                    {!isEmptyOrSpaces(location.image_url) && <>
-                        <p className="text-gray-600 mb-4 text-center">Ảnh hiện tại</p>
-                        <img src={location.image_url} className="w-full h-auto mb-4 rounded-lg" />
-                    </>}
-
                     <div className="buttons flex">
                         <hr className="mt-4" />
-                        <Link to="/admin/dashboard/all-location" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
+                        <Link to="/admin/dashboard/all-heritage-category" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
                             Hủy
                         </Link>
                         <button id="notification_buttonmodal" onClick={() => { handleSubmit() }} type="submit" className="btn ml-2 rounded-md transition duration-300 ease-in-out cursor-pointer !hover:bg-indigo-700 !bg-indigo-500 p-2 px-5 font-semibold text-white">
@@ -257,7 +199,7 @@ export default ({ type = "" }) => {
                         </button>
                     </div>
 
-                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="location" />
+                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="heritage-category"/>
                 </div>
 
             </div>

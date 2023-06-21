@@ -198,7 +198,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
             <MenuSection>
               <MenuTitle>
                 <FontAwesomeIcon icon={faCube} css={tw`mr-2 text-base`} />
-                Loại hình di sản
+                Hình thức di sản
               </MenuTitle>
               {heritageCategoryList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
               <MenuContainer >

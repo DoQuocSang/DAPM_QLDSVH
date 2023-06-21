@@ -9,6 +9,15 @@ type Location struct {
 	ShortDescription string `json:"short_description" gorm:"column:short_description;"`
 }
 
+type Location_DTO struct {
+	ID   int    `json:"id" gorm:"column:id;"`
+	Name string `json:"name" gorm:"column:name;"`
+}
+
+func (Location_DTO) TableName() string {
+	return "locations"
+}
+
 type Location_Full_Info struct {
 	ID               int    `json:"id" gorm:"column:id;"`
 	Name             string `json:"name" gorm:"column:name;"`

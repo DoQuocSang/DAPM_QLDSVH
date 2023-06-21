@@ -186,7 +186,7 @@ export default ({ hasTab = true, isProductPage = false }) => {
       if (type === "by-heritage-category") {
         getHeritageCategoryBySlug(slug).then(data => {
           if (data) {
-            setheadingText("Các di sản thuộc loại hình " + data.name);
+            setheadingText("Các di sản thuộc hình thức " + data.name);
             setMainInfo({
               ...data,
             });

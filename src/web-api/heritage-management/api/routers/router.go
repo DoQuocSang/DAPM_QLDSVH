@@ -28,7 +28,8 @@ func SetupRouter() *gin.Engine {
 			heritage.GET(":id/paragraphs", controllers.GetHeritageParagraphsByHeritageID)
 			heritage.GET(":id/images", controllers.GetAllImagesByHeritageID)
 			heritage.POST("/full-info", controllers.CreateHeritageAndParagraphs)
-			heritage.GET("/full-info/:urlSlug", controllers.GetHeritageWithParagraphsBySlug)
+			heritage.GET("/full-info/slug/:urlSlug", controllers.GetHeritageWithParagraphsBySlug)
+			heritage.GET("/full-info/id/:id", controllers.GetHeritageWithParagraphsById)
 			heritage.GET("/related/:urlSlug", controllers.GetRelatedHeritagesWithImages)
 			heritage.GET("/increase-view-count/:urlSlug", controllers.IncreaseViewCount)
 		}

@@ -18,22 +18,49 @@ import { putHeritage } from "../../../services/HeritageRepository";
 import NotificationModal from "../../../components/admin/modal/NotificationModal";
 
 import DefaultImage from "images/post-default-full.png"
+import { getHeritageCategories } from "../../../services/HeritageCategoryRepository";
+import { getHeritageWithDetailById } from "../../../services/HeritageRepository";
 
 export default ({ type = "" }) => {
 
     let mainText = AddOrUpdateText(type, "di sản");
-    const initialState = {
-        heritage_type_id: 0,
+
+    const defaultHeritage = {
+        id: 0,
         name: '',
-        image_url: '',
+        short_description: '',
+        time: '',
+        image_360_url: '',
+        urlslug: '',
+        video_url: '',
         location_id: 0,
         management_unit_id: 0,
-        time: '',
-        urlslug: '',
-        description: ''
-    }, [heritage, setHeritage] = useState(initialState);
+        heritage_type_id: 0,
+        heritage_category_id: 0,
+        view_count: 0,
+        images: []
+      };
+    
+      const defaultParagraphs = [
+        {
+          id: 0,
+          title: '',
+          description: '',
+          image_description: '',
+          image_url: '',
+          heritage_id: 0
+        }
+      ];
+    
+      const initialState = {
+        heritage: {
+          ...defaultHeritage,
+        },
+        paragraphs: defaultParagraphs
+      }, [heritageData, setHeritageData] = useState(initialState);
 
-    const [heritageTypeList, setHeritageTypeList] = useState([]);
+    const [heritageTypeList, setHeritageDataTypeList] = useState([]);
+    const [heritageCategoryList, setHeritageDataCategoryList] = useState([]);
     const [locationList, setLocationList] = useState([]);
     const [managementUnitList, setManagementUnitList] = useState([]);
     const [successFlag, SetSuccessFlag] = useState(false);
@@ -55,28 +82,37 @@ export default ({ type = "" }) => {
         document.title = "Thêm/ cập nhật di sản";
 
         if (id !== 0) {
-            getHeritageById(id).then(data => {
+            getHeritageWithDetailById(id).then(data => {
                 //console.log(data)
                 if (data) {
                     const {
                         id: ignoredId,
-                        ...heritageData } = data;
-                    setHeritage({
+                        ...heritageData} = data;
+                    setHeritageData({
                         ...heritageData
                     });
-                    //console.log("Đã bỏ qua id: " + ignoredId);
+                    // console.log("Đã bỏ qua id: " + ignoredId);
                 } else {
-                    setHeritage(initialState);
+                    setHeritageData(initialState);
                 }
             })
         }
 
         getHeritageTypes().then(data => {
             if (data) {
-                setHeritageTypeList(data.data);
+                setHeritageDataTypeList(data.data);
             }
             else
-                setHeritageTypeList([]);
+                setHeritageDataTypeList([]);
+            //console.log(data)
+        })
+
+        getHeritageCategories().then(data => {
+            if (data) {
+                setHeritageDataCategoryList(data.data);
+            }
+            else
+                setHeritageDataCategoryList([]);
             //console.log(data)
         })
 
@@ -85,7 +121,7 @@ export default ({ type = "" }) => {
                 setLocationList(data.data);
             }
             else
-                setHeritageTypeList([]);
+                setHeritageDataTypeList([]);
             //console.log(data)
         })
 
@@ -94,7 +130,7 @@ export default ({ type = "" }) => {
                 setManagementUnitList(data.data);
             }
             else
-                setHeritageTypeList([]);
+                setHeritageDataTypeList([]);
             //console.log(data)
         })
     }, [])
@@ -102,38 +138,43 @@ export default ({ type = "" }) => {
 
     //validate lỗi bổ trống
     const validateAllInput = () => {
+        console.log(heritageData.heritage)
         const validationErrors = {};
 
-        if (heritage.heritage_type_id === 0) {
+        if (heritageData.heritage.heritage_type_id === 0) {
             validationErrors.heritage_type_id = 'Vui lòng chọn loại di sản';
         }
 
-        if (heritage.name.trim() === '') {
+        if (heritageData.heritage.name.trim() === '') {
             validationErrors.name = 'Vui lòng nhập tên di sản';
         }
 
-        if (heritage.image_url.trim() === '') {
-            validationErrors.image_url = 'Vui lòng chọn địa chỉ url của ảnh';
-        }
+        // if (heritageData.heritage.image_url.trim() === '') {
+        //     validationErrors.image_url = 'Vui lòng chọn địa chỉ url của ảnh';
+        // }
 
-        if (heritage.location_id === 0) {
+        if (heritageData.heritage.location_id === 0) {
             validationErrors.location_id = 'Vui lòng chọn địa điểm';
         }
 
-        if (heritage.management_unit_id === 0) {
+        if (heritageData.heritage.heritage_category_id === 0) {
+            validationErrors.heritage_category_id = 'Vui lòng chọn hình thức';
+        }
+
+        if (heritageData.heritage.management_unit_id === 0) {
             validationErrors.management_unit_id = 'Vui lòng chọn đơn vị quản lý';
         }
 
-        if (heritage.time.trim() === '') {
-            validationErrors.time = 'Vui lòng nhập thời gian';
+        if (heritageData.heritage.time.trim() === '') {
+            validationErrors.time = 'Vui lòng nhập niên đại';
         }
 
-        if (heritage.urlslug.trim() === '') {
+        if (heritageData.heritage.urlslug.trim() === '') {
             validationErrors.urlslug = 'Slug chưa được tạo';
         }
 
-        if (heritage.description.trim() === '') {
-            validationErrors.description = 'Vui lòng nhập mô tả chi tiết';
+        if (heritageData.heritage.short_description.trim() === '') {
+            validationErrors.short_description = 'Vui lòng nhập mô tả chi tiết';
         }
 
         setErrors(validationErrors);
@@ -150,13 +191,13 @@ export default ({ type = "" }) => {
         // Nếu không có lỗi mới xóa hoặc cập nhật
         if (validateAllInput() === false) {
             if (id === 0) {
-                addHeritage(heritage).then(data => {
+                addHeritage(heritageData.heritage).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
             }
             else {
-                putHeritage(id, heritage).then(data => {
+                putHeritage(id, heritageData.heritage).then(data => {
                     SetSuccessFlag(data);
                     //console.log(data);
                 });
@@ -167,8 +208,8 @@ export default ({ type = "" }) => {
     //Xử lý khi bấm xóa bên component con NotificationModal
     const childToParent = (isContinue) => {
         if (isContinue === true && id === 0) {
-            setHeritage(initialState);
-             // Reset flag sau khi thêm thành công
+            setHeritageData(initialState);
+            // Reset flag sau khi thêm thành công
             setTimeout(() => { SetSuccessFlag(false); }, 1000)
         }
     }
@@ -191,12 +232,17 @@ export default ({ type = "" }) => {
                         name="name"
                         required
                         type="text"
-                        value={heritage.name || ''}
-                        onChange={e => setHeritage({
-                            ...heritage,
-                            name: e.target.value,
-                            urlslug: generateSlug(e.target.value),
-                        })}
+                        value={heritageData.heritage.name || ''}
+                        onChange={e =>
+                            setHeritageData(heritageData => ({
+                              ...heritageData,
+                              heritage: {
+                                ...heritageData.heritage,
+                                name: e.target.value,
+                                urlslug: generateSlug(e.target.value),
+                              }
+                            }))
+                        }
                         placeholder="Nhập tên di sản"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
                     {errors.name &&
@@ -213,9 +259,9 @@ export default ({ type = "" }) => {
                         name="urlslug"
                         required
                         type="text"
-                        value={heritage.urlslug || ''}
-                        // onChange={e => setHeritage({
-                        //     ...heritage,
+                        value={heritageData.heritage.urlslug || ''}
+                        // onChange={e => setHeritageData({
+                        //     ...heritageData.heritage,
                         //     UrlSlug: e.target.value
                         // })}
                         placeholder="Nhập định danh slug"
@@ -232,16 +278,19 @@ export default ({ type = "" }) => {
                     </h2>
                     <select
                         name='heritage_type_id'
-                        value={heritage.heritage_type_id}
+                        value={heritageData.heritage.heritage_type_id}
                         required
-                        onChange={e => {
-                            setHeritage({
-                                ...heritage,
+                        onChange={e =>
+                            setHeritageData(heritageData => ({
+                              ...heritageData,
+                              heritage: {
+                                ...heritageData.heritage,
                                 heritage_type_id: parseInt(e.target.value, 10)
-                            })
-                        }}
+                              }
+                            }))
+                        }
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
-                        <option value=''>--- Chọn loại di sản ---</option>
+                        <option value={0}>--- Chọn loại di sản ---</option>
                         {heritageTypeList.map((item, index) => (
                             <option key={index} value={item.id}>{item.name}</option>
                         ))}
@@ -254,20 +303,53 @@ export default ({ type = "" }) => {
                     }
 
                     <h2 className="font-semibold text-sm text-teal-500">
+                        Hình thức di sản
+                    </h2>
+                    <select
+                        name='heritage_category_id'
+                        value={heritageData.heritage.heritage_category_id}
+                        required
+                        onChange={e =>
+                            setHeritageData(heritageData => ({
+                              ...heritageData,
+                              heritage: {
+                                ...heritageData.heritage,
+                                heritage_category_id: parseInt(e.target.value, 10)
+
+                              }
+                            }))
+                        }
+                        className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
+                        <option value={0}>--- Chọn hình thức di sản ---</option>
+                        {heritageCategoryList.map((item, index) => (
+                            <option key={index} value={item.id}>{item.name}</option>
+                        ))}
+                    </select>
+                    {errors.heritage_category_id &&
+                        <p className="text-red-500 mb-6 text-sm font-semibold">
+                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
+                            {errors.heritage_category_id}
+                        </p>
+                    }
+
+                    <h2 className="font-semibold text-sm text-teal-500">
                         Địa điểm
                     </h2>
                     <select
                         name='location_id'
-                        value={heritage.location_id}
+                        value={heritageData.heritage.location_id}
                         required
-                        onChange={e => {
-                            setHeritage({
-                                ...heritage,
+                        onChange={e =>
+                            setHeritageData(heritageData => ({
+                              ...heritageData,
+                              heritage: {
+                                ...heritageData.heritage,
                                 location_id: parseInt(e.target.value, 10)
-                            })
-                        }}
+                              }
+                            }))
+                        }
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
-                        <option value=''>--- Chọn địa điểm ---</option>
+                        <option value={0}>--- Chọn địa điểm ---</option>
                         {locationList.map((item, index) => (
                             <option key={index} value={item.id}>{item.name}</option>
                         ))}
@@ -284,16 +366,20 @@ export default ({ type = "" }) => {
                     </h2>
                     <select
                         name='management_unit_id'
-                        value={heritage.management_unit_id}
+                        value={heritageData.heritage.management_unit_id}
                         required
-                        onChange={e => {
-                            setHeritage({
-                                ...heritage,
+                        onChange={e =>
+                            setHeritageData(heritageData => ({
+                              ...heritageData,
+                              heritage: {
+                                ...heritageData.heritage,
                                 management_unit_id: parseInt(e.target.value, 10)
-                            })
-                        }}
+
+                              }
+                            }))
+                        }
                         className=" text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400 appearance-none">
-                        <option value=''>--- Chọn đơn vị quản lý ---</option>
+                        <option value={0}>--- Chọn đơn vị quản lý ---</option>
                         {managementUnitList.map((item, index) => (
                             <option key={index} value={item.id}>{item.name}</option>
                         ))}
@@ -306,17 +392,22 @@ export default ({ type = "" }) => {
                     }
 
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Thời gian
+                        Niên đại
                     </h2>
                     <input
                         name="time"
                         required
                         type="text"
-                        value={heritage.time || ''}
-                        onChange={e => setHeritage({
-                            ...heritage,
-                            time: e.target.value,
-                        })}
+                        value={heritageData.heritage.time || ''}
+                        onChange={e =>
+                            setHeritageData(heritageData => ({
+                              ...heritageData,
+                              heritage: {
+                                ...heritageData.heritage,
+                                time: e.target.value,
+                              }
+                            }))
+                        }
                         placeholder="Nhập thời gian"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
                     {errors.time &&
@@ -327,51 +418,71 @@ export default ({ type = "" }) => {
                     }
 
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Mô tả chi tiết
+                        Mô tả ngắn
                     </h2>
                     <textarea
-                        name="description"
+                        name="short_description"
                         required
                         type="text"
-                        value={heritage.description || ''}
-                        onChange={e => setHeritage({
-                            ...heritage,
-                            description: e.target.value
-                        })}
+                        value={heritageData.heritage.short_description || ''}
+                        onChange={e =>
+                            setHeritageData(heritageData => ({
+                              ...heritageData,
+                              heritage: {
+                                ...heritageData.heritage,
+                                short_description: e.target.value
+
+                              }
+                            }))
+                        }
                         placeholder="Nhập mô tả chi tiết"
                         className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false" ></textarea>
-                    {errors.description &&
+                    {errors.short_description &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.description}
+                            {errors.short_description}
                         </p>
                     }
 
                     <h2 className="font-semibold text-sm text-teal-500">
-                        Hình ảnh
+                        Video
                     </h2>
                     <input
-                        name="image_url"
+                        name="video_url"
                         required
                         type="text"
-                        value={heritage.image_url || ''}
-                        onChange={e => setHeritage({
-                            ...heritage,
-                            image_url: e.target.value,
-                        })}
-                        placeholder="Nhập link ảnh"
+                        value={heritageData.heritage.video_url || ''}
+                        onChange={e =>
+                            setHeritageData(heritageData => ({
+                              ...heritageData,
+                              heritage: {
+                                ...heritageData.heritage,
+                                video_url: e.target.value,
+                              }
+                            }))
+                        }
+                        placeholder="Nhập link video"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.image_url &&
-                        <p className="text-red-500 mb-6 text-sm font-semibold">
-                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
-                            {errors.image_url}
-                        </p>
-                    }
 
-                    {!isEmptyOrSpaces(heritage.image_url) && <>
-                        <p className="text-gray-600 mb-4 text-center">Ảnh hiện tại</p>
-                        <img src={heritage.image_url} className="w-full h-auto mb-4 rounded-lg" />
-                    </>}
+                    <h2 className="font-semibold text-sm text-teal-500">
+                        Ảnh 360 độ
+                    </h2>
+                    <input
+                        name="image_360_url"
+                        required
+                        type="text"
+                        value={heritageData.heritage.image_360_url || ''}
+                        onChange={e =>
+                            setHeritageData(heritageData => ({
+                              ...heritageData,
+                              heritage: {
+                                ...heritageData.heritage,
+                                image_360_url: e.target.value,
+                              }
+                            }))
+                        }
+                        placeholder="Nhập link ảnh 360 độ"
+                        className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
 
                     <div className="buttons flex">
                         <hr className="mt-4" />
