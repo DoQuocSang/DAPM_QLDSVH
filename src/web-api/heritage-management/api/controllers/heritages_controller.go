@@ -283,6 +283,56 @@ func IncreaseViewCount(c *gin.Context) {
 	utils.SuccessResponse(c, http.StatusOK, "View count increased successfully")
 }
 
+// UpdateHeritageAndParagraphs cập nhật di sản và các mô tả di sản tương ứng theo ID của di sản
+func UpdateHeritageAndParagraphs(c *gin.Context) {
+	heritageID := c.Param("id")
+
+	var requestData struct {
+		Heritage   models.Heritage_DTO         `json:"heritage"`
+		Paragraphs []models.Heritage_Paragraph `json:"paragraphs"`
+	}
+
+	if err := c.ShouldBindJSON(&requestData); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid request data")
+		return
+	}
+
+	// Kiểm tra di sản có tồn tại không
+	var heritage models.Heritage
+	if err := db.GetDB().Where("id = ?", heritageID).First(&heritage).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Heritage not found")
+		return
+	}
+
+	// Cập nhật thông tin di sản
+	if err := db.GetDB().Model(&models.Heritage_DTO{}).Where("id = ?", heritageID).Updates(requestData.Heritage).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not update heritage")
+		return
+	}
+
+	// Xóa các mô tả di sản cũ của di sản
+	if err := db.GetDB().Where("heritage_id = ?", heritageID).Delete(&models.Heritage_Paragraph{}).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not delete heritage paragraphs")
+		return
+	}
+
+	// Gán heritage_id cho các mô tả di sản mới
+	for i := range requestData.Paragraphs {
+		requestData.Paragraphs[i].Heritage_ID = heritage.ID
+	}
+
+	// Thêm các mô tả di sản mới vào cơ sở dữ liệu
+	if err := db.GetDB().Create(&requestData.Paragraphs).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not create heritage paragraphs")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, gin.H{
+		"heritage":   requestData.Heritage,
+		"paragraphs": requestData.Paragraphs,
+	})
+}
+
 // GetHeritageWithParagraphsBySlug lấy thông tin di sản và các đoạn mô tả của di sản dựa trên slug di sản
 func GetHeritageWithParagraphsBySlug(c *gin.Context) {
 	heritageSlug := c.Param("urlSlug")
@@ -363,6 +413,32 @@ func GetHeritageWithParagraphsById(c *gin.Context) {
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, response)
+}
+
+// Xóa di sản cùng các đoạn mô tả dựa trên ID di sản
+func DeleteHeritageWithParagraphsById(c *gin.Context) {
+	heritageId := c.Param("id")
+
+	// Kiểm tra di sản có tồn tại không
+	var heritage models.Heritage
+	if err := db.GetDB().Where("id = ?", heritageId).First(&heritage).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Heritage not found")
+		return
+	}
+
+	// Xóa các đoạn mô tả liên quan đến di sản
+	if err := db.GetDB().Where("heritage_id = ?", heritageId).Delete(&models.Heritage_Paragraph{}).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not delete heritage paragraphs")
+		return
+	}
+
+	// Xóa di sản
+	if err := db.GetDB().Where("id = ?", heritageId).Delete(&models.Heritage{}).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not delete heritage")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, "Heritage and related paragraphs deleted successfully")
 }
 
 // GetPagedHeritagesWithImages trả về danh sách phân trang di sản cùng với các hình ảnh của mỗi di sản

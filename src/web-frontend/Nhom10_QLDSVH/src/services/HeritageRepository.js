@@ -77,11 +77,24 @@ export function addHeritage(
     return post_api(`http://localhost:8080/api/v1/heritage`, formData);
 }
 
+export function addHeritageWithParagraphs(
+    formData
+    ) {
+    return post_api(`http://localhost:8080/api/v1/heritage/full-info`, formData);
+}
+
 export function putHeritage(
     id = 0,
     formData
     ) {
     return put_api(`http://localhost:8080/api/v1/heritage/${id}`, formData);
+}
+
+export function putHeritageWithParagraphs(
+    id = 0,
+    formData
+    ) {
+    return put_api(`http://localhost:8080/api/v1/heritage/full-info/${id}`, formData);
 }
 
 export function getHeritagesByQuerySearch(

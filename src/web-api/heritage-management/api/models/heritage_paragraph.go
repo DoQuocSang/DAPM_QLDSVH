@@ -1,6 +1,6 @@
 package models
 
-// Heritage struct
+// Heritage Paragraph struct
 type Heritage_Paragraph struct {
 	ID                int    `json:"id" gorm:"column:id;"`
 	Title             string `json:"title" gorm:"column:title;"`

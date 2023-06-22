@@ -93,6 +93,10 @@ export const handleGetFirstString = (str) => {
     return resultArray[0]; // Trả về phần tử đầu tiên của mảng
 };
 
+// Chặt chuỗi các hình ảnh và trả về mảng
+export const splitImageUrls = (imageUrlString) => {
+    return imageUrlString.split(",").map((url) => url.trim());
+};
 
 // export function formatNumber(number) {
 //     if (number < 10 && number !== 0) {
