@@ -10,7 +10,7 @@ import CatDefault from "images/cat-default-nobg.png";
 import logo from "images/logo1.png";
 import { ReactComponent as MenuIcon } from "feather-icons/dist/icons/menu.svg";
 import { ReactComponent as CloseIcon } from "feather-icons/dist/icons/x.svg";
-import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { faBriefcase, faCaretDown, faCaretUp, faComment, faCube, faHeadset, faImage, faLocationDot, faMinusCircle, faPlusCircle, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileLines } from "@fortawesome/free-solid-svg-icons";
 import { faPeopleRoof } from "@fortawesome/free-solid-svg-icons";
@@ -26,6 +26,8 @@ import { isEmptyOrSpaces } from "../../utils/Utils";
 import { getLocations } from "../../../services/LocationRepository.js";
 import { getManagementUnits } from "../../../services/ManagementUnitRepository.js";
 import { getHeritageTypes } from "../../../services/HeritageTypeRepository.js";
+import { getHeritageCategories } from "../../../services/HeritageCategoryRepository.js";
+
 // import { getAuthors } from "../../../services/AuthorRepository.js";
 // import { getCategories } from "../../../services/CategoryRepository.js";
 
@@ -34,7 +36,7 @@ const Header = tw.header`
   max-w-screen-xl mx-auto
 `;
 
-export const PaddingContainer = tw.div`p-6`;
+export const PaddingContainer = tw.div`py-2`;
 
 export const NavLinks = tw.div`inline-block`;
 
@@ -55,7 +57,7 @@ export const LogoLink = styled(NavLink)`
   ${tw`flex items-center font-black border-b-0 text-2xl! ml-0!`};
 
   img {
-    ${tw`w-32 mr-3`}
+    ${tw`h-12 mr-3`}
   }
 `;
 
@@ -75,7 +77,12 @@ export const DesktopNavLinks = tw.nav`
 `;
 
 export const MenuOnHover = tw.div`invisible py-5 absolute z-50 rounded-md flex bg-gray-100 py-1 px-4 text-gray-800 shadow-xl group-hover:visible`;
-export const MenuItem = tw.a`px-5 py-3 hover:text-primary-500 transition duration-300 text-gray-600`;
+export const MenuItem = styled.a(({ isShowMore, isShorten, isNormal }) => [
+  tw`px-5 py-3 hover:text-primary-500 transition duration-300`,
+  isNormal && tw`text-gray-600`,
+  isShowMore && tw`text-teal-400`,
+  isShorten && tw`text-red-500`,
+]);
 
 export const MenuContainer = styled.div(({ flexCol }) => [
   tw`grid grid-cols-4 grow-0 mb-5`,
@@ -105,36 +112,61 @@ const ErrorImage = tw.img`max-w-xs h-auto rounded-lg pt-4`;
 export default ({ roundedHeaderButton = false, logoLink, links, className, collapseBreakpointClass = "lg" }) => {
   const [locationList, setLocationList] = useState([]);
   const [heritageTypeList, setHeritageTypeList] = useState([]);
+  const [heritageCategoryList, setHeritageCategoryList] = useState([]);
   const [managementUnitList, setManagementUnitList] = useState([]);
+
+  const [categoriesVisible, setCategoriesVisible] = useState(7);
+  const onLoadMoreCategoriesClick = () => {
+    setCategoriesVisible(v => v + 8);
+  };
+
+  const [locationsVisible, setLocationsVisible] = useState(7);
+  const onLoadMoreLocationsClick = () => {
+    setLocationsVisible(v => v + 8);
+  };
+
+  const [managementUnitsVisible, setManagementUnitsVisible] = useState(7);
+  const onLoadMoreManagementUnitsVisibleClick = () => {
+    setManagementUnitsVisible(v => v + 8);
+  };
 
   useEffect(() => {
     document.title = 'Trang chủ';
 
-    getHeritageTypes().then(data => {
+    getHeritageTypes(1, 100, "name", "ASC").then(data => {
       if (data) {
         setHeritageTypeList(data.data);
       }
-      else{
+      else {
         setHeritageTypeList([]);
       }
-      console.log(data)
+      //console.log(data)
     })
 
-    getLocations().then(data => {
+    getLocations(1, 100, "name", "ASC").then(data => {
       if (data) {
         setLocationList(data.data);
       }
-      else{
+      else {
         setLocationList([]);
       }
     })
 
-    getManagementUnits().then(data => {
+    getManagementUnits(1, 100, "name", "ASC").then(data => {
       if (data) {
         setManagementUnitList(data.data);
       }
-      else{
+      else {
         setManagementUnitList([]);
+      }
+    })
+
+    getHeritageCategories(1, 100, "name", "ASC").then(data => {
+      if (data) {
+        setHeritageCategoryList(data.data);
+      }
+      else {
+        setHeritageCategoryList([]);
       }
     })
   }, []);
@@ -142,53 +174,114 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
   const defaultLinks = [
     <NavLinks key={1}>
       <NavLink className="group" css={tw`cursor-pointer`}>
-        <a href="/all-product">
+        <a href="/all-heritage">
           <FontAwesomeIcon icon={faListUl} css={tw`mr-2 text-base`} />
           Danh mục
         </a>
         <MenuOnHover>
           <MenuSection hasBorder>
             <MenuTitle>
-              <FontAwesomeIcon icon={faBoltLightning} css={tw`mr-2 text-base`} />
+              <FontAwesomeIcon icon={faBookmark} css={tw`mr-2 text-base`} />
               Loại di sản
             </MenuTitle>
             {heritageTypeList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
             <MenuContainer flexCol>
-                {heritageTypeList.map((item, i) => (
-                  <MenuItem href={"/all-product/" + "heritage-type/" + item.urlslug}>
-                    {item.name}
-                  </MenuItem>
-                ))}
+              {heritageTypeList.map((item, i) => (
+                <MenuItem isNormal href={"/all-heritage/"+ "by-heritage-type/" + item.urlslug}>
+                  {item.name}
+                </MenuItem>
+              ))}
             </MenuContainer>
           </MenuSection>
 
           <MenuSection flexCol>
             <MenuSection>
               <MenuTitle>
-                <FontAwesomeIcon icon={faUserPen} css={tw`mr-2 text-base`} />
+                <FontAwesomeIcon icon={faCube} css={tw`mr-2 text-base`} />
+                Hình thức di sản
+              </MenuTitle>
+              {heritageCategoryList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
+              <MenuContainer >
+                {heritageCategoryList.slice(0, categoriesVisible).map((item, i) => (
+                  <MenuItem isNormal href={"/all-heritage/"+ "by-heritage-category/" + item.urlslug}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+                {categoriesVisible < heritageCategoryList.length ? (
+                  <MenuItem isShowMore onClick={onLoadMoreCategoriesClick}>
+                    <FontAwesomeIcon icon={faCaretDown} css={tw`mr-2 text-base`} />
+                    Xem thêm
+                  </MenuItem>
+                )
+                  :
+                  (
+                    heritageCategoryList.length > 7 &&
+                    <MenuItem isShorten onClick={() => { setCategoriesVisible(7) }}>
+                      <FontAwesomeIcon icon={faCaretUp} css={tw`mr-2 text-base`} />
+                      Thu gọn
+                    </MenuItem>
+                  )
+                }
+              </MenuContainer>
+            </MenuSection>
+
+            <MenuSection>
+              <MenuTitle>
+                <FontAwesomeIcon icon={faLocationDot} css={tw`mr-2 text-base`} />
                 Địa điểm
               </MenuTitle>
               {locationList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
               <MenuContainer >
-              {locationList.map((item, i) => (
-                  <MenuItem href={"/all-product/" + "location/" + item.urlslug}>
+                {locationList.slice(0, locationsVisible).map((item, i) => (
+                  <MenuItem isNormal href={"/all-heritage/"+ "by-location/" + item.urlslug}>
                     {item.name}
                   </MenuItem>
                 ))}
+                {locationsVisible < locationList.length ? (
+                  <MenuItem isShowMore onClick={onLoadMoreLocationsClick}>
+                    <FontAwesomeIcon icon={faCaretDown} css={tw`mr-2 text-base`} />
+                    Xem thêm
+                  </MenuItem>
+                )
+                  :
+                  (
+                    locationList.length > 7 &&
+                    <MenuItem isShorten onClick={() => { setLocationsVisible(7) }}>
+                      <FontAwesomeIcon icon={faCaretUp} css={tw`mr-2 text-base`} />
+                      Thu gọn
+                    </MenuItem>
+                  )
+                }
               </MenuContainer>
             </MenuSection>
+
             <MenuSection>
               <MenuTitle>
-                <FontAwesomeIcon icon={faBook} css={tw`mr-2 text-base`} />
+                <FontAwesomeIcon icon={faBriefcase} css={tw`mr-2 text-base`} />
                 Đơn vị quản lý
               </MenuTitle>
               {managementUnitList.length === 0 ? <ErrorImage src={CatDefault} /> : ""}
               <MenuContainer >
-                {managementUnitList.map((item, i) => (
-                  <MenuItem href={"/all-product/" + "management-unit/" + item.urlslug}>
+                {managementUnitList.slice(0, managementUnitsVisible).map((item, i) => (
+                  <MenuItem isNormal href={"/all-heritage/"+ "by-management-unit/" + item.urlslug}>
                     {item.name}
                   </MenuItem>
                 ))}
+                {managementUnitsVisible < managementUnitList.length ? (
+                  <MenuItem isShowMore onClick={onLoadMoreManagementUnitsVisibleClick}>
+                    <FontAwesomeIcon icon={faCaretDown} css={tw`mr-2 text-base`} />
+                    Xem thêm
+                  </MenuItem>
+                )
+                  :
+                  (
+                    managementUnitList.length > 7 &&
+                    <MenuItem isShorten onClick={() => { setManagementUnitsVisible(7) }}>
+                      <FontAwesomeIcon icon={faCaretUp} css={tw`mr-2 text-base`} />
+                      Thu gọn
+                    </MenuItem>
+                  )
+                }
               </MenuContainer>
             </MenuSection>
           </MenuSection>
@@ -219,17 +312,17 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
 
       <a href="/blog">
         <NavLink>
-          <FontAwesomeIcon icon={faFileLines} css={tw`mr-2 text-base`} />
-          Bài viết
+          <FontAwesomeIcon icon={faComment} css={tw`mr-2 text-base`} />
+          Hỗ trợ
         </NavLink>
       </a>
 
-      <Link to="/cart">
+      <a href="/blog">
         <NavLink>
-          <FontAwesomeIcon icon={faShoppingCart} css={tw`mr-2 text-base`} />
-          Giỏ hàng
+          <FontAwesomeIcon icon={faImage} css={tw`mr-2 text-base`} />
+          Thư viện
         </NavLink>
-      </Link>
+      </a>
 
       <Link to="/login">
         <NavLink tw="lg:ml-12!">

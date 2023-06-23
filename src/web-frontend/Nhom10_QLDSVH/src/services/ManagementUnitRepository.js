@@ -11,6 +11,13 @@ export function getManagementUnitById(
     // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
 }
 
+export function getManagementUnitBySlug(
+    slug = "",
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/management-unit/slug/${slug}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
+
 export function getManagementUnits(
     page = 1,
     limit = 30,
@@ -47,8 +54,21 @@ export function getManagementUnitsByQuerySearch(
     page = 1,
     limit = 30
     ) {    
-    return get_api(`http://localhost:3000/api/v1/management-unit/search?page=${page}&limit=${limit}&key=${key}&column=${column}`)
+    return get_api(`http://localhost:8080/api/v1/management-unit/search?Key=${key}&page=${page}&limit=${limit}&column=${column}`)
 }
+
+export function getHeritagesByManagementUnitSlug(
+    slug = "",
+    page = 1,
+    limit = 30,
+    columnName = "id",
+    sortOrder = "DESC"
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/management-unit/slug/${slug}/heritages/paged?page=${page}&limit=${limit}&columnName=${columnName}&sortOrder=${sortOrder}`)
+    // return get_api(`http://localhost:3000/v1/location?page=${page}&limit=${limit}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
+
 
 
 

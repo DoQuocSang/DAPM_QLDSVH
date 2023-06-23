@@ -15,10 +15,15 @@ import Error404 from "../../../components/admin/other/Error404";
 import { getHeritages } from "services/HeritageRepository";
 import DeleteModal from "../../../components/admin/modal/DeleteModal";
 import { getHeritageById } from "../../../services/HeritageRepository";
+import { checkImageArray } from "../../../components/utils/Utils";
+import SearchInput from "../../../components/admin/other/SearchInput";
+import { getHeritagesByQuerySearch } from "../../../services/HeritageRepository";
 
 export default () => {
     const [heritageList, setHeritageList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
+    const [searchKey, setSearchKey] = useState("");
+    const [searchColumn, setSearchColumn] = useState("name");
 
     //Xử lý khi bấm xóa bên component con DeleteModal
     const childToParent = (isDelete) => {
@@ -28,13 +33,41 @@ export default () => {
         console.log(heritageList.length)
     }
 
-    //Xử lý khi tìm kiếm bên component header
-    const datafromHeader = (data) => {
-        if (data.length > 0) {
-            setHeritageList(data);
+    const handleSearch = () => {
+        if (isEmptyOrSpaces(searchKey)) {
+            getHeritages(1, 30)
+                .then(data => {
+                    if (data) {
+                        setHeritageList(data.data);
+                    } else {
+                        setHeritageList([]);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    setHeritageList([]);
+                });
+        } else {
+            getHeritagesByQuerySearch(searchKey, searchColumn, 1, 30)
+                .then(data => {
+                    if (data) {
+                        setHeritageList(data.data);
+                    } else {
+                        setHeritageList([]);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    setHeritageList([]);
+                });
         }
-        //console.log(heritageList.length)
-    }
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -43,8 +76,10 @@ export default () => {
             if (data) {
                 setHeritageList(data.data);
             }
-            else
+            else {
                 setHeritageList([]);
+            }
+            console.log(data)
         })
     }, []);
 
@@ -129,10 +164,20 @@ export default () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col mt-8">
+                            <div className="flex flex-col">
                                 <div className="overflow-x-auto rounded-lg">
                                     <div className="align-middle inline-block min-w-full">
                                         <div className="shadow overflow-hidden sm:rounded-lg">
+                                            <div className="mb-6 bg-white">
+                                                <div className="flex items-center justify-start">
+                                                    <SearchInput
+                                                        searchKey={searchKey}
+                                                        setSearchKey={setSearchKey}
+                                                        handleSearch={handleSearch}
+                                                        handleKeyPress={handleKeyPress}
+                                                    />
+                                                </div>
+                                            </div>
                                             <table className="min-w-full divide-y divide-gray-200 border border-gray-200">
                                                 <thead className="bg-gray-200">
                                                     <tr>
@@ -142,17 +187,20 @@ export default () => {
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Tên di sản
                                                         </th>
-                                                        <th scope="col" width="10%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        <th scope="col" width="15%" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                            Hình ảnh
+                                                        </th>
+                                                        <th scope="col" width="15%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Loại di sản
                                                         </th>
-                                                        <th scope="col" width="20%" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                           Hình ảnh
-                                                        </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        <th scope="col" width="15%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Địa điểm
                                                         </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        <th scope="col" width="15%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Đơn vị quản lý
+                                                        </th>
+                                                        <th scope="col" width="5%" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                            Số ảnh
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Sửa
@@ -173,22 +221,20 @@ export default () => {
                                                                 {item.name}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500">
-                                                                {item.heritage_type.name}
+                                                                <img className="h-auto rounded-lg mx-auto" src={checkImageArray(item.images)[0]} alt="Neil image" />
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500">
-                                                                {isEmptyOrSpaces(item.image_url) ? (
-                                                                    <img className="h-auto rounded-lg mx-auto" src={DefaultImage} alt="Neil image" />
-                                                                ) : (
-                                                                    <img className="h-auto rounded-lg mx-auto" src={item.image_url} alt="Neil image" />
-                                                                )}
+                                                                {item.heritage_type.name}
                                                             </td>
                                                             <td className="p-4 text-sm font-normal text-gray-500 align-middle">
                                                                 {item.location.name}
                                                             </td>
-                                                            <td className="p-4 text-sm font-semibold text-gray-500">
+                                                            <td className="p-4 text-sm font-normal text-gray-500">
                                                                 {item.management_unit.name}
                                                             </td>
-
+                                                            <td className="p-4 text-center text-sm font-normal text-gray-500">
+                                                                {item.images.length}
+                                                            </td>
                                                             <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider hover:text-emerald-600 transition duration-75">
                                                                 <Link to={`/admin/dashboard/update-heritage/${item.id}`}>
                                                                     <FontAwesomeIcon icon={faPenToSquare} />

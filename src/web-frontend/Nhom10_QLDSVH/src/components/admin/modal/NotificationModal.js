@@ -23,6 +23,9 @@ export default ({mainAction='text', mainText = 'item', type = '', isSuccess, isC
     if(type === 'heritage-type'){
         page = 'all-heritage-type';
     }
+    if(type === 'heritage-category'){
+        page = 'all-heritage-category';
+    }
     if(type === 'location'){
         page = 'all-location';
     }

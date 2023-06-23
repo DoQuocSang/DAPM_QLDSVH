@@ -3,7 +3,7 @@ import Book1 from "images/book1.png"
 import Book2 from "images/book2.jpg"
 import Book3 from "images/book3.jpg"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle, faCircleNotch, faPenToSquare, faPencil, faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faCircle, faCircleNotch, faPenToSquare, faPencil, faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -16,6 +16,7 @@ import { getManagementUnitById } from "../../../services/ManagementUnitRepositor
 import { addManagementUnit } from "../../../services/ManagementUnitRepository";
 import { putManagementUnit } from "../../../services/ManagementUnitRepository";
 import NotificationModal from "../../../components/admin/modal/NotificationModal";
+import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 
 
 
@@ -25,9 +26,13 @@ export default ({ type = "" }) => {
     const initialState = {
         id: 0,
         name: '',
-        description: '',
         urlslug: '',
-    },[managementUnit, setManagementUnit] = useState(initialState);
+        image_url: '',
+        note: '',
+        address: '',
+        description: '',
+        short_description: '',
+    }, [managementUnit, setManagementUnit] = useState(initialState);
     const [successFlag, SetSuccessFlag] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -62,6 +67,7 @@ export default ({ type = "" }) => {
     //validate lỗi bổ trống
     const validateAllInput = () => {
         const validationErrors = {};
+        const validationEmpty = {};
 
         if (managementUnit.name.trim() === '') {
             validationErrors.name = 'Vui lòng nhập tên đơn vị quản lý';
@@ -69,6 +75,22 @@ export default ({ type = "" }) => {
 
         if (managementUnit.urlslug.trim() === '') {
             validationErrors.urlslug = 'Slug chưa được tạo';
+        }
+
+        // if (managementUnit.image_url.trim() === '') {
+        //     validationErrors.image_url = 'Vui lòng nhập link ảnh';
+        // }
+
+        if (managementUnit.address.trim() === '') {
+            validationErrors.address = 'Vui lòng nhập địa chỉ';
+        }
+
+        // if (managementUnit.note.trim() === '') {
+        //     validationErrors.note = 'Vui lòng nhập ghi chú';
+        // }
+
+        if (managementUnit.short_description.trim() === '') {
+            validationErrors.short_description = 'Vui lòng nhập mô tả ngắn';
         }
 
         if (managementUnit.description.trim() === '') {
@@ -168,6 +190,50 @@ export default ({ type = "" }) => {
                     }
 
                     <h2 className="font-semibold text-sm text-teal-500">
+                        Địa chỉ
+                    </h2>
+                    <input
+                        name="address"
+                        required
+                        type="text"
+                        value={managementUnit.address || ''}
+                        onChange={e => setManagementUnit({
+                            ...managementUnit,
+                            address: e.target.value
+                        })}
+                        placeholder="Nhập địa chỉ"
+                        className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+                    {errors.address &&
+                        <p className="text-red-500 mb-6 text-sm font-semibold">
+                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
+                            {errors.address}
+                        </p>
+                    }
+
+
+                    <h2 className="font-semibold text-sm text-teal-500">
+                        Mô tả ngắn
+                    </h2>
+                    <textarea
+                        name="short_description"
+                        required
+                        type="text"
+                        value={managementUnit.short_description || ''}
+                        onChange={e => setManagementUnit({
+                            ...managementUnit,
+                            short_description: e.target.value
+                        })}
+                        placeholder="Nhập mô tả ngắn"
+                        className="description mb-4 sec h-36 text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" spellcheck="false" ></textarea>
+                    {errors.short_description &&
+                        <p className="text-red-500 mb-6 text-sm font-semibold">
+                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
+                            {errors.short_description}
+                        </p>
+                    }
+
+
+                    <h2 className="font-semibold text-sm text-teal-500">
                         Mô tả chi tiết
                     </h2>
                     <textarea
@@ -188,6 +254,54 @@ export default ({ type = "" }) => {
                         </p>
                     }
 
+                    <h2 className="font-semibold text-sm text-teal-500">
+                        Ghi chú
+                    </h2>
+                    <input
+                        name="note"
+                        required
+                        type="text"
+                        value={managementUnit.note || ''}
+                        onChange={e => setManagementUnit({
+                            ...managementUnit,
+                            note: e.target.value
+                        })}
+                        placeholder="Nhập ghi chú"
+                        className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+                    {/* {errors.note &&
+                        <p className="text-red-500 mb-6 text-sm font-semibold">
+                            <FontAwesomeIcon className="mr-2" icon={faCheckCircle} />
+                            {errors.note}
+                        </p>
+                    } */}
+
+                    <h2 className="font-semibold text-sm text-teal-500">
+                        Hình ảnh
+                    </h2>
+                    <input
+                        name="image_url"
+                        required
+                        type="text"
+                        value={managementUnit.image_url || ''}
+                        onChange={e => setManagementUnit({
+                            ...managementUnit,
+                            image_url: e.target.value,
+                        })}
+                        placeholder="Nhập link ảnh"
+                        className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
+                    {/* {errors.image_url &&
+                        <p className="text-red-500 mb-6 text-sm font-semibold">
+                            <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
+                            {errors.image_url}
+                        </p>
+                    } */}
+
+                    {!isEmptyOrSpaces(managementUnit.image_url) && <>
+                        <p className="text-gray-600 mb-4 text-center">Ảnh hiện tại</p>
+                        <img src={managementUnit.image_url} className="w-full h-auto mb-4 rounded-lg" />
+                    </>}
+
+
                     <div className="buttons flex">
                         <hr className="mt-4" />
                         <Link to="/admin/dashboard/all-management-unit" className="btn ml-auto rounded-md transition duration-300 ease-in-out cursor-pointer hover:bg-gray-500 p-2 px-5 font-semibold hover:text-white text-gray-500">
@@ -198,7 +312,7 @@ export default ({ type = "" }) => {
                         </button>
                     </div>
 
-                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="management-unit"/>
+                    <NotificationModal mainAction={maintAction} isSuccess={successFlag} isContinue={childToParent} type="management-unit" />
                 </div>
 
             </div>

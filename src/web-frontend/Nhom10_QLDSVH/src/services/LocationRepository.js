@@ -11,6 +11,13 @@ export function getLocationById(
     // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
 }
 
+export function getLocationBySlug(
+    slug = "",
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/location/slug/${slug}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
+
 export function getLocations(
     page = 1,
     limit = 30,
@@ -47,9 +54,19 @@ export function getLocationsByQuerySearch(
     page = 1,
     limit = 30
     ) {    
-    return get_api(`http://localhost:3000/api/v1/location/search?page=${page}&limit=${limit}&key=${key}&column=${column}`)
+    return get_api(`http://localhost:8080/api/v1/location/search?Key=${key}&page=${page}&limit=${limit}&column=${column}`)
 }
 
-
+export function getHeritagesByLocationSlug(
+    slug = "",
+    page = 1,
+    limit = 30,
+    columnName = "id",
+    sortOrder = "DESC"
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/location/slug/${slug}/heritages/paged?page=${page}&limit=${limit}&columnName=${columnName}&sortOrder=${sortOrder}`)
+    // return get_api(`http://localhost:3000/v1/location?page=${page}&limit=${limit}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
 
 

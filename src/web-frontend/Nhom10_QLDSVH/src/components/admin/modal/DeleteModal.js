@@ -6,6 +6,7 @@ import { deleteManagementUnitById } from "../../../services/ManagementUnitReposi
 import { deleteUserById } from "../../../services/UserRepository";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { deleteHeritageCategoryById } from "../../../services/HeritageCategoryRepository";
 
 export default ({ mainText = 'item', deleteId = 0, type='', isDelete }) => {
     const [changeContent, setChangeContent] = useState(false);
@@ -35,6 +36,17 @@ export default ({ mainText = 'item', deleteId = 0, type='', isDelete }) => {
         }
         if(type === 'heritage-type'){
             deleteHeritageTypeById(deleteId).then(data => {
+                //Ở đây Data có kiểu trả về là boolean
+                //Gọi hàm isDelete để thực thi bên component cha AllHeritage  
+                isDelete(data);
+    
+                //Thay đổi nội dung thông báo nếu xóa thành công
+                setChangeContent(true);
+            })
+            //console.log('loai di san')
+        }
+        if(type === 'heritage-category'){
+            deleteHeritageCategoryById(deleteId).then(data => {
                 //Ở đây Data có kiểu trả về là boolean
                 //Gọi hàm isDelete để thực thi bên component cha AllHeritage  
                 isDelete(data);

@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
+import { useNavigate } from "react-router-dom";
 import { Container as ContainerBase } from "components/user/misc/Layouts";
 import tw from "twin.macro";
 import styled from "styled-components";
-import {css} from "styled-components/macro"; //eslint-disable-line
+import { css } from "styled-components/macro"; //eslint-disable-line
 import illustration from "images/design-illustration.svg";
-import logo from "images/logo.png";
+import logo from "images/logo1.png";
 import googleIconImageSrc from "images/google-icon.png";
 import facebookIconImageSrc from "images/facebook-icon.png";
 import { ReactComponent as LoginIcon } from "feather-icons/dist/icons/log-in.svg";
+import { getUserByUserName } from "../../../services/UserRepository";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Container = tw(ContainerBase)`min-h-screen text-white font-medium flex justify-center m-0 bg-purple-300`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow-lg sm:rounded-lg flex justify-center flex-1`;
@@ -52,62 +56,109 @@ const IllustrationImage = styled.div`
   ${props => `background-image: url("${props.imageSrc}");`}
   ${tw`m-12 xl:m-16 w-full max-w-sm bg-contain bg-center bg-no-repeat`}
 `;
+const ErrorText = tw.div`text-red-500 mt-2 font-semibold text-sm`;
 
-export default ({
-  logoLinkUrl = "#",
-  illustrationImageSrc = illustration,
-  headingText = "Đăng nhập Admin",
-  socialButtons = [
-    {
-      iconImageSrc: googleIconImageSrc,
-      text: "Đăng nhập với Google",
-      url: "https://google.com"
-    },
-    {
-      iconImageSrc: facebookIconImageSrc,
-      text: "Đăng nhập với Facebook",
-      url: "https://facebook.com"
+
+export default () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const [loggedInUsername, setLoggedInUsername] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  localStorage.setItem("loggedInUsername", "");
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+
+    // Kiểm tra xem đã nhập tên đăng nhập và mật khẩu hay chưa
+    if (!username) {
+      setUsernameError("Vui lòng nhập tên đăng nhập");
+      return;
+    } else {
+      setUsernameError("");
     }
-  ],
-  submitButtonText = "Đăng nhập",
-  SubmitButtonIcon = LoginIcon,
-  forgotPasswordUrl = "#",
-  signupUrl = "#",
 
-}) => (
-  <AnimationRevealPage>
-    <Container>
-      <Content>
-        <MainContainer>
-          <LogoLink href={logoLinkUrl}>
-            <LogoImage src={logo} />
-          </LogoLink>
-          <MainContent>
-            <Heading>{headingText}</Heading>
-            <FormContainer>
-              
-            <Form>
-                <Input type="email" placeholder="Nhập Email..." />
-                <Input type="password" placeholder="Nhập mật khẩu..." />
-                <SubmitButton type="submit">
-                  <SubmitButtonIcon className="icon" />
-                  <span className="text">{submitButtonText}</span>
-                </SubmitButton>
-              </Form>
+    if (!password) {
+      setPasswordError("Vui lòng nhập mật khẩu");
+      return;
+    } else {
+      setPasswordError("");
+    }
 
-              {/* <p tw="mt-6 text-xs text-gray-600 text-center">
-                <a href={forgotPasswordUrl} tw="border-b border-gray-500 border-dotted">
-                  Quên mật khẩu?
-                </a>
-              </p> */}
-              
-            </FormContainer>
-          </MainContent>
-        </MainContainer>
-        <IllustrationContainer>
-          <IllustrationImage imageSrc={illustrationImageSrc} />
-        </IllustrationContainer>
-      </Content>
-    </Container>
-  </AnimationRevealPage>
-);
+    const user = await getUserByUserName(username);
+
+    if (user && user.password === password && user.permission === 1) {
+      // Đăng nhập thành công, chuyển hướng đến trang chủ của admin
+      setLoggedInUsername(user.user_name);
+      localStorage.setItem("loggedInUsername", user.user_name);
+
+      navigate("/admin/dashboard");
+    } else {
+      alert("Tên đăng nhập hoặc mật khẩu không chính xác.");
+    }
+  };
+
+  const handleUsernameFocus = () => {
+    setUsernameError("");
+  };
+
+  const handlePasswordFocus = () => {
+    setPasswordError("");
+  };
+
+  return (
+    <AnimationRevealPage>
+      <Container>
+        <Content>
+          <MainContainer>
+            <LogoLink href="/">
+              <LogoImage src={logo} />
+            </LogoLink>
+            <MainContent>
+              <Heading>Đăng nhập Admin</Heading>
+              <FormContainer>
+                <Form onSubmit={handleLogin}>
+                  <Input
+                    type="text"
+                    placeholder="Nhập tên đăng nhập..."
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    onFocus={handleUsernameFocus}
+                  />
+                  {usernameError &&
+                    <ErrorText>
+                      <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
+                      {usernameError}
+                    </ErrorText>
+                  }
+
+                  <Input
+                    type="password"
+                    placeholder="Nhập mật khẩu..."
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onFocus={handlePasswordFocus}
+                  />
+                  {passwordError &&
+                    <ErrorText>
+                      <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
+                      {passwordError}
+                    </ErrorText>
+                  }
+                  <SubmitButton type="submit">
+                    <LoginIcon className="icon" />
+                    <span className="text">Đăng nhập</span>
+                  </SubmitButton>
+                </Form>
+              </FormContainer>
+            </MainContent>
+          </MainContainer>
+          <IllustrationContainer>
+            <IllustrationImage imageSrc={illustration} />
+          </IllustrationContainer>
+        </Content>
+      </Container>
+    </AnimationRevealPage>
+  );
+}

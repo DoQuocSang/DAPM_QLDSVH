@@ -14,10 +14,14 @@ import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 import DefaultImage from "images/post-default.png"
 import Error404 from "../../../components/admin/other/Error404";
 import DeleteModal from "../../../components/admin/modal/DeleteModal";
+import SearchInput from "../../../components/admin/other/SearchInput";
+import { getLocationsByQuerySearch } from "../../../services/LocationRepository";
 
 export default () => {
     const [locationList, setLocationList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
+    const [searchKey, setSearchKey] = useState("");
+    const [searchColumn, setSearchColumn] = useState("name");
 
     //Xử lý khi bấm xóa bên component con DeleteModal
     const childToParent = (isDelete) => {
@@ -26,6 +30,42 @@ export default () => {
         }
         console.log(locationList.length)
     }
+
+    const handleSearch = () => {
+        if (isEmptyOrSpaces(searchKey)) {
+            getLocations(1, 30)
+                .then(data => {
+                    if (data) {
+                        setLocationList(data.data);
+                    } else {
+                        setLocationList([]);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    setLocationList([]);
+                });
+        } else {
+            getLocationsByQuerySearch(searchKey, searchColumn, 1, 30)
+                .then(data => {
+                    if (data) {
+                        setLocationList(data.data);
+                    } else {
+                        setLocationList([]);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    setLocationList([]);
+                });
+        }
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -48,60 +88,6 @@ export default () => {
         <>
             <main>
                 <div className="pt-6 px-4">
-                    {/* <div className="mb-4 w-full grid grid-cols-4 gap-4">
-                        <div className="relative max-w-md mx-auto md:max-w-2xl min-w-0 break-words bg-white w-full shadow-sm rounded-xl">
-                            <div className="px-6">
-                                <div className="text-center py-6">
-                                    <FontAwesomeIcon className="text-3xl" icon={faChartPie} />
-                                    <h3 className="text-2xl text-slate-600 font-bold leading-normal my-1">12</h3>
-                                    <div className="text-xs mt-0 mb-2 text-slate-400 font-bold uppercase">
-                                        <i className="fas fa-map-marker-alt mr-2 text-slate-400 opacity-75"></i>
-                                        Tổng số địa điểm
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="relative max-w-md mx-auto md:max-w-2xl min-w-0 break-words bg-white w-full shadow-sm rounded-xl">
-                            <div className="px-6">
-                                <div className="text-center py-6">
-                                    <FontAwesomeIcon className="text-emerald-500 text-3xl" icon={faLaughBeam} />
-                                    <h3 className="text-2xl text-slate-600 font-bold leading-normal my-1">03</h3>
-                                    <div className="text-xs mt-0 mb-2 text-slate-400 font-bold uppercase">
-                                        <i className="fas fa-map-marker-alt mr-2 text-slate-400 opacity-75"></i>
-                                        Di sản đang bảo tồn
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="relative max-w-md mx-auto md:max-w-2xl min-w-0 break-words bg-white w-full shadow-sm rounded-xl">
-                            <div className="px-6">
-                                <div className="text-center py-6">
-                                    <FontAwesomeIcon className="text-amber-500 text-3xl" icon={faTired} />
-                                    <h3 className="text-2xl text-slate-600 font-bold leading-normal my-1">02</h3>
-                                    <div className="text-xs mt-0 mb-2 text-slate-400 font-bold uppercase">
-                                        <i className="fas fa-map-marker-alt mr-2 text-slate-400 opacity-75"></i>
-                                        Di sản bị đe dọa
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="relative max-w-md mx-auto md:max-w-2xl min-w-0 break-words bg-white w-full shadow-sm rounded-xl">
-                            <div className="px-6">
-                                <div className="text-center py-6">
-                                    <FontAwesomeIcon className="text-red-500 text-3xl" icon={faDizzy} />
-                                    <h3 className="text-2xl text-slate-600 font-bold leading-normal my-1">04</h3>
-                                    <div className="text-xs mt-0 mb-2 text-slate-400 font-bold uppercase">
-                                        <i className="fas fa-map-marker-alt mr-2 text-slate-400 opacity-75"></i>
-                                        Di sản có nguy cơ biến mất
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div> */}
                     <div className="w-full mb-8">
                         <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
                             <div className="mb-4 flex items-center justify-between">
@@ -121,18 +107,34 @@ export default () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col mt-8">
+                            <div className="flex flex-col">
                                 <div className="overflow-x-auto rounded-lg">
                                     <div className="align-middle inline-block min-w-full">
                                         <div className="shadow overflow-hidden sm:rounded-lg">
+                                            <div className="mb-6 bg-white">
+                                                <div className="flex items-center justify-start">
+                                                    <SearchInput
+                                                        searchKey={searchKey}
+                                                        setSearchKey={setSearchKey}
+                                                        handleSearch={handleSearch}
+                                                        handleKeyPress={handleKeyPress}
+                                                    />
+                                                </div>
+                                            </div>
                                             <table className="min-w-full divide-y divide-gray-200 border border-gray-200">
                                                 <thead className="bg-gray-200">
                                                     <tr>
                                                         <th scope="col" className="p-4 text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             STT
                                                         </th>
-                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                        <th scope="col" width="20%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Tên địa điểm
+                                                        </th>
+                                                        <th scope="col" width="20%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                            Hình ảnh
+                                                        </th>
+                                                        <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                                            Mô tả ngắn
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Sửa
@@ -151,6 +153,16 @@ export default () => {
                                                             <td className="p-4 text-sm font-semibold text-gray-500">
                                                                 {item.name}
                                                             </td>
+                                                            <td className="p-4 text-sm font-normal text-gray-500">
+                                                                {isEmptyOrSpaces(item.image_url) ? (
+                                                                    <img className="h-auto rounded-lg mx-auto" src={DefaultImage} alt="Neil image" />
+                                                                ) : (
+                                                                    <img className="h-auto rounded-lg mx-auto" src={item.image_url} alt="Neil image" />
+                                                                )}
+                                                            </td>
+                                                            <td className="p-4 text-sm font-semibold text-gray-500">
+                                                                {item.short_description}
+                                                            </td>
                                                             <th scope="col" className="p-4 text-left text-xl font-semibold text-emerald-400 uppercase tracking-wider hover:text-emerald-600 transition duration-75">
                                                                 <Link to={`/admin/dashboard/update-location/${item.id}`}>
                                                                     <FontAwesomeIcon icon={faPenToSquare} />
@@ -166,7 +178,7 @@ export default () => {
                                             {locationList.length === 0 ?
                                                 <Error404 />
                                                 :
-                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} type="location"/>}
+                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} type="location" />}
                                         </div>
                                     </div>
                                 </div>

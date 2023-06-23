@@ -3,7 +3,7 @@ import tw from "twin.macro";
 import styled from "styled-components";
 import { css } from "styled-components/macro"; //eslint-disable-line
 
-import LogoImage from "images/logo.png";
+import LogoImage from "images/logo1.png";
 import { ReactComponent as FacebookIcon } from "images/facebook-icon.svg";
 import { ReactComponent as TwitterIcon } from "images/twitter-icon.svg";
 import { ReactComponent as YoutubeIcon } from "images/youtube-icon.svg";
@@ -25,7 +25,7 @@ const LinkListItem = tw.li`mt-3`;
 const Link = tw.a`border-b-2 border-transparent hocus:text-primary-500 hocus:border-primary-500 pb-1 transition duration-300`;
 
 const LogoContainer = tw.div`flex items-center justify-center md:justify-start`;
-const LogoImg = tw.img`w-8`;
+const LogoImg = tw.img`w-32`;
 const LogoText = tw.h5`ml-2 text-xl font-black text-primary-500`;
 
 const CompanyDescription = tw.p`mt-4 max-w-xs font-medium text-sm mx-auto md:mx-0 md:mr-4 `;
@@ -48,10 +48,9 @@ export default () => {
           <WideColumn>
             <LogoContainer>
               <LogoImg src={LogoImage} />
-              <LogoText>Fahasa</LogoText>
             </LogoContainer>
             <CompanyDescription>
-              Fahasa là cửa hàng kinh danh sách hàng đầu tại Việt Nam.
+              VNESCO là trang web giới thiệu di sản văn hóa tại Việt Nam.
               Nếu có bất kì thắc mắc nào hãy liên hệ với chúng tôi qua những đường link bên dưới
             </CompanyDescription>
 
@@ -88,7 +87,7 @@ export default () => {
                 <Link href="/all-product">Danh mục</Link>
               </LinkListItem>
               <LinkListItem>
-                <Link href="/not-found-404">FAQs</Link>
+                <Link href="/not-found-404">Giấy phép</Link>
               </LinkListItem>
               <LinkListItem>
                 <Link href="/not-found-404">Hỗ trợ</Link>
@@ -108,7 +107,7 @@ export default () => {
                 <Link href="/not-found-404">Chi tiết tài khoản</Link>
               </LinkListItem>
               <LinkListItem>
-                <Link href="/not-found-404">Lịch sử mua hàng</Link>
+                <Link href="/not-found-404">Đặt lịch tham quan</Link>
               </LinkListItem>
               <LinkListItem>
                 <Link href="/not-found-404">Mục ưa thích</Link>
@@ -116,19 +115,19 @@ export default () => {
             </LinkList>
           </Column>
           <Column>
-            <ColumnHeading>Hỗ trợ</ColumnHeading>
+            <ColumnHeading>Liên hệ</ColumnHeading>
             <LinkList>
               <LinkListItem>
-                <Link href="/not-found-404">Chính sách đổi trả</Link>
+                <Link href="/not-found-404">Hỗ trợ</Link>
               </LinkListItem>
               <LinkListItem>
-                <Link href="/not-found-404">Chính sách bảo hành</Link>
+                <Link href="/not-found-404">Góp ý</Link>
               </LinkListItem>
               <LinkListItem>
-                <Link href="/not-found-404">Chính sách vận chuyển</Link>
+                <Link href="/not-found-404">Bản đồ</Link>
               </LinkListItem>
               <LinkListItem>
-                <Link href="/not-found-404">Phương thức thanh toán</Link>
+                <Link href="/not-found-404">Địa chỉ</Link>
               </LinkListItem>
             </LinkList>
           </Column>

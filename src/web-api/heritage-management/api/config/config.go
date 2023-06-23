@@ -32,7 +32,7 @@ func GetAppConfig() *AppConfig {
 		}{
 			Host:     "localhost",
 			Port:     "3306",
-			Name:     "QLDSVH_Web",
+			Name:     "QLDSVH",
 			User:     "root",
 			Password: "my-secret-pw",
 		},
