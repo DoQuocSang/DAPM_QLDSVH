@@ -37,6 +37,8 @@ import UserSignup from "pages/user/Signup"
 import UserAllHeritage from "pages/user/AllHeritagePage"
 import AboutUs from "pages/user/AboutUs"
 import UserHeritageDetail from "pages/user/HeritageDetail"
+import ContactUs from "pages/user/ContactUs"
+import Gallery from "pages/user/Gallery"
 
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
@@ -61,6 +63,8 @@ function App() {
           <Route path="/all-heritage/:type/:slug" element={<UserAllHeritage />} />
           <Route path="/heritage-detail/:slug" element={<UserHeritageDetail />} />
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/gallery" element={<Gallery />} />
         </Route>
 
         <Route path="/admin" element={<AdminLogin />} />

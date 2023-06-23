@@ -151,31 +151,70 @@ func GetRandomHeritages(c *gin.Context) {
 		return
 	}
 
+	// // Lấy danh sách hình ảnh cho mỗi di sản
+	// for i := range heritages {
+	// 	var heritageParagraphs []models.Heritage_Paragraph
+
+	// 	if err := db.GetDB().Where("heritage_id = ?", heritages[i].ID).Find(&heritageParagraphs).Error; err != nil {
+	// 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+	// 		return
+	// 	}
+
+	// 	images := make([]string, 0)
+
+	// 	// Cắt chuỗi nếu chứa dấu phẩy
+	// 	for _, paragraph := range heritageParagraphs {
+	// 		imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+	// 		for _, url := range imageURLs {
+	// 			trimmedURL := strings.TrimSpace(url)
+	// 			if trimmedURL != "" {
+	// 				images = append(images, trimmedURL)
+	// 			}
+	// 		}
+	// 	}
+
+	// 	// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+	// 	heritages[i].Images = images
+	// }
+
+	// Dùng Map để cải thiện hiệu suất api, giảm số lần truy vấn dữ liệu
 	// Lấy danh sách hình ảnh cho mỗi di sản
+	var heritageIDs []int
+
 	for i := range heritages {
-		var heritageParagraphs []models.Heritage_Paragraph
+		heritageIDs = append(heritageIDs, heritages[i].ID)
+	}
 
-		if err := db.GetDB().Where("heritage_id = ?", heritages[i].ID).Find(&heritageParagraphs).Error; err != nil {
-			utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
-			return
-		}
+	var heritageParagraphs []models.Heritage_Paragraph
 
-		images := make([]string, 0)
+	if err := db.GetDB().Where("heritage_id IN ?", heritageIDs).Find(&heritageParagraphs).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+		return
+	}
 
-		// Cắt chuỗi nếu chứa dấu phẩy
-		for _, paragraph := range heritageParagraphs {
-			imageURLs := strings.Split(paragraph.ImageURL, ",")
+	// Tạo map để lưu trữ danh sách hình ảnh cho từng di sản
+	heritageImagesMap := make(map[int][]string)
 
-			for _, url := range imageURLs {
-				trimmedURL := strings.TrimSpace(url)
-				if trimmedURL != "" {
-					images = append(images, trimmedURL)
-				}
+	for _, paragraph := range heritageParagraphs {
+		imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+		for _, url := range imageURLs {
+			trimmedURL := strings.TrimSpace(url)
+			if trimmedURL != "" {
+				heritageImagesMap[paragraph.Heritage_ID] = append(heritageImagesMap[paragraph.Heritage_ID], trimmedURL)
 			}
 		}
+	}
 
-		// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
-		heritages[i].Images = images
+	// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+	for i := range heritages {
+		// Biến ok dùng để kiểm tra giá trị có tồn tại không
+		if images, ok := heritageImagesMap[heritages[i].ID]; ok {
+			heritages[i].Images = images
+		} else {
+			heritages[i].Images = []string{} // Gán mảng rỗng nếu không có ảnh
+		}
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, heritages)
@@ -728,6 +767,115 @@ func SearchHeritage(c *gin.Context) {
 		heritages[i].Images = images
 	}
 
+	pagination := utils.Pagination{
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
+		Data:       heritages,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, pagination)
+}
+
+// GetPagedHeritagesImagesForGallery trả về danh sách phân trang di sản cùng với các hình ảnh của mỗi di sản
+func GetPagedHeritagesImagesForGallery(c *gin.Context) {
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	var total int64
+	var heritages []models.Heritage_Gallery
+
+	// Đếm tổng số lượng
+	if err := db.GetDB().Model(&models.Heritage_Gallery{}).Count(&total).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	// Đếm tổng số trang
+	// Chia % vì nếu chia có dư thì đồng nghĩa vẫn còn trang sau nên phải tăng thêm 1
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+
+	// Phân trang
+	offset := (page - 1) * limit
+	if err := db.GetDB().Order("RAND()").Offset(offset).Limit(limit).Find(&heritages).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	// Kiểm tra dữ liệu trả về rỗng
+	if len(heritages) == 0 {
+		utils.ErrorResponse(c, http.StatusNotFound, "No data available")
+		return
+	}
+
+	// Dùng Map để cải thiện hiệu suất api, giảm số lần truy vấn dữ liệu
+	// Lấy danh sách hình ảnh cho mỗi di sản
+	var heritageIDs []int
+
+	for i := range heritages {
+		heritageIDs = append(heritageIDs, heritages[i].ID)
+	}
+
+	var heritageParagraphs []models.Heritage_Paragraph
+
+	if err := db.GetDB().Where("heritage_id IN ?", heritageIDs).Find(&heritageParagraphs).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+		return
+	}
+
+	// Tạo map để lưu trữ danh sách hình ảnh cho từng di sản
+	heritageImagesMap := make(map[int][]string)
+
+	for _, paragraph := range heritageParagraphs {
+		imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+		for _, url := range imageURLs {
+			trimmedURL := strings.TrimSpace(url)
+			if trimmedURL != "" {
+				heritageImagesMap[paragraph.Heritage_ID] = append(heritageImagesMap[paragraph.Heritage_ID], trimmedURL)
+			}
+		}
+	}
+
+	// Tạo map để lưu trữ mô tả ảnh cho từng ảnh
+	heritageImageDescriptionsMap := make(map[int][]string)
+
+	for _, paragraph := range heritageParagraphs {
+		imageDescriptions := strings.Split(paragraph.Image_Description, ",")
+
+		for _, item := range imageDescriptions {
+			trimmedItem := strings.TrimSpace(item)
+			if trimmedItem != "" {
+				heritageImageDescriptionsMap[paragraph.Heritage_ID] = append(heritageImageDescriptionsMap[paragraph.Heritage_ID], trimmedItem)
+			}
+		}
+	}
+
+	// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+	for i := range heritages {
+		// Biến ok dùng để kiểm tra giá trị có tồn tại không
+		if images, ok := heritageImagesMap[heritages[i].ID]; ok {
+			heritages[i].Images = images
+		} else {
+			heritages[i].Images = []string{} // Gán mảng rỗng nếu không có ảnh
+		}
+	}
+
+	// Gán danh sách hình ảnh và mô tả ảnh vào thuộc tính ImageDescriptions của di sản tương ứng
+	for i := range heritages {
+		// Biến ok dùng để kiểm tra giá trị có tồn tại không
+		if imageDescriptions, ok := heritageImageDescriptionsMap[heritages[i].ID]; ok {
+			heritages[i].ImageDescriptions = imageDescriptions
+		} else {
+			heritages[i].ImageDescriptions = []string{} // Gán mảng rỗng nếu không có mô tả ảnh
+		}
+	}
+
+	// Tạo đối tượng phản hồi phân trang
 	pagination := utils.Pagination{
 		Total:      total,
 		Page:       page,

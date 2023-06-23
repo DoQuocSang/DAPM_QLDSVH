@@ -60,6 +60,8 @@ const ErrorText = tw.div`text-red-500 mt-2 font-semibold text-sm`;
 
 
 export default () => {
+  document.title = 'Đăng nhập Admin';
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();

@@ -125,6 +125,15 @@ export const scrollToTop = () => {
     requestAnimationFrame(scrollAnimation);
 };
 
+export const checkImageDescriptionArray = (value) => {
+    //console.log(value)
+    if(value.length === 0) {
+        return ["Không có mô tả cho ảnh này"];
+    }
+    const arr = value.map(item => item !== '' ? item : "Không có mô tả cho ảnh này");
+    return arr;
+}
+
 export const checkImageArray = (value) => {
     //console.log(value)
     if(value.length === 0) {

@@ -73,61 +73,64 @@ export default ({
   forgotPasswordUrl = "#",
   signupUrl = "#",
 
-}) => (
-  <AnimationRevealPage>
-    <Container>
-      <Content>
-        <MainContainer>
-          <LogoLink href={logoLinkUrl}>
-            <LogoImage src={logo} />
-          </LogoLink>
-          <MainContent>
-            <Heading>{headingText}</Heading>
-            <FormContainer>
-              
-            <Form>
-                <Input type="email" placeholder="Nhập Email..." />
-                <Input type="password" placeholder="Nhập mật khẩu..." />
-                <SubmitButton type="submit">
-                  <SubmitButtonIcon className="icon" />
-                  <span className="text">{submitButtonText}</span>
-                </SubmitButton>
-              </Form>
-
-              <p className="mt-6 text-xs text-gray-500 text-center">
-                <a href={forgotPasswordUrl} className="border-b border-gray-500 border-dotted">
-                  Quên mật khẩu?
-                </a>
-              </p>
-
-              <DividerTextContainer>
-                <DividerText>Hoặc sử dụng phương thức khác</DividerText>
-              </DividerTextContainer>
-
-              <SocialButtonsContainer>
-                {socialButtons.map((socialButton, index) => (
-                  <SocialButton key={index} href={socialButton.url}>
-                    <span className="iconContainer">
-                      <img src={socialButton.iconImageSrc} className="icon" alt=""/>
-                    </span>
-                    <span className="text">{socialButton.text}</span>
-                  </SocialButton>
-                ))}
-              </SocialButtonsContainer>
-
-              <p className="mt-8 text-sm text-gray-500 text-center">
-                Chưa có tài khoản?{" "}
-                <a href={signupUrl} className="border-b border-gray-500 border-dotted">
-                  Đăng ký ngay
-                </a>
-              </p>
-            </FormContainer>
-          </MainContent>
-        </MainContainer>
-        <IllustrationContainer>
-          <IllustrationImage imageSrc={illustrationImageSrc} />
-        </IllustrationContainer>
-      </Content>
-    </Container>
-  </AnimationRevealPage>
-);
+}) => {
+  document.title = 'Đăng nhập';
+  return (
+    <AnimationRevealPage>
+      <Container>
+        <Content>
+          <MainContainer>
+            <LogoLink href={logoLinkUrl}>
+              <LogoImage src={logo} />
+            </LogoLink>
+            <MainContent>
+              <Heading>{headingText}</Heading>
+              <FormContainer>
+                
+              <Form>
+                  <Input type="email" placeholder="Nhập Email..." />
+                  <Input type="password" placeholder="Nhập mật khẩu..." />
+                  <SubmitButton type="submit">
+                    <SubmitButtonIcon className="icon" />
+                    <span className="text">{submitButtonText}</span>
+                  </SubmitButton>
+                </Form>
+  
+                <p className="mt-6 text-xs text-gray-500 text-center">
+                  <a href={forgotPasswordUrl} className="border-b border-gray-500 border-dotted">
+                    Quên mật khẩu?
+                  </a>
+                </p>
+  
+                <DividerTextContainer>
+                  <DividerText>Hoặc sử dụng phương thức khác</DividerText>
+                </DividerTextContainer>
+  
+                <SocialButtonsContainer>
+                  {socialButtons.map((socialButton, index) => (
+                    <SocialButton key={index} href={socialButton.url}>
+                      <span className="iconContainer">
+                        <img src={socialButton.iconImageSrc} className="icon" alt=""/>
+                      </span>
+                      <span className="text">{socialButton.text}</span>
+                    </SocialButton>
+                  ))}
+                </SocialButtonsContainer>
+  
+                <p className="mt-8 text-sm text-gray-500 text-center">
+                  Chưa có tài khoản?{" "}
+                  <a href={signupUrl} className="border-b border-gray-500 border-dotted">
+                    Đăng ký ngay
+                  </a>
+                </p>
+              </FormContainer>
+            </MainContent>
+          </MainContainer>
+          <IllustrationContainer>
+            <IllustrationImage imageSrc={illustrationImageSrc} />
+          </IllustrationContainer>
+        </Content>
+      </Container>
+    </AnimationRevealPage>
+  );
+}

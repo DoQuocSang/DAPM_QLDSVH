@@ -9,6 +9,7 @@ import DesignIllustration from "images/stats-illustration.svg";
 
 
 export default () => {
+    document.title = 'Quản lý chung';
 
     return (
         <main>

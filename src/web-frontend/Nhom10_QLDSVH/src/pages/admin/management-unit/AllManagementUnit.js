@@ -18,6 +18,8 @@ import SearchInput from "../../../components/admin/other/SearchInput";
 import { getManagementUnitsByQuerySearch } from "../../../services/ManagementUnitRepository";
 
 export default () => {
+    document.title = 'Quản lý đơn vị quản lý';
+
     const [managementUnitList, setManagementUnitList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
     const [searchKey, setSearchKey] = useState("");

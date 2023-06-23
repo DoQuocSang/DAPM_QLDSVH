@@ -73,65 +73,69 @@ export default ({
   tosUrl = "#",
   privacyPolicyUrl = "#",
   signInUrl = "#"
-}) => (
-  <AnimationRevealPage>
-    <Container>
-      <Content>
-        <MainContainer>
-          <LogoLink href={logoLinkUrl}>
-            <LogoImage src={logo} />
-          </LogoLink>
-          <MainContent>
-            <Heading>{headingText}</Heading>
-            <FormContainer>
-              <Form>
-                <Input type="email" placeholder="Nhập Email..." />
-                <Input type="password" placeholder="Nhập mật khẩu..." />
-                <SubmitButton type="submit">
-                  <SubmitButtonIcon className="icon" />
-                  <span className="text">{submitButtonText}</span>
-                </SubmitButton>
-                <p className="mt-6 text-xs text-gray-500 text-center">
-                  Tôi đã đọc và đồng ý với{" "}
-                  <a href={tosUrl} className="border-b border-gray-500 border-dotted">
-                    Điều khoản dịch vụ
-                  </a>{" "}
-                  và {" "}
-                  <a href={privacyPolicyUrl} className="border-b border-gray-500 border-dotted">
-                    Chính sách bảo mật
-                  </a>{" "}
-                   của Fahasa
-                </p>
-
-                <p className="mt-8 text-sm text-gray-500 text-center">
-                  Đã có tài khoản?{" "}
-                  <a href={signInUrl} className="border-b border-gray-500 border-dotted">
-                    Đăng nhập ngay
-                  </a>
-                </p>
-              </Form>
-
-              <DividerTextContainer>
-                <DividerText>Hoặc sử dụng phương thức khác</DividerText>
-              </DividerTextContainer>
-              
-              <SocialButtonsContainer>
-                {socialButtons.map((socialButton, index) => (
-                  <SocialButton key={index} href={socialButton.url}>
-                    <span className="iconContainer">
-                      <img src={socialButton.iconImageSrc} className="icon" alt="" />
-                    </span>
-                    <span className="text">{socialButton.text}</span>
-                  </SocialButton>
-                ))}
-              </SocialButtonsContainer>
-            </FormContainer>
-          </MainContent>
-        </MainContainer>
-        <IllustrationContainer>
-          <IllustrationImage imageSrc={illustrationImageSrc} />
-        </IllustrationContainer>
-      </Content>
-    </Container>
-  </AnimationRevealPage>
-);
+}) => {
+  document.title = 'Đăng ký';
+  
+  return(
+    <AnimationRevealPage>
+      <Container>
+        <Content>
+          <MainContainer>
+            <LogoLink href={logoLinkUrl}>
+              <LogoImage src={logo} />
+            </LogoLink>
+            <MainContent>
+              <Heading>{headingText}</Heading>
+              <FormContainer>
+                <Form>
+                  <Input type="email" placeholder="Nhập Email..." />
+                  <Input type="password" placeholder="Nhập mật khẩu..." />
+                  <SubmitButton type="submit">
+                    <SubmitButtonIcon className="icon" />
+                    <span className="text">{submitButtonText}</span>
+                  </SubmitButton>
+                  <p className="mt-6 text-xs text-gray-500 text-center">
+                    Tôi đã đọc và đồng ý với{" "}
+                    <a href={tosUrl} className="border-b border-gray-500 border-dotted">
+                      Điều khoản dịch vụ
+                    </a>{" "}
+                    và {" "}
+                    <a href={privacyPolicyUrl} className="border-b border-gray-500 border-dotted">
+                      Chính sách bảo mật
+                    </a>{" "}
+                     của Fahasa
+                  </p>
+  
+                  <p className="mt-8 text-sm text-gray-500 text-center">
+                    Đã có tài khoản?{" "}
+                    <a href={signInUrl} className="border-b border-gray-500 border-dotted">
+                      Đăng nhập ngay
+                    </a>
+                  </p>
+                </Form>
+  
+                <DividerTextContainer>
+                  <DividerText>Hoặc sử dụng phương thức khác</DividerText>
+                </DividerTextContainer>
+                
+                <SocialButtonsContainer>
+                  {socialButtons.map((socialButton, index) => (
+                    <SocialButton key={index} href={socialButton.url}>
+                      <span className="iconContainer">
+                        <img src={socialButton.iconImageSrc} className="icon" alt="" />
+                      </span>
+                      <span className="text">{socialButton.text}</span>
+                    </SocialButton>
+                  ))}
+                </SocialButtonsContainer>
+              </FormContainer>
+            </MainContent>
+          </MainContainer>
+          <IllustrationContainer>
+            <IllustrationImage imageSrc={illustrationImageSrc} />
+          </IllustrationContainer>
+        </Content>
+      </Container>
+    </AnimationRevealPage>
+  );
+}

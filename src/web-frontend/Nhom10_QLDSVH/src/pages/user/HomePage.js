@@ -6,12 +6,16 @@ import ManagementUnit from "components/user/blogs/ThreeColSimpleWithImageAndDash
 import Location from "components/user/blogs/BlogIndex.js";
 import FAQS from "components/user/faqs/SingleCol.js";
 
-export default () => (
-  <AnimationRevealPage>
-    <Hero />
-    <RandomHeritage />
-    <Location />
-    <ManagementUnit />
-    <FAQS />
-  </AnimationRevealPage>
-);
+export default () => {
+  document.title = 'Trang chủ';
+
+  return(
+    <AnimationRevealPage>
+      <Hero />
+      <RandomHeritage />
+      <Location />
+      <ManagementUnit />
+      <FAQS />
+    </AnimationRevealPage>
+  );
+}

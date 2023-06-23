@@ -18,6 +18,8 @@ import SearchInput from "../../../components/admin/other/SearchInput";
 import { getHeritageCategoriesByQuerySearch } from "../../../services/HeritageCategoryRepository";
 
 export default () => {
+    document.title = 'Quản lý hình thức';
+
     const [heritageCategoryList, setHeritageCategoryList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
     const [searchKey, setSearchKey] = useState("");
