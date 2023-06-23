@@ -56,3 +56,12 @@ export function getHeritagesByCategorySlug(
     ) {    
     return get_api(`http://localhost:8080/api/v1/heritage-category/slug/${slug}/heritages/paged?page=${page}&limit=${limit}&columnName=${columnName}&sortOrder=${sortOrder}`)
 }
+
+export function getHeritageCategoriesByQuerySearch(
+    key = "",
+    column = "name",
+    page = 1,
+    limit = 30
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/heritage-category/search?Key=${key}&page=${page}&limit=${limit}&column=${column}`)
+}

@@ -247,15 +247,18 @@ func CreateHeritageAndParagraphs(c *gin.Context) {
 		return
 	}
 
-	// Gán heritage_id cho các mô tả di sản
-	for i := range requestData.Paragraphs {
-		requestData.Paragraphs[i].Heritage_ID = requestData.Heritage.ID
-	}
+	// Nếu mảng paragraphs không rỗng, thêm các mô tả di sản mới vào cơ sở dữ liệu
+	if len(requestData.Paragraphs) > 0 {
+		// Gán heritage_id cho các mô tả di sản
+		for i := range requestData.Paragraphs {
+			requestData.Paragraphs[i].Heritage_ID = requestData.Heritage.ID
+		}
 
-	// Thêm các mô tả di sản vào cơ sở dữ liệu
-	if err := db.GetDB().Create(&requestData.Paragraphs).Error; err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not create heritage paragraphs")
-		return
+		// Thêm các mô tả di sản vào cơ sở dữ liệu
+		if err := db.GetDB().Create(&requestData.Paragraphs).Error; err != nil {
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Could not create heritage paragraphs")
+			return
+		}
 	}
 
 	utils.SuccessResponse(c, http.StatusCreated, gin.H{
@@ -316,15 +319,18 @@ func UpdateHeritageAndParagraphs(c *gin.Context) {
 		return
 	}
 
-	// Gán heritage_id cho các mô tả di sản mới
-	for i := range requestData.Paragraphs {
-		requestData.Paragraphs[i].Heritage_ID = heritage.ID
-	}
+	// Nếu mảng paragraphs không rỗng, thêm các mô tả di sản mới vào cơ sở dữ liệu
+	if len(requestData.Paragraphs) > 0 {
+		// Gán heritage_id cho các mô tả di sản mới
+		for i := range requestData.Paragraphs {
+			requestData.Paragraphs[i].Heritage_ID = heritage.ID
+		}
 
-	// Thêm các mô tả di sản mới vào cơ sở dữ liệu
-	if err := db.GetDB().Create(&requestData.Paragraphs).Error; err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not create heritage paragraphs")
-		return
+		// Thêm các mô tả di sản mới vào cơ sở dữ liệu
+		if err := db.GetDB().Create(&requestData.Paragraphs).Error; err != nil {
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Could not create heritage paragraphs")
+			return
+		}
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, gin.H{
@@ -478,31 +484,43 @@ func GetPagedHeritagesWithImages(c *gin.Context) {
 		return
 	}
 
+	// Dùng Map để cải thiện hiệu suất api, giảm số lần truy vấn dữ liệu
 	// Lấy danh sách hình ảnh cho mỗi di sản
+	var heritageIDs []int
+
 	for i := range heritages {
-		var heritageParagraphs []models.Heritage_Paragraph
+		heritageIDs = append(heritageIDs, heritages[i].ID)
+	}
 
-		if err := db.GetDB().Where("heritage_id = ?", heritages[i].ID).Find(&heritageParagraphs).Error; err != nil {
-			utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
-			return
-		}
+	var heritageParagraphs []models.Heritage_Paragraph
 
-		images := make([]string, 0)
+	if err := db.GetDB().Where("heritage_id IN ?", heritageIDs).Find(&heritageParagraphs).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+		return
+	}
 
-		// Cắt chuỗi nếu chứa dấu phẩy
-		for _, paragraph := range heritageParagraphs {
-			imageURLs := strings.Split(paragraph.ImageURL, ",")
+	// Tạo map để lưu trữ danh sách hình ảnh cho từng di sản
+	heritageImagesMap := make(map[int][]string)
 
-			for _, url := range imageURLs {
-				trimmedURL := strings.TrimSpace(url)
-				if trimmedURL != "" {
-					images = append(images, trimmedURL)
-				}
+	for _, paragraph := range heritageParagraphs {
+		imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+		for _, url := range imageURLs {
+			trimmedURL := strings.TrimSpace(url)
+			if trimmedURL != "" {
+				heritageImagesMap[paragraph.Heritage_ID] = append(heritageImagesMap[paragraph.Heritage_ID], trimmedURL)
 			}
 		}
+	}
 
-		// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
-		heritages[i].Images = images
+	// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+	for i := range heritages {
+		// Biến ok dùng để kiểm tra giá trị có tồn tại không
+		if images, ok := heritageImagesMap[heritages[i].ID]; ok {
+			heritages[i].Images = images
+		} else {
+			heritages[i].Images = []string{} // Gán mảng rỗng nếu không có ảnh
+		}
 	}
 
 	// Tạo đối tượng phản hồi phân trang
@@ -563,11 +581,131 @@ func GetRelatedHeritagesWithImages(c *gin.Context) {
 		return
 	}
 
-	// Lấy danh sách hình ảnh cho mỗi di sản liên quan
+	// // Lấy danh sách hình ảnh cho mỗi di sản liên quan
+	// for i := range relatedHeritages {
+	// 	var heritageParagraphs []models.Heritage_Paragraph
+
+	// 	if err := db.GetDB().Where("heritage_id = ?", relatedHeritages[i].ID).Find(&heritageParagraphs).Error; err != nil {
+	// 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+	// 		return
+	// 	}
+
+	// 	images := make([]string, 0)
+
+	// 	// Cắt chuỗi nếu chứa dấu phẩy
+	// 	for _, paragraph := range heritageParagraphs {
+	// 		imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+	// 		for _, url := range imageURLs {
+	// 			trimmedURL := strings.TrimSpace(url)
+	// 			if trimmedURL != "" {
+	// 				images = append(images, trimmedURL)
+	// 			}
+	// 		}
+	// 	}
+
+	// 	// Gán danh sách hình ảnh vào thuộc tính Images của di sản liên quan tương ứng
+	// 	relatedHeritages[i].Images = images
+	// }
+
+	// Dùng Map để cải thiện hiệu suất api, giảm số lần truy vấn dữ liệu
+	// Lấy danh sách hình ảnh cho mỗi di sản
+	var heritageIDs []int
+
 	for i := range relatedHeritages {
+		heritageIDs = append(heritageIDs, relatedHeritages[i].ID)
+	}
+
+	var heritageParagraphs []models.Heritage_Paragraph
+
+	if err := db.GetDB().Where("heritage_id IN ?", heritageIDs).Find(&heritageParagraphs).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+		return
+	}
+
+	// Tạo map để lưu trữ danh sách hình ảnh cho từng di sản
+	heritageImagesMap := make(map[int][]string)
+
+	for _, paragraph := range heritageParagraphs {
+		imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+		for _, url := range imageURLs {
+			trimmedURL := strings.TrimSpace(url)
+			if trimmedURL != "" {
+				heritageImagesMap[paragraph.Heritage_ID] = append(heritageImagesMap[paragraph.Heritage_ID], trimmedURL)
+			}
+		}
+	}
+
+	// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+	for i := range relatedHeritages {
+		// Biến ok dùng để kiểm tra giá trị có tồn tại không
+		if images, ok := heritageImagesMap[relatedHeritages[i].ID]; ok {
+			relatedHeritages[i].Images = images
+		} else {
+			relatedHeritages[i].Images = []string{} // Gán mảng rỗng nếu không có ảnh
+		}
+	}
+
+	// Tạo đối tượng phản hồi phân trang
+	pagination := utils.Pagination{
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
+		Data:       relatedHeritages,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, pagination)
+}
+
+// SearchHeritage tìm kiếm di sản văn hóa dựa trên các thông tin như tên di sản, tên địa điểm, tên cơ sở quản lý, tên loại di sản, tên thể loại
+func SearchHeritage(c *gin.Context) {
+	hq := models.HeritageQuery{}
+	if err := c.ShouldBindQuery(&hq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid search parameters")
+		return
+	}
+
+	query := db.GetDB().Model(&models.Heritage{})
+
+	if hq.Key != "" {
+		query = query.
+			Joins("JOIN locations ON heritages.location_id = locations.id").
+			Joins("JOIN management_units ON heritages.management_unit_id = management_units.id").
+			Joins("JOIN heritage_types ON heritages.heritage_type_id = heritage_types.id").
+			Joins("JOIN heritage_categories ON heritages.heritage_category_id = heritage_categories.id").
+			Where("heritages.name LIKE ? OR locations.name LIKE ? OR management_units.name LIKE ? OR heritage_types.name LIKE ? OR heritage_categories.name LIKE ?",
+				"%"+hq.Key+"%", "%"+hq.Key+"%", "%"+hq.Key+"%", "%"+hq.Key+"%", "%"+hq.Key+"%")
+	}
+
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	offset := (page - 1) * limit
+
+	var heritages []models.Heritage
+	if err := query.Offset(offset).Limit(limit).Preload("HeritageType").Preload("HeritageCategory").Preload("Location").Preload("ManagementUnit").Find(&heritages).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+
+	// Lấy danh sách hình ảnh cho mỗi di sản
+	for i := range heritages {
 		var heritageParagraphs []models.Heritage_Paragraph
 
-		if err := db.GetDB().Where("heritage_id = ?", relatedHeritages[i].ID).Find(&heritageParagraphs).Error; err != nil {
+		if err := db.GetDB().Where("heritage_id = ?", heritages[i].ID).Find(&heritageParagraphs).Error; err != nil {
 			utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
 			return
 		}
@@ -586,17 +724,16 @@ func GetRelatedHeritagesWithImages(c *gin.Context) {
 			}
 		}
 
-		// Gán danh sách hình ảnh vào thuộc tính Images của di sản liên quan tương ứng
-		relatedHeritages[i].Images = images
+		// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+		heritages[i].Images = images
 	}
 
-	// Tạo đối tượng phản hồi phân trang
 	pagination := utils.Pagination{
 		Total:      total,
 		Page:       page,
 		Limit:      limit,
 		TotalPages: totalPages,
-		Data:       relatedHeritages,
+		Data:       heritages,
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, pagination)

@@ -152,7 +152,7 @@ export default ({ hasTab = true, isProductPage = false }) => {
           else {
             setHeritageList([]);
           }
-          console.log(data.data)
+          //console.log(data.data)
         })
       }
 

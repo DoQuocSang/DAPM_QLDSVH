@@ -38,9 +38,18 @@ import UserAllHeritage from "pages/user/AllHeritagePage"
 import AboutUs from "pages/user/AboutUs"
 import UserHeritageDetail from "pages/user/HeritageDetail"
 
-import { Route, Routes } from "react-router-dom"
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 function App() {
+  const loggedInUsername = localStorage.getItem("loggedInUsername");
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin/dashboard");
+
+  if (isAdminRoute && !loggedInUsername) {
+    // Nếu đường dẫn là trang admin và chưa đăng nhập, chuyển hướng đến trang đăng nhập
+    return <Navigate to="/admin" replace />;
+  }
+
   return (
     <AnimationRevealPage>
       <Routes>
@@ -52,14 +61,11 @@ function App() {
           <Route path="/all-heritage/:type/:slug" element={<UserAllHeritage />} />
           <Route path="/heritage-detail/:slug" element={<UserHeritageDetail />} />
           <Route path="/about-us" element={<AboutUs />} />
-          {/* <Route path="/blog" element={<BlogIndex />} />
-          <Route path="/blog/:type/:slug" element={<BlogIndex />} />
-          <Route path="/blog-detail/:slug" element={<BlogDetail />} />
-          <Route path="/not-found-404" element={<NotFound404 />} /> */}
         </Route>
 
         <Route path="/admin" element={<AdminLogin />} />
 
+        {loggedInUsername && (
         <Route path="/admin/dashboard" element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/dashboard/all-heritage" element={<AdminAllHeritage />} />
@@ -86,6 +92,7 @@ function App() {
           <Route path="/admin/dashboard/add-user" element={<AdminAddOrUpdateUser type="add" />} />
           <Route path="/admin/dashboard/update-user/:id" element={<AdminAddOrUpdateUser type="update" />} />
         </Route>
+        )}
 
         <Route path="*" element={<NotFound404 />} />
 

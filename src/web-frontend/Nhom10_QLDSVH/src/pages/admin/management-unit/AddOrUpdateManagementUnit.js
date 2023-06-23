@@ -77,17 +77,17 @@ export default ({ type = "" }) => {
             validationErrors.urlslug = 'Slug chưa được tạo';
         }
 
-        if (managementUnit.image_url.trim() === '') {
-            validationErrors.image_url = 'Vui lòng nhập link ảnh';
-        }
+        // if (managementUnit.image_url.trim() === '') {
+        //     validationErrors.image_url = 'Vui lòng nhập link ảnh';
+        // }
 
         if (managementUnit.address.trim() === '') {
             validationErrors.address = 'Vui lòng nhập địa chỉ';
         }
 
-        if (managementUnit.note.trim() === '') {
-            validationErrors.note = 'Vui lòng nhập ghi chú';
-        }
+        // if (managementUnit.note.trim() === '') {
+        //     validationErrors.note = 'Vui lòng nhập ghi chú';
+        // }
 
         if (managementUnit.short_description.trim() === '') {
             validationErrors.short_description = 'Vui lòng nhập mô tả ngắn';
@@ -268,12 +268,12 @@ export default ({ type = "" }) => {
                         })}
                         placeholder="Nhập ghi chú"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.note &&
+                    {/* {errors.note &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faCheckCircle} />
                             {errors.note}
                         </p>
-                    }
+                    } */}
 
                     <h2 className="font-semibold text-sm text-teal-500">
                         Hình ảnh
@@ -289,12 +289,12 @@ export default ({ type = "" }) => {
                         })}
                         placeholder="Nhập link ảnh"
                         className="text-black mb-4 placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-2 ring-purple-400" />
-                    {errors.image_url &&
+                    {/* {errors.image_url &&
                         <p className="text-red-500 mb-6 text-sm font-semibold">
                             <FontAwesomeIcon className="mr-2" icon={faXmarkCircle} />
                             {errors.image_url}
                         </p>
-                    }
+                    } */}
 
                     {!isEmptyOrSpaces(managementUnit.image_url) && <>
                         <p className="text-gray-600 mb-4 text-center">Ảnh hiện tại</p>

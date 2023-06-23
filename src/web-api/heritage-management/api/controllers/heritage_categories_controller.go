@@ -6,6 +6,7 @@ import (
 	"heritage-management/api/utils"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -196,23 +197,62 @@ func GetPagedHeritageByCategorySlug(c *gin.Context) {
 		return
 	}
 
+	// // Lấy danh sách hình ảnh cho mỗi di sản
+	// for i := range heritages {
+	// 	var heritageParagraphs []models.Heritage_Paragraph
+
+	// 	if err := db.GetDB().Where("heritage_id = ?", heritages[i].ID).Find(&heritageParagraphs).Error; err != nil {
+	// 		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+	// 		return
+	// 	}
+
+	// 	images := make([]string, 0)
+
+	// 	for _, paragraph := range heritageParagraphs {
+	// 		images = append(images, paragraph.ImageURL)
+	// 	}
+
+	// 	// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+	// 	heritages[i].Images = images
+	// }
+
+	// Dùng Map để cải thiện hiệu suất api, giảm số lần truy vấn dữ liệu
 	// Lấy danh sách hình ảnh cho mỗi di sản
+	var heritageIDs []int
+
 	for i := range heritages {
-		var heritageParagraphs []models.Heritage_Paragraph
+		heritageIDs = append(heritageIDs, heritages[i].ID)
+	}
 
-		if err := db.GetDB().Where("heritage_id = ?", heritages[i].ID).Find(&heritageParagraphs).Error; err != nil {
-			utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
-			return
+	var heritageParagraphs []models.Heritage_Paragraph
+
+	if err := db.GetDB().Where("heritage_id IN ?", heritageIDs).Find(&heritageParagraphs).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get heritage paragraphs")
+		return
+	}
+
+	// Tạo map để lưu trữ danh sách hình ảnh cho từng di sản
+	heritageImagesMap := make(map[int][]string)
+
+	for _, paragraph := range heritageParagraphs {
+		imageURLs := strings.Split(paragraph.ImageURL, ",")
+
+		for _, url := range imageURLs {
+			trimmedURL := strings.TrimSpace(url)
+			if trimmedURL != "" {
+				heritageImagesMap[paragraph.Heritage_ID] = append(heritageImagesMap[paragraph.Heritage_ID], trimmedURL)
+			}
 		}
+	}
 
-		images := make([]string, 0)
-
-		for _, paragraph := range heritageParagraphs {
-			images = append(images, paragraph.ImageURL)
+	// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
+	for i := range heritages {
+		// Biến ok dùng để kiểm tra giá trị có tồn tại không
+		if images, ok := heritageImagesMap[heritages[i].ID]; ok {
+			heritages[i].Images = images
+		} else {
+			heritages[i].Images = []string{} // Gán mảng rỗng nếu không có ảnh
 		}
-
-		// Gán danh sách hình ảnh vào thuộc tính Images của di sản tương ứng
-		heritages[i].Images = images
 	}
 
 	// Tạo đối tượng phản hồi phân trang
@@ -239,4 +279,54 @@ func GetHeritageCategoryBySlug(c *gin.Context) {
 	}
 
 	utils.SuccessResponse(c, http.StatusOK, heritageCategory)
+}
+
+// SearchCategory trả về thông tin danh mục theo tên
+func SearchCategory(c *gin.Context) {
+	hq := models.HeritageQuery{}
+	if err := c.ShouldBindQuery(&hq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid search parameters")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	columnName := c.DefaultQuery("columnName", "id")
+	sortOrder := c.DefaultQuery("sortOrder", "desc")
+
+	query := db.GetDB().Model(&models.Heritage_Category{})
+
+	if hq.Key != "" {
+		query = query.Where("name LIKE ?", "%"+hq.Key+"%")
+	}
+
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+
+	offset := (page - 1) * limit
+	orderClause := columnName + " " + sortOrder
+
+	var categories []models.Heritage_Category
+	if err := query.Order(orderClause).Offset(offset).Limit(limit).Find(&categories).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	pagination := utils.Pagination{
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
+		Data:       categories,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, pagination)
 }

@@ -33,6 +33,7 @@ func SetupRouter() *gin.Engine {
 			heritage.GET("/full-info/id/:id", controllers.GetHeritageWithParagraphsById)
 			heritage.GET("/related/:urlSlug", controllers.GetRelatedHeritagesWithImages)
 			heritage.GET("/increase-view-count/:urlSlug", controllers.IncreaseViewCount)
+			heritage.GET("/search", controllers.SearchHeritage)
 		}
 		heritage_paragraph := v1.Group("/heritage-paragraph")
 		{
@@ -52,6 +53,7 @@ func SetupRouter() *gin.Engine {
 			heritage_type.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByTypeSlug)
 			heritage_type.GET("/slug/:urlSlug", controllers.GetHeritageTypeBySlug)
 			heritage_type.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByTypeSlug)
+			heritage_type.GET("/search", controllers.SearchType)
 		}
 		management_unit := v1.Group("/management-unit")
 		{
@@ -63,6 +65,7 @@ func SetupRouter() *gin.Engine {
 			management_unit.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByUnitSlug)
 			management_unit.GET("/slug/:urlSlug", controllers.GetManagementUnitBySlug)
 			management_unit.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByUnitSlug)
+			management_unit.GET("/search", controllers.SearchUnit)
 		}
 		location := v1.Group("/location")
 		{
@@ -74,14 +77,17 @@ func SetupRouter() *gin.Engine {
 			location.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByLocationSlug)
 			location.GET("/slug/:urlSlug", controllers.GetLocationBySlug)
 			location.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByLocationSlug)
+			location.GET("/search", controllers.SearchLocation)
 		}
 		user := v1.Group("/user")
 		{
 			user.GET("", controllers.GetPagedUsers)
 			user.GET("/:id", controllers.GetUserByID)
+			user.GET("/username/:username", controllers.GetUserByUserName)
 			user.POST("", controllers.RegisterUser)
 			user.PUT("/:id", controllers.UpdateUser)
 			user.DELETE("/:id", controllers.DeleteUser)
+			user.GET("/search", controllers.SearchUser)
 		}
 		heritage_category := v1.Group("/heritage-category")
 		{
@@ -93,6 +99,7 @@ func SetupRouter() *gin.Engine {
 			heritage_category.GET("/slug/:urlSlug/heritages", controllers.GetHeritageByCategorySlug)
 			heritage_category.GET("/slug/:urlSlug", controllers.GetHeritageCategoryBySlug)
 			heritage_category.GET("/slug/:urlSlug/heritages/paged", controllers.GetPagedHeritageByCategorySlug)
+			heritage_category.GET("/search", controllers.SearchCategory)
 		}
 	}
 

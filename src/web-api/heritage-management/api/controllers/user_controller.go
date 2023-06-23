@@ -172,3 +172,67 @@ func GetUserByID(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, user)
 }
+
+// GetUserByID trả về thông tin của một người dùng dựa trên tên đăng nhập
+func GetUserByUserName(c *gin.Context) {
+	name := c.Param("username")
+
+	var user models.User
+
+	if err := db.GetDB().Where("user_name = ?", name).First(&user).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "User not found")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, user)
+}
+
+// SearchUser trả về thông tin tài khoản theo tên
+func SearchUser(c *gin.Context) {
+	hq := models.HeritageQuery{}
+	if err := c.ShouldBindQuery(&hq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid search parameters")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	columnName := c.DefaultQuery("columnName", "id")
+	sortOrder := c.DefaultQuery("sortOrder", "desc")
+
+	query := db.GetDB().Model(&models.User{})
+
+	if hq.Key != "" {
+		query = query.Where("user_name LIKE ?", "%"+hq.Key+"%")
+	}
+
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+
+	offset := (page - 1) * limit
+	orderClause := columnName + " " + sortOrder
+
+	var users []models.User
+	if err := query.Order(orderClause).Offset(offset).Limit(limit).Find(&users).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Could not get data")
+		return
+	}
+
+	pagination := utils.Pagination{
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
+		Data:       users,
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, pagination)
+}

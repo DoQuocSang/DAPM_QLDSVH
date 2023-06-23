@@ -14,10 +14,14 @@ import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 import DefaultImage from "images/post-default.png"
 import Error404 from "../../../components/admin/other/Error404";
 import DeleteModal from "../../../components/admin/modal/DeleteModal";
+import SearchInput from "../../../components/admin/other/SearchInput";
+import { getManagementUnitsByQuerySearch } from "../../../services/ManagementUnitRepository";
 
 export default () => {
     const [managementUnitList, setManagementUnitList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
+    const [searchKey, setSearchKey] = useState("");
+    const [searchColumn, setSearchColumn] = useState("name");
 
     //Xử lý khi bấm xóa bên component con DeleteModal
     const childToParent = (isDelete) => {
@@ -26,6 +30,42 @@ export default () => {
         }
         console.log(managementUnitList.length)
     }
+
+    const handleSearch = () => {
+        if (isEmptyOrSpaces(searchKey)) {
+            getManagementUnits(1, 30)
+                .then(data => {
+                    if (data) {
+                        setManagementUnitList(data.data);
+                    } else {
+                        setManagementUnitList([]);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    setManagementUnitList([]);
+                });
+        } else {
+            getManagementUnitsByQuerySearch(searchKey, searchColumn, 1, 30)
+                .then(data => {
+                    if (data) {
+                        setManagementUnitList(data.data);
+                    } else {
+                        setManagementUnitList([]);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    setManagementUnitList([]);
+                });
+        }
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -121,10 +161,20 @@ export default () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col mt-8">
+                            <div className="flex flex-col">
                                 <div className="overflow-x-auto rounded-lg">
                                     <div className="align-middle inline-block min-w-full">
                                         <div className="shadow overflow-hidden sm:rounded-lg">
+                                            <div className="mb-6 bg-white">
+                                                <div className="flex items-center justify-start">
+                                                    <SearchInput
+                                                        searchKey={searchKey}
+                                                        setSearchKey={setSearchKey}
+                                                        handleSearch={handleSearch}
+                                                        handleKeyPress={handleKeyPress}
+                                                    />
+                                                </div>
+                                            </div>
                                             <table className="min-w-full divide-y divide-gray-200 border border-gray-200">
                                                 <thead className="bg-gray-200">
                                                     <tr>
@@ -135,7 +185,7 @@ export default () => {
                                                             Tên đơn vị quản lý
                                                         </th>
                                                         <th scope="col" width="20%" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                                            Hình ảnh 
+                                                            Hình ảnh
                                                         </th>
                                                         <th scope="col" className="p-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                                             Mô tả ngắn
@@ -188,7 +238,7 @@ export default () => {
                                             {managementUnitList.length === 0 ?
                                                 <Error404 />
                                                 :
-                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} type="management-unit"/>}
+                                                <DeleteModal deleteId={deleteId} isDelete={childToParent} type="management-unit" />}
                                         </div>
                                     </div>
                                 </div>

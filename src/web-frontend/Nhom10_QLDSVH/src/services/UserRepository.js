@@ -11,6 +11,13 @@ export function getUserById(
     // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
 }
 
+export function getUserByUserName(
+    name = "",
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/user/username/${name}`)
+    // return get_api(`https://localhost:7245/api/users?PageSize=30&PageNumber=1`)
+}
+
 export function getUsers(
     page = 1,
     limit = 30,
@@ -39,6 +46,15 @@ export function putUser(
     formData
     ) {
     return put_api(`http://localhost:8080/api/v1/user/${id}`, formData);
+}
+
+export function getUsersByQuerySearch(
+    key = "",
+    column = "name",
+    page = 1,
+    limit = 30
+    ) {    
+    return get_api(`http://localhost:8080/api/v1/user/search?Key=${key}&page=${page}&limit=${limit}&column=${column}`)
 }
 
 

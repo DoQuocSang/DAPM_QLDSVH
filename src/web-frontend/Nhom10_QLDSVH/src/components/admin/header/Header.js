@@ -6,27 +6,44 @@ import { faBell, faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-
 import DefaultUserImage from "images/post-default.png"
 import LogoutModal from "../../../components/admin/modal/LogoutModal";
 import { getHeritagesByQuerySearch } from "../../../services/HeritageRepository";
+import { getUserByUserName } from "services/UserRepository";
 import { isEmptyOrSpaces } from "../../utils/Utils";
+import { useLocation } from "react-router-dom";
 
 
 export default () => {
    const [heritageList, setHeritageList] = useState([]);
-
+   const location = useLocation();
+   const queryParams = new URLSearchParams(location.search);
+   const username = queryParams.get("username");
+   const [loggedInUsername, setLoggedInUsername] = useState(localStorage.getItem('loggedInUsername') || "");
+ 
    const handleSearch = (key) => {
-      if(!isEmptyOrSpaces(key)){
-         getHeritagesByQuerySearch(key).then(data => {
-            if (data) {
-               setHeritageList(data);
-            }
-            else {
-               setHeritageList([]);
-            }
-            console.log(heritageList);
-        });
-      }else{
-         setHeritageList([]);
-      }
-   }
+     if (!isEmptyOrSpaces(key)) {
+       getHeritagesByQuerySearch(key).then((data) => {
+         if (data) {
+           setHeritageList(data);
+         } else {
+           setHeritageList([]);
+         }
+         console.log(heritageList);
+       });
+     } else {
+       setHeritageList([]);
+     }
+   };
+ 
+   useEffect(() => {
+     // Lấy thông tin người dùng từ username
+     getUserByUserName(username).then((user) => {
+       if (user) {
+         setLoggedInUsername(user.username);
+         localStorage.setItem('loggedInUsername', user.username);
+       }
+     });
+   }, [username]);
+
+    
 
    return (
      <>
@@ -53,7 +70,7 @@ export default () => {
                      </a>
                   </Link>
 
-                  <form action="#" method="GET" className="hidden lg:block lg:pl-32">
+                  {/* <form action="#" method="GET" className="hidden lg:block lg:pl-32">
                      <label for="topbar-search" className="sr-only">Tìm kiếm</label>
                      <div className="mt-1 relative lg:w-64">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -66,9 +83,11 @@ export default () => {
                            name="key" 
                            id="topbar-search" 
                            onChange={e => handleSearch(e.target.value)}
-                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-full focus:ring-cyan-600 focus:border-cyan-600 block w-full pl-10 p-2.5 transition duration-500 ease-in-out border-transparent focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-1 ring-purple-400" placeholder="Tìm kiếm" />
+                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-full focus:ring-cyan-600 focus:border-cyan-600 block w-full pl-10 p-2.5 transition duration-500 ease-in-out border-transparent focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-1 ring-offset-current ring-offset-1 ring-purple-400" 
+                           style={{ color: 'white' }}
+                           placeholder="Tìm kiếm" />
                      </div>
-                  </form>
+                  </form> */}
 
                </div>
                <div className="flex items-center">
@@ -81,7 +100,7 @@ export default () => {
                   <div className="hidden lg:flex items-center">
                      <img className="h-8 w-8 rounded-lg mx-3" src={DefaultUserImage} alt="Neil image" />
                      <span className="text-base font-bold text-gray-500 mr-5">
-                        Sang Đỗ
+                     {loggedInUsername}
                      </span>
                      {/* <div className="-mb-1">
                         <a className="github-button" href="#" data-color-scheme="no-preference: dark; light: light; dark: light;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star themesberg/windster-tailwind-css-dashboard on GitHub">Star</a>

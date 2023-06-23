@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 export default () => {
     useEffect(() => {
-        const button = document.getElementById('logout_buttonmodal')
-        const closebutton = document.getElementById('logout_closebutton')
-        const modal = document.getElementById('logout_modal')
-        button.addEventListener('click', () => modal.classList.add('scale-100'))
-        closebutton.addEventListener('click', () => modal.classList.remove('scale-100'))
+        const button = document.getElementById('logout_buttonmodal');
+        const closebutton = document.getElementById('logout_closebutton');
+        const modal = document.getElementById('logout_modal');
+
+        button.addEventListener('click', () => modal.classList.add('scale-100'));
+        closebutton.addEventListener('click', () => modal.classList.remove('scale-100'));
     }, []);
+
+    const navigate = useNavigate();
+
+    const handleContinue = () => {
+        localStorage.setItem("loggedInUsername", "");
+        navigate("/admin");
+    };
+
     return (
         <>
             <div id="logout_modal" className=" transform scale-0 transition-transform duration-300 min-w-screen h-screen animated fadeIn fixed left-0 top-0 flex justify-center items-center inset-0 z-50 outline-none focus:outline-none" >
@@ -28,7 +39,7 @@ export default () => {
                             <button id="logout_closebutton" className="mb-2 md:mb-0 bg-white px-10 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">
                                 Không
                             </button>
-                            <button className="mb-2 md:mb-0 bg-teal-500 border border-teal-500 px-10 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-teal-600">Có</button>
+                            <button onClick={() => handleContinue()} className="mb-2 md:mb-0 bg-teal-500 border border-teal-500 px-10 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-teal-600">Có</button>
                         </div>
                     </div>
                 </div>
