@@ -9,6 +9,7 @@ import DesignIllustration from "images/stats-illustration.svg";
 
 
 export default () => {
+    
 
     return (
         <main>

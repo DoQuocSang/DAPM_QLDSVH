@@ -88,8 +88,8 @@ export default function Login() {
 
     if (user && user.password === password && user.permission === 1) {
       // Đăng nhập thành công, chuyển hướng đến trang chủ của admin
-      setLoggedInUsername(user.username);
-      localStorage.setItem("loggedInUsername", username);
+      setLoggedInUsername(user.user_name);
+      localStorage.setItem("loggedInUsername", user.user_name);
 
       navigate("/admin/dashboard");
     } else {
