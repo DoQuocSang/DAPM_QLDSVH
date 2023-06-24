@@ -11,7 +11,7 @@ import { checkImageDescriptionArray } from "../../utils/Utils";
 
 const HeadingContainer = tw.div`text-center`;
 const Subheading = tw(SubheadingBase)`mb-4`;
-const Heading = tw(SectionHeading)``;
+const Heading = tw(SectionHeading)`hover:text-primary-500 transition duration-300`;
 const Description = tw(SectionDescription)`mx-auto`;
 
 const Posts = tw.div`mt-4 flex flex-wrap -mr-3 relative`;
@@ -79,7 +79,9 @@ export default ({
           <ContentWithPaddingXl>
             <HeadingContainer>
               {subheading && <Subheading>{subheading}</Subheading>}
-              <Heading>{heritage.name}</Heading>
+              <a href={"/heritage-detail/" + heritage.urlslug}>
+                <Heading>{heritage.name}</Heading>
+              </a>
               {description && <Description>{heritage.description}</Description>}
             </HeadingContainer>
             <Posts>

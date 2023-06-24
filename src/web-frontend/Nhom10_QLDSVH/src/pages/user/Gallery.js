@@ -4,7 +4,7 @@ import tw from "twin.macro";
 import { getHeritagesForGallery } from "../../services/HeritageRepository";
 import GalleryItem from "components/user/blogs/GridWithFeaturedPost";
 import { PrimaryButton } from "components/user/misc/Buttons";
-
+import FAQS from "components/user/faqs/SingleCol.js";
 
 const ButtonContainer = tw.div`flex justify-center`;
 const LoadMoreButton = tw(PrimaryButton)`my-16 mx-auto`;
@@ -52,6 +52,7 @@ export default () => {
             <ShortenButton onClick={onShortenClick}>Ẩn bớt</ShortenButton>
           </ButtonContainer>
         )}
+       <FAQS />
     </AnimationRevealPage>
   );
 };
