@@ -92,7 +92,6 @@ const SubCardHeading = styled.div`
 const BlogImage = tw.img`w-full h-auto rounded-lg pt-4`;
 
 export default ({ hasTab = true, isProductPage = false }) => {
-
   //scrollToTop();
 
   let { slug } = useParams();
@@ -117,8 +116,6 @@ export default ({ hasTab = true, isProductPage = false }) => {
   }, [mainInfo, setMainInfo] = useState(initialState);
 
   useEffect(() => {
-    document.title = 'Trang chủ';
-
     if (isEmptyOrSpaces(slug)) {
       getHeritages(1, 100, "name", "ASC").then(data => {
         if (data) {

@@ -155,7 +155,8 @@ const ContactButton = styled.div(({ color1, color2, color3 }) => [
 const ContactButtonText = tw.div`font-semibold text-gray-800 text-sm mt-3`
 
 export default () => {
-
+  document.title = 'Thông tin di sản';
+  
   const { slug } = useParams();
 
   const defaultHeritage = {
@@ -225,8 +226,6 @@ export default () => {
   const [videoId, setVideoId] = useState("");
 
   useEffect(() => {
-    document.title = 'Thông tin di sản';
-
     getHeritageWithDetailBySlug(slug).then(data => {
       if (data) {
         setHeritageData(data);

@@ -21,6 +21,7 @@ import NotificationModal from "../../../components/admin/modal/NotificationModal
 
 
 export default ({ type = "" }) => {
+    document.title = 'Thêm/Cập nhật tài khoản';
 
     let mainText = AddOrUpdateText(type, "tài khoản");
     const currentDate = new Date().toISOString().substring(0, 19) + 'Z';

@@ -19,6 +19,8 @@ import SearchInput from "../../../components/admin/other/SearchInput";
 import { getUsersByQuerySearch } from "../../../services/UserRepository";
 
 export default () => {
+    document.title = 'Quản lý tài khoản';
+
     const [userList, setUserList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
     const [searchKey, setSearchKey] = useState("");

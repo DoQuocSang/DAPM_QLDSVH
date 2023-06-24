@@ -21,6 +21,7 @@ import NotificationModal from "../../../components/admin/modal/NotificationModal
 
 
 export default ({ type = "" }) => {
+    document.title = 'Thêm/Cập nhật loại di sản';
 
     let mainText = AddOrUpdateText(type, "loại di sản");
     const initialState = {

@@ -11,6 +11,8 @@ import CustomerLoveIconImage from "images/simple-icon.svg";
 
 const Subheading = tw.span`uppercase tracking-wider text-sm`;
 export default () => {
+  document.title = 'Giới thiệu';
+
   return (
     <AnimationRevealPage>
       <MainFeature1

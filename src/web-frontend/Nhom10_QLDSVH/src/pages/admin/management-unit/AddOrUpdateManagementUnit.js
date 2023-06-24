@@ -21,6 +21,7 @@ import { isEmptyOrSpaces } from "../../../components/utils/Utils";
 
 
 export default ({ type = "" }) => {
+    document.title = 'Thêm/Cập nhật đơn vị quản lý';
 
     let mainText = AddOrUpdateText(type, "đơn vị quản lý");
     const initialState = {

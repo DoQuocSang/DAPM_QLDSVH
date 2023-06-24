@@ -41,3 +41,19 @@ type Heritage_DTO struct {
 func (Heritage_DTO) TableName() string {
 	return "heritages"
 }
+
+// Heritage struct
+type Heritage_Gallery struct {
+	ID                int      `json:"id" gorm:"column:id;"`
+	Name              string   `json:"name" gorm:"column:name;"`
+	Short_Description string   `json:"short_description" gorm:"column:short_description;"`
+	Image_360_URL     string   `json:"image_360_url" gorm:"column:image_360_url;"`
+	VideoURL          string   `json:"video_url" gorm:"column:video_url;"`
+	UrlSlug           string   `json:"urlslug" gorm:"column:urlslug;"`
+	Images            []string `json:"images" gorm:"-"`
+	ImageDescriptions []string `json:"image_descriptions" gorm:"-"`
+}
+
+func (Heritage_Gallery) TableName() string {
+	return "heritages"
+}

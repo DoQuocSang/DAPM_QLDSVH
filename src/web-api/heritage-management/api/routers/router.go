@@ -33,6 +33,7 @@ func SetupRouter() *gin.Engine {
 			heritage.GET("/full-info/id/:id", controllers.GetHeritageWithParagraphsById)
 			heritage.GET("/related/:urlSlug", controllers.GetRelatedHeritagesWithImages)
 			heritage.GET("/increase-view-count/:urlSlug", controllers.IncreaseViewCount)
+			heritage.GET("/gallery", controllers.GetPagedHeritagesImagesForGallery)
 			heritage.GET("/search", controllers.SearchHeritage)
 		}
 		heritage_paragraph := v1.Group("/heritage-paragraph")

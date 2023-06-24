@@ -51,7 +51,7 @@ export default ({
     {
       question: "Làm thế nào để xem thông tin di sản văn hóa ở địa phương của bạn?",
       answer:
-        `Để xem di sản văn hóa ở địa phương của bạn, bạn có thể truy cập tab danh mục trên thanh điều hướng và chọn địa phương của mình hoặc bạn có thể tìm địa phương mình ở mục "Danh sách địa điểm" ở trang chủ, khi bấm vào bạn sẽ được chuyển đến trang danh sách đơn vị quản lý thuộc địa phương, sau đó hãy chọn đơn vị quản lý mình muốn để xem thông tin di sản văn hóa.`
+        `Để xem di sản văn hóa ở địa phương của bạn, bạn có thể truy cập tab danh mục trên thanh điều hướng và chọn địa phương của mình hoặc bạn có thể tìm địa phương mình ở mục "Danh sách địa điểm" ở trang chủ, sau đó hãy danh sách di sản sẽ hiện ra và bạn có thể chọn một di sản để xem thông tin chi tiết`
     },
     {
       question: "Cách truy cập trang quản lý Admin?",

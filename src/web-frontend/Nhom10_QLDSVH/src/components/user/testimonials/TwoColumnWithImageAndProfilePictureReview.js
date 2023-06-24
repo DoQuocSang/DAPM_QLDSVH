@@ -151,7 +151,7 @@ export default ({
                 <TextContent>
                   <SubheadingContent>Đề xuất</SubheadingContent>
                   <HeadingContent> {heritage.name}</HeadingContent>
-                  <DescriptionContent>{description}</DescriptionContent>
+                  <DescriptionContent>{heritage.short_description}</DescriptionContent>
 
                   <GridContainer>
                     <GridItem>

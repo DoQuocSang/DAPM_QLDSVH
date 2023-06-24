@@ -25,6 +25,7 @@ import { putHeritageWithParagraphs } from "../../../services/HeritageRepository"
 import { splitImageUrls } from "../../../components/utils/Utils";
 
 export default ({ type = "" }) => {
+    document.title = 'Thêm/Cập nhật di sản';
 
     let mainText = AddOrUpdateText(type, "di sản");
 

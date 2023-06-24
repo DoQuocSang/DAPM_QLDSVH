@@ -18,6 +18,8 @@ import SearchInput from "../../../components/admin/other/SearchInput";
 import { getLocationsByQuerySearch } from "../../../services/LocationRepository";
 
 export default () => {
+    document.title = 'Quản lý địa điểm';
+
     const [locationList, setLocationList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
     const [searchKey, setSearchKey] = useState("");

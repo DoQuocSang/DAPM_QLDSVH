@@ -18,6 +18,8 @@ import SearchInput from "../../../components/admin/other/SearchInput";
 import { getHeritageTypesByQuerySearch } from "../../../services/HeritageTypeRepository";
 
 export default () => {
+    document.title = 'Quản lý loại di sản';
+
     const [heritageTypeList, setHeritageTypeList] = useState([]);
     const [deleteId, setDeleteId] = useState(0);
     const [searchKey, setSearchKey] = useState("");
